@@ -678,16 +678,10 @@
                     <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SBM-Wb-U8a">
                         <rect key="frame" x="48" y="18" width="574" height="19"/>
                         <sliderCell key="cell" state="on" alignment="left" maxValue="100" tickMarkPosition="above" sliderType="linear" id="OIy-qN-qKM"/>
-                        <connections>
-                            <action selector="hSliderChanged:" target="z44-Lp-cgU" id="PCK-1A-DEz"/>
-                        </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KRX-Wz-Kbk">
                         <rect key="frame" x="18" y="40" width="19" height="422"/>
                         <sliderCell key="cell" alignment="left" maxValue="100" tickMarkPosition="right" sliderType="linear" id="ju1-ru-QmO"/>
-                        <connections>
-                            <action selector="vSliderChanged:" target="z44-Lp-cgU" id="SwW-I1-hE7"/>
-                        </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X6k-ca-shT">
                         <rect key="frame" x="614" y="40" width="19" height="422"/>

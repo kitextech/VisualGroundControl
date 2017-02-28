@@ -9,9 +9,11 @@
 /* Begin PBXBuildFile section */
 		22389A0F1E658CFD00E596EA /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223899F01E658CB500E596EA /* RxCocoa.framework */; };
 		22389A101E658CFD00E596EA /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223899E81E658CB500E596EA /* RxSwift.framework */; };
+		22389A121E6602DE00E596EA /* KiteViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22389A111E6602DE00E596EA /* KiteViewer.swift */; };
+		22389A141E66034400E596EA /* KiteEmulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22389A131E66034400E596EA /* KiteEmulator.swift */; };
 		22EC26881E61DD7E00370170 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26871E61DD7E00370170 /* AppDelegate.swift */; };
 		22EC268A1E61DD7E00370170 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26891E61DD7E00370170 /* GameView.swift */; };
-		22EC268C1E61DD7E00370170 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC268B1E61DD7E00370170 /* GameViewController.swift */; };
+		22EC268C1E61DD7E00370170 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC268B1E61DD7E00370170 /* ViewController.swift */; };
 		22EC268E1E61DD7E00370170 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 22EC268D1E61DD7E00370170 /* art.scnassets */; };
 		22EC26901E61DD7E00370170 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22EC268F1E61DD7E00370170 /* Assets.xcassets */; };
 		22EC26931E61DD7F00370170 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 22EC26911E61DD7F00370170 /* MainMenu.xib */; };
@@ -174,10 +176,12 @@
 
 /* Begin PBXFileReference section */
 		223899CD1E658CB400E596EA /* Rx.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Rx.xcodeproj; path = RxSwift/Rx.xcodeproj; sourceTree = "<group>"; };
+		22389A111E6602DE00E596EA /* KiteViewer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteViewer.swift; sourceTree = "<group>"; };
+		22389A131E66034400E596EA /* KiteEmulator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteEmulator.swift; sourceTree = "<group>"; };
 		22EC26841E61DD7E00370170 /* VisualKite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisualKite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22EC26871E61DD7E00370170 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		22EC26891E61DD7E00370170 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
-		22EC268B1E61DD7E00370170 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		22EC268B1E61DD7E00370170 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		22EC268D1E61DD7E00370170 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		22EC268F1E61DD7E00370170 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		22EC26921E61DD7F00370170 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -252,7 +256,9 @@
 			children = (
 				22EC26871E61DD7E00370170 /* AppDelegate.swift */,
 				22EC26891E61DD7E00370170 /* GameView.swift */,
-				22EC268B1E61DD7E00370170 /* GameViewController.swift */,
+				22EC268B1E61DD7E00370170 /* ViewController.swift */,
+				22389A131E66034400E596EA /* KiteEmulator.swift */,
+				22389A111E6602DE00E596EA /* KiteViewer.swift */,
 				22EC268D1E61DD7E00370170 /* art.scnassets */,
 				22EC268F1E61DD7E00370170 /* Assets.xcassets */,
 				22EC26911E61DD7F00370170 /* MainMenu.xib */,
@@ -500,8 +506,10 @@
 				22EC26A71E62219B00370170 /* Vector4.swift in Sources */,
 				22EC268A1E61DD7E00370170 /* GameView.swift in Sources */,
 				22EC26A41E62219B00370170 /* Rotations.swift in Sources */,
-				22EC268C1E61DD7E00370170 /* GameViewController.swift in Sources */,
+				22EC268C1E61DD7E00370170 /* ViewController.swift in Sources */,
 				22EC26881E61DD7E00370170 /* AppDelegate.swift in Sources */,
+				22389A141E66034400E596EA /* KiteEmulator.swift in Sources */,
+				22389A121E6602DE00E596EA /* KiteViewer.swift in Sources */,
 				22EC26A61E62219B00370170 /* Vector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
