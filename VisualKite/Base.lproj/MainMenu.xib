@@ -671,9 +671,9 @@
                 <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <sceneView autoenablesDefaultLighting="YES" translatesAutoresizingMaskIntoConstraints="NO" id="536" customClass="GameView" customModule="VisualKite" customModuleProvider="target">
+                    <sceneView autoenablesDefaultLighting="YES" allowsCameraControl="YES" translatesAutoresizingMaskIntoConstraints="NO" id="536">
                         <rect key="frame" x="56" y="49" width="546" height="395"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     </sceneView>
                     <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SBM-Wb-U8a">
                         <rect key="frame" x="48" y="18" width="574" height="19"/>
@@ -730,6 +730,7 @@
                 <outlet property="gameView" destination="536" id="No3-Ct-Xwn"/>
                 <outlet property="hSlider" destination="SBM-Wb-U8a" id="mEU-WC-qgn"/>
                 <outlet property="phaseSlider" destination="X6k-ca-shT" id="Gen-nC-bkp"/>
+                <outlet property="sceneView" destination="536" id="gRp-KN-aSc"/>
                 <outlet property="vSlider" destination="KRX-Wz-Kbk" id="kib-bW-DvA"/>
                 <outlet property="view" destination="372" id="bTQ-MN-Ejh"/>
                 <outlet property="windSlider" destination="iKH-WG-6ji" id="RGy-yM-61K"/>
