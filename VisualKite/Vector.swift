@@ -77,6 +77,18 @@ extension Vector {
     
     // Properties
     
+    public var r: Scalar {
+        return norm
+    }
+
+    public var phi: Scalar {
+        return atan2(y, x)
+    }
+
+    public var theta: Scalar {
+        return atan2(z, sqrt(x*x + y*y))
+    }
+
     public func component(along b: Vector) -> Scalar {
         let normB = b.norm
         

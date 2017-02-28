@@ -16,33 +16,13 @@ public typealias Vector4 = SCNVector4
 public typealias Matrix = SCNMatrix4
 
 extension Matrix {
-    public init(rotation axis: Vector, by angle: Scalar, translation vector: Vector) {
-        self = SCNMatrix4Translate(SCNMatrix4MakeRotation(angle, axis.x, axis.y, axis.z), vector.x, vector.y, vector.z)
+    public init(rotation axis: Vector, by angle: Scalar, translation vector: Vector = .origin, scale: Vector = Vector(1, 1, 1)) {
+        self = SCNMatrix4Scale(SCNMatrix4Translate(SCNMatrix4MakeRotation(angle, axis.x, axis.y, axis.z), vector.x, vector.y, vector.z), scale.x, scale.y, scale.z)
     }
     
-    public init(rotation axis: Vector, by angle: Scalar) {
-        self = SCNMatrix4MakeRotation(angle, axis.x, axis.y, axis.z)
+    public init(translation vector: Vector = .origin, scale: Vector = Vector(1, 1, 1)) {
+        self = SCNMatrix4Scale(SCNMatrix4MakeTranslation(vector.x, vector.y, vector.z), scale.x, scale.y, scale.z)
     }
-    
-    public init(translation vector: Vector) {
-        self = SCNMatrix4MakeTranslation(vector.x, vector.y, vector.z)
-    }
-    
-//    public static func rotation(around vector: Vector, by angle: Scalar) -> Matrix {
-//        return SCNMatrix4MakeRotation(angle, vector.x, vector.y, vector.z)
-//    }
-//
-//    public static func translation(by vector: Vector) -> Matrix {
-//        return SCNMatrix4MakeTranslation(vector.x, vector.y, vector.z)
-//    }
-//
-//    public func rotated(around vector: Vector, by angle: Scalar) -> Matrix {
-//        return SCNMatrix4Rotate(self, angle, vector.x, vector.y, vector.z)
-//    }
-//
-//    public func translated(by vector: Vector) -> Matrix {
-//        return SCNMatrix4Translate(self, vector.x, vector.y, vector.z)
-//    }
 
     subscript(row: Int, col: Int) -> Scalar {
         get {
@@ -104,13 +84,6 @@ extension Matrix {
             " [\(m41), \(m42), \(m43), \(m44)]]"
     }
     
-    public var array: [[Scalar]] {
-        return [[m11, m12, m13, m14],
-                [m21, m22, m23, m24],
-                [m31, m32, m33, m34],
-                [m41, m42, m43, m44]]
-    }
-    
     public var transpose: Matrix {
         return Matrix(m11: m11, m12: m21, m13: m31, m14: m41,
                       m21: m12, m22: m22, m23: m32, m24: m42,
@@ -149,32 +122,24 @@ extension Matrix {
     
     // Scalar multiplication
     
-    public static func *(matrix: Matrix, scalar: Scalar) -> Matrix {
-        return Matrix(
-            m11: matrix.m11*scalar, m12: matrix.m12*scalar, m13: matrix.m13*scalar, m14: matrix.m14*scalar,
-            m21: matrix.m21*scalar, m22: matrix.m22*scalar, m23: matrix.m23*scalar, m24: matrix.m24*scalar,
-            m31: matrix.m31*scalar, m32: matrix.m32*scalar, m33: matrix.m33*scalar, m34: matrix.m34*scalar,
-            m41: matrix.m41*scalar, m42: matrix.m42*scalar, m43: matrix.m43*scalar, m44: matrix.m44*scalar)
-    }
-    
     public static func *(scalar: Scalar, matrix: Matrix) -> Matrix {
-        return matrix*scalar
-    }
-    
-    public static func *(matrix: Matrix, int: Int) -> Matrix {
-        return matrix*Scalar(int)
+        return Matrix(
+            m11: scalar*matrix.m11, m12: scalar*matrix.m12, m13: scalar*matrix.m13, m14: scalar*matrix.m14,
+            m21: scalar*matrix.m21, m22: scalar*matrix.m22, m23: scalar*matrix.m23, m24: scalar*matrix.m24,
+            m31: scalar*matrix.m31, m32: scalar*matrix.m32, m33: scalar*matrix.m33, m34: scalar*matrix.m34,
+            m41: scalar*matrix.m41, m42: scalar*matrix.m42, m43: scalar*matrix.m43, m44: scalar*matrix.m44)
     }
     
     public static func *(int: Int, matrix: Matrix) -> Matrix {
-        return matrix*Scalar(int)
+        return Scalar(int)*matrix
     }
     
     public static func *=(matrix: inout Matrix, scalar: Scalar) {
-        matrix = matrix*scalar
+        matrix = scalar*matrix
     }
     
     public static func *=(matrix: inout Matrix, int: Int) {
-        matrix = matrix*int
+        matrix = int*matrix
     }
 
 }
