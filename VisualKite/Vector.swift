@@ -155,14 +155,6 @@ extension Vector {
     }
 
     // Scalar multiplication
-
-    public static func *(left: Vector, right: Scalar) -> Vector {
-        let x = left.x * right
-        let y = left.y * right
-        let z = left.z * right
-        
-        return Vector(x: x, y: y, z: z)
-    }
     
     public static func *(scalar: Scalar, vector: Vector) -> Vector {
         let x = scalar*vector.x
@@ -171,6 +163,10 @@ extension Vector {
         
         return Vector(x: x, y: y, z: z)
     }
+    
+//    public static func *(int: Int, vector: Vector) -> Vector {
+//        return Scalar(int)*vector
+//    }
 
     // Vector addition
     

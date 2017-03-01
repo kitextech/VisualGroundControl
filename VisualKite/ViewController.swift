@@ -47,49 +47,63 @@ final class GameViewController: NSViewController {
     override func awakeFromNib(){
         super.awakeFromNib()
         
-        vSlider.minValue = Double(0)
-        vSlider.maxValue = Double(π/2)
-        
-        hSlider.minValue = Double(-π)
-        hSlider.maxValue = Double(π)
-        
         phaseSlider.minValue = Double(0)
         phaseSlider.maxValue = Double(2*π)
 
-        windSlider.minValue = Double(-π)
-        windSlider.maxValue = Double(π)
+//        vSlider.minValue = Double(0)
+//        vSlider.maxValue = Double(π/2)
+//        
+//        hSlider.minValue = Double(-π)
+//        hSlider.maxValue = Double(π)
+//        
+//        windSlider.minValue = Double(-π)
+//        windSlider.maxValue = Double(π)
         
-        vSlider.rx.value
-            .map(Scalar.init(_:))
-            .bindTo(kite.gamma)
-            .disposed(by: bag)
-
-        hSlider.rx.value
-            .map(Scalar.init(_:))
-            .bindTo(kite.phi)
-            .disposed(by: bag)
-
+        vSlider.minValue = Double(0)
+        vSlider.maxValue = Double(2*π)
+        
+        hSlider.minValue = Double(0)
+        hSlider.maxValue = Double(2*π)
+        
+        windSlider.minValue = Double(0)
+        windSlider.maxValue = Double(2*π)
+        
         phaseSlider.rx.value
             .map(Scalar.init(_:))
             .bindTo(kite.phase)
             .disposed(by: bag)
 
-        let wind = windSlider.rx.value.map(Scalar.init(_:))
-
-        wind.bindTo(kite.phiWind)
-            .disposed(by: bag)
+//        vSlider.rx.value
+//            .map(Scalar.init(_:))
+//            .bindTo(kite.gamma)
+//            .disposed(by: bag)
+//
+//        hSlider.rx.value
+//            .map(Scalar.init(_:))
+//            .bindTo(kite.phi)
+//            .disposed(by: bag)
+//
+//        let wind = windSlider.rx.value.map(Scalar.init(_:))
+//
+//        wind.bindTo(kite.phiWind)
+//            .disposed(by: bag)
 
         // ----
         
+        Observable.combineLatest( windSlider.rx.value, vSlider.rx.value, hSlider.rx.value, resultSelector: Vector.init)
+            .bindTo(viewer.attitude).disposed(by: bag)
+        
+//        Observable.combineLatest(vSlider.rx.value, hSlider.rx.value, windSlider.rx.value, resultSelector: noOp)
+//            .map { Matrix(rotation: .ex, by: Scalar($0.0))*Matrix(rotation: .ey, by: Scalar($0.1))*Matrix(rotation: .ez, by: Scalar($0.2)) }
+//            .subscribe(onNext: { self.viewer.ship.pivot = $0 })
+//            .disposed(by: bag)
+        
         kite.position.bindTo(viewer.position).disposed(by: bag)
-        kite.attitude.bindTo(viewer.attitude).disposed(by: bag)
+//        kite.attitude.bindTo(viewer.attitude).disposed(by: bag)
         kite.tetherPoint.bindTo(viewer.tetherPoint).disposed(by: bag)
         kite.turningPoint.bindTo(viewer.turningPoint).disposed(by: bag)
         
-        wind.bindTo(kite.phiWind).disposed(by: bag)
-        
-        
-        let g = Observable.combineLatest(kite.position, kite.attitude, resultSelector: { $0 })
+//        wind.bindTo(viewer.phiWind).disposed(by: bag)
     }
     
     // MARK: - Helper Methods

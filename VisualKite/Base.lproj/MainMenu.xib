@@ -721,7 +721,6 @@
         <customObject id="420" customClass="NSFontManager"/>
         <viewController id="z44-Lp-cgU" customClass="GameViewController" customModule="VisualKite" customModuleProvider="target">
             <connections>
-                <outlet property="gameView" destination="536" id="No3-Ct-Xwn"/>
                 <outlet property="hSlider" destination="SBM-Wb-U8a" id="mEU-WC-qgn"/>
                 <outlet property="phaseSlider" destination="X6k-ca-shT" id="Gen-nC-bkp"/>
                 <outlet property="sceneView" destination="536" id="gRp-KN-aSc"/>
