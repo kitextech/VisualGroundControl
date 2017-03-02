@@ -672,43 +672,43 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <sceneView autoenablesDefaultLighting="YES" allowsCameraControl="YES" translatesAutoresizingMaskIntoConstraints="NO" id="536">
-                        <rect key="frame" x="56" y="49" width="546" height="395"/>
+                        <rect key="frame" x="30" y="30" width="580" height="420"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     </sceneView>
                     <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SBM-Wb-U8a">
-                        <rect key="frame" x="48" y="18" width="574" height="19"/>
-                        <sliderCell key="cell" state="on" alignment="left" maxValue="100" tickMarkPosition="above" sliderType="linear" id="OIy-qN-qKM"/>
+                        <rect key="frame" x="28" y="-1" width="584" height="24"/>
+                        <sliderCell key="cell" state="on" alignment="left" maxValue="100" tickMarkPosition="below" numberOfTickMarks="17" allowsTickMarkValuesOnly="YES" sliderType="linear" id="OIy-qN-qKM"/>
                     </slider>
                     <slider horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KRX-Wz-Kbk">
-                        <rect key="frame" x="18" y="40" width="19" height="422"/>
-                        <sliderCell key="cell" alignment="left" maxValue="100" tickMarkPosition="right" sliderType="linear" id="ju1-ru-QmO"/>
+                        <rect key="frame" x="0.0" y="27" width="24" height="425"/>
+                        <sliderCell key="cell" alignment="left" maxValue="100" tickMarkPosition="left" numberOfTickMarks="17" allowsTickMarkValuesOnly="YES" sliderType="linear" id="ju1-ru-QmO"/>
                     </slider>
                     <slider horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X6k-ca-shT">
-                        <rect key="frame" x="614" y="40" width="19" height="422"/>
-                        <sliderCell key="cell" alignment="left" maxValue="100" tickMarkPosition="right" sliderType="linear" id="Di6-iQ-3qV"/>
+                        <rect key="frame" x="616" y="27" width="24" height="425"/>
+                        <sliderCell key="cell" state="on" alignment="left" maxValue="1" tickMarkPosition="right" numberOfTickMarks="21" allowsTickMarkValuesOnly="YES" sliderType="linear" id="Di6-iQ-3qV"/>
                     </slider>
                     <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iKH-WG-6ji">
-                        <rect key="frame" x="54" y="450" width="545" height="19"/>
-                        <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="Zxb-aa-Vmz"/>
+                        <rect key="frame" x="28" y="456" width="584" height="24"/>
+                        <sliderCell key="cell" state="on" alignment="left" maxValue="100" tickMarkPosition="above" numberOfTickMarks="17" sliderType="linear" id="Zxb-aa-Vmz"/>
                     </slider>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="536" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="56" id="541"/>
-                    <constraint firstItem="536" firstAttribute="top" secondItem="372" secondAttribute="top" constant="36" id="542"/>
-                    <constraint firstItem="536" firstAttribute="bottom" secondItem="372" secondAttribute="bottom" constant="-49" id="543"/>
-                    <constraint firstItem="536" firstAttribute="trailing" secondItem="372" secondAttribute="trailing" constant="-38" id="544"/>
-                    <constraint firstItem="iKH-WG-6ji" firstAttribute="top" secondItem="372" secondAttribute="top" constant="13" id="48v-o7-9bb"/>
-                    <constraint firstAttribute="bottom" secondItem="SBM-Wb-U8a" secondAttribute="bottom" constant="20" id="5YP-gg-cUw"/>
-                    <constraint firstItem="X6k-ca-shT" firstAttribute="top" secondItem="372" secondAttribute="top" constant="20" id="Cn6-hN-Zpd"/>
-                    <constraint firstAttribute="trailing" secondItem="SBM-Wb-U8a" secondAttribute="trailing" constant="20" id="JMx-GI-tGK"/>
-                    <constraint firstItem="iKH-WG-6ji" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="56" id="K1N-nz-g1z"/>
-                    <constraint firstAttribute="bottom" secondItem="X6k-ca-shT" secondAttribute="bottom" constant="43" id="NcP-aO-TCn"/>
-                    <constraint firstAttribute="trailing" secondItem="iKH-WG-6ji" secondAttribute="trailing" constant="43" id="QUY-tq-LHY"/>
-                    <constraint firstItem="SBM-Wb-U8a" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="50" id="cWB-J2-xit"/>
-                    <constraint firstItem="KRX-Wz-Kbk" firstAttribute="top" secondItem="372" secondAttribute="top" constant="20" id="oYm-2w-prt"/>
-                    <constraint firstAttribute="bottom" secondItem="KRX-Wz-Kbk" secondAttribute="bottom" constant="43" id="pA9-Ey-YnE"/>
-                    <constraint firstAttribute="trailing" secondItem="X6k-ca-shT" secondAttribute="trailing" constant="9" id="tLJ-WB-06M"/>
-                    <constraint firstItem="KRX-Wz-Kbk" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="20" id="wsz-LI-Ytl"/>
+                    <constraint firstItem="536" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="30" id="541"/>
+                    <constraint firstItem="536" firstAttribute="top" secondItem="372" secondAttribute="top" constant="30" id="542"/>
+                    <constraint firstItem="536" firstAttribute="bottom" secondItem="372" secondAttribute="bottom" constant="-30" id="543"/>
+                    <constraint firstItem="536" firstAttribute="trailing" secondItem="372" secondAttribute="trailing" constant="-30" id="544"/>
+                    <constraint firstItem="iKH-WG-6ji" firstAttribute="top" secondItem="372" secondAttribute="top" id="48v-o7-9bb"/>
+                    <constraint firstAttribute="bottom" secondItem="SBM-Wb-U8a" secondAttribute="bottom" id="5YP-gg-cUw"/>
+                    <constraint firstItem="X6k-ca-shT" firstAttribute="top" secondItem="372" secondAttribute="top" constant="30" id="Cn6-hN-Zpd"/>
+                    <constraint firstAttribute="trailing" secondItem="SBM-Wb-U8a" secondAttribute="trailing" constant="30" id="JMx-GI-tGK"/>
+                    <constraint firstItem="iKH-WG-6ji" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="30" id="K1N-nz-g1z"/>
+                    <constraint firstAttribute="bottom" secondItem="X6k-ca-shT" secondAttribute="bottom" constant="30" id="NcP-aO-TCn"/>
+                    <constraint firstAttribute="trailing" secondItem="iKH-WG-6ji" secondAttribute="trailing" constant="30" id="QUY-tq-LHY"/>
+                    <constraint firstItem="SBM-Wb-U8a" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="30" id="cWB-J2-xit"/>
+                    <constraint firstItem="KRX-Wz-Kbk" firstAttribute="top" secondItem="372" secondAttribute="top" constant="30" id="oYm-2w-prt"/>
+                    <constraint firstAttribute="bottom" secondItem="KRX-Wz-Kbk" secondAttribute="bottom" constant="30" id="pA9-Ey-YnE"/>
+                    <constraint firstAttribute="trailing" secondItem="X6k-ca-shT" secondAttribute="trailing" id="tLJ-WB-06M"/>
+                    <constraint firstItem="KRX-Wz-Kbk" firstAttribute="leading" secondItem="372" secondAttribute="leading" id="wsz-LI-Ytl"/>
                 </constraints>
             </view>
             <point key="canvasLocation" x="321" y="-196"/>

@@ -12,7 +12,7 @@ import SceneKit
 infix operator •: MultiplicationPrecedence
 infix operator ×: MultiplicationPrecedence
 
-extension Vector {
+extension Vector: CustomStringConvertible {
     // Creation
     
     public static var zero: Vector {
@@ -68,11 +68,11 @@ extension Vector {
     }
     
     public func rotated(around vector: Vector, by angle: Scalar) -> Vector {
-        return Matrix(rotation: vector, by: angle)*self
+        return self*Matrix(rotation: vector, by: angle)
     }
     
     public func transformed(by matrix: Matrix) -> Vector {
-        return matrix*self
+        return self*matrix
     }
     
     // Properties
@@ -108,7 +108,7 @@ extension Vector {
         return (self•b/pow(normB, 2))*b
     }
 
-    public func angle(with b: Vector) -> Scalar {
+    public func angle(to b: Vector) -> Scalar {
         let m = norm*b.norm
         
         guard m > 0 else {

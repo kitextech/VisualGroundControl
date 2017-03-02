@@ -15,7 +15,7 @@ public typealias Vector = SCNVector3
 public typealias Vector4 = SCNVector4
 public typealias Matrix = SCNMatrix4
 
-extension Matrix {
+extension Matrix: CustomStringConvertible {
     public init(rotation axis: Vector, by angle: Scalar, translation vector: Vector = .origin, scale: Vector = Vector(1, 1, 1)) {
         self = SCNMatrix4Scale(SCNMatrix4Translate(SCNMatrix4MakeRotation(angle, axis.x, axis.y, axis.z), vector.x, vector.y, vector.z), scale.x, scale.y, scale.z)
     }
@@ -103,7 +103,7 @@ extension Matrix {
 
     // Matrix vector multiplication
     
-    public static func *(matrix: Matrix, vector: Vector4) -> Vector4 {
+    public static func *(vector: Vector4, matrix: Matrix) -> Vector4 {
         let x = matrix.m11*vector.x + matrix.m21*vector.y + matrix.m31*vector.z + matrix.m41*vector.w
         let y = matrix.m12*vector.x + matrix.m22*vector.y + matrix.m32*vector.z + matrix.m42*vector.w
         let z = matrix.m13*vector.x + matrix.m23*vector.y + matrix.m33*vector.z + matrix.m43*vector.w
@@ -112,10 +112,12 @@ extension Matrix {
         return Vector4(x: x, y: y, z: z, w: w)
     }
     
-    public static func *(matrix: Matrix, vector: Vector) -> Vector {
+    public static func *(vector: Vector, matrix: Matrix) -> Vector { 
         let x = matrix.m11*vector.x + matrix.m21*vector.y + matrix.m31*vector.z + matrix.m41
         let y = matrix.m12*vector.x + matrix.m22*vector.y + matrix.m32*vector.z + matrix.m42
         let z = matrix.m13*vector.x + matrix.m23*vector.y + matrix.m33*vector.z + matrix.m43
+        
+//        print("*: vector: \(vector.description) * m = \(Vector(x: x, y: y, z: z).description), m = \n\(matrix.description)")
         
         return Vector(x: x, y: y, z: z)
     }
@@ -130,17 +132,17 @@ extension Matrix {
             m41: scalar*matrix.m41, m42: scalar*matrix.m42, m43: scalar*matrix.m43, m44: scalar*matrix.m44)
     }
     
-    public static func *(int: Int, matrix: Matrix) -> Matrix {
-        return Scalar(int)*matrix
-    }
+//    public static func *(int: Int, matrix: Matrix) -> Matrix {
+//        return Scalar(int)*matrix
+//    }
     
     public static func *=(matrix: inout Matrix, scalar: Scalar) {
         matrix = scalar*matrix
     }
     
-    public static func *=(matrix: inout Matrix, int: Int) {
-        matrix = int*matrix
-    }
+//    public static func *=(matrix: inout Matrix, int: Int) {
+//        matrix = int*matrix
+//    }
 
 }
 

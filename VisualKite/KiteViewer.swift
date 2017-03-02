@@ -30,13 +30,14 @@ final class KiteViewer {
     // Public Variables - Mandatory Input
 
     public let position = Variable<Vector>(.origin)
+    public let velocity = Variable<Vector>(.origin)
     public let attitude = Variable<Vector>(.origin)
+    public let wind = Variable<Vector>(.origin)
     
     // Public Variables - Optional Input
 
     public let tetherPoint = Variable<Vector?>(nil)
     public let turningPoint = Variable<Vector?>(nil)
-    public let phiWind = Variable<Scalar?>(nil)
 
     // Private Variables
 
@@ -47,20 +48,24 @@ final class KiteViewer {
     
     private let tetherPointBall = KiteViewer.makeBall(color: .orange)
     private let tetherLine = KiteViewer.makeLine(color: .orange)
-    private let turningPointBall = KiteViewer.makeBall(color: .purple)
+    private let turningPointBall = KiteViewer.makeBall(color: .orange)
     private let eπyAxis = KiteViewer.makeArrow(color: .green, length: 1)
     private let eπzAxis = KiteViewer.makeArrow(color: .blue, length: 1)
     private let axes = KiteViewer.makeFixedAxes()
     private let windArrows = KiteViewer.makeWindArrows()
     
-//    private
-    let ship: SCNNode
+    private let velocityArrow = KiteViewer.makeArrow(color: .yellow, length: 1)
+    private let velocityWindArrow = KiteViewer.makeArrow(color: .white, length: 1)
+    private let windArrow = KiteViewer.makeArrow(color: .white, length: 1)
+    private let apparentWindArrow = KiteViewer.makeArrow(color: .white, length: 1)
+
+    private let ship: SCNNode
     
     public init() {
         // Ship
         ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
-//        ship.scale = 0.2*Vector(1, 1, 1)
-        ship.pivot = Matrix(rotation: .ez, by: -π/2)*Matrix(rotation: .ex, by: -π/2)*Matrix(scale: 5*Vector(1, 1, 1))
+        ship.scale = 0.02*Vector(1, 1, 1)
+        ship.pivot = Matrix(rotation: .ez, by: -π/2)*Matrix(rotation: .ex, by: -π/2) //*Matrix(scale: 5*Vector(1, 1, 1))
         
         // Camera
         let cameraNode = SCNNode()
@@ -86,9 +91,10 @@ final class KiteViewer {
         scene.rootNode.addChildNode(ambientLightNode)
         
         // Nodes
-        [axes, tetherPointBall, tetherLine, turningPointBall, eπyAxis, eπzAxis, windArrows].forEach(scene.rootNode.addChildNode)
+        let nodes = [axes, tetherPointBall, tetherLine, turningPointBall, eπyAxis, eπzAxis, windArrows, windArrow, velocityArrow, velocityWindArrow, apparentWindArrow]
+        nodes.forEach(scene.rootNode.addChildNode)
         
-        Observable.combineLatest(position.asObservable(), attitude.asObservable(), tetherPoint.asObservable(), turningPoint.asObservable(), phiWind.asObservable(), resultSelector: noOp)
+        Observable.combineLatest(position.asObservable(), velocity.asObservable(), attitude.asObservable(), wind.asObservable(), tetherPoint.asObservable(), turningPoint.asObservable(), resultSelector: noOp)
             .subscribe(onNext: updateScene)
             .disposed(by: bag)
     }
@@ -101,45 +107,52 @@ final class KiteViewer {
     
     // Helper Methods - Updating
 
-    private func updateScene(p: Vector, a: Vector, o: Vector?, c: Vector?, w: Scalar?) {
-        print("p: \(p.description), a: \(a.description), o:\(o?.description ?? "nil"), c:\(c?.description ?? "nil"), w:\(w?.description ?? "nil") ")
+    private func updateScene(p: Vector, v: Vector, a: Vector, w: Vector, o: Vector?, c: Vector?) {
+        //        print("p: \(p), a: \(a), w: \(w), o: \(o?.description ?? "nil"), c: \(c?.description ?? "nil") ")
+        //        print("Attitude: {\(a.x/π), \(a.y/π), \(a.z/π)}")
+
+        let (lacksC, lacksO, lacksW) = (c == nil, o == nil, w.norm == 0)
+
+        //        let roll = Matrix(rotation: .ex, by: a.x)
+        //        let pitch = Matrix(rotation: .ey, by: a.y)
+        //        let yaw = Matrix(rotation: .ez, by: a.z)
+        //        let translation = Matrix(translation: p)
+        //        ship.transform = roll*pitch*yaw*translation
         
-        print("Attitude: roll: \(a.x/π), pitch: \(a.y/π), yaw: \(a.z/π)")
+        ship.position = p
+        ship.eulerAngles = a
         
-        let roll = Matrix(rotation: .ex, by: a.x)
-        let pitch = Matrix(rotation: .ey, by: a.y)
-        let yaw = Matrix(rotation: .ez, by: a.z)
-        let translation = Matrix(translation: p)
+        update(line: velocityArrow, from: p, to: p + v)
+        update(line: velocityWindArrow, from: p, to: p - v)
         
-        ship.transform = roll*pitch*yaw*translation
-//        ship.position = p
-//        ship.eulerAngles = a
+        if !lacksW {
+            update(line: windArrow, from: p, to: p + w)
+            update(line: apparentWindArrow, from: p, to: p + w - v)
+            
+            if let c = c {
+                let e_w = w.unit
+                windArrows.position = c
+                windArrows.rotation = Rotation(around: Vector.ex×e_w, by: Vector.ex.angle(to: e_w))
+            }
+        }
         
         if let c = c {
             turningPointBall.position = c
-            
-            if let w = w {
-                let wind = Vector.ex.rotated(around: .ez, by: w)
-                windArrows.position = c - 3*wind
-                windArrows.rotation = Rotation(around: .ez, by: w)
-            }
         }
         
         if let o = o {
             tetherPointBall.position = o
             update(line: tetherLine, from: o, to: p)
-            
-            if let c = c {
-                let e_c = (c - o).unit
-                let e_πy = (Vector.ez×e_c).unit
-                let e_πz = e_c×e_πy
-                
-                update(arrow: eπzAxis, at: c, direction: e_πz)
-                update(arrow: eπyAxis, at: c, direction: e_πy)
-            }
         }
         
-        let (lacksC, lacksO, lacksW) = (c == nil, o == nil, w == nil)
+        if let c = c, let o = o {
+            let e_c = (c - o).unit
+            let e_πy = (Vector.ez×e_c).unit
+            let e_πz = e_c×e_πy
+            
+            update(arrow: eπzAxis, at: c, direction: e_πz)
+            update(arrow: eπyAxis, at: c, direction: e_πy)
+        }
         
         turningPointBall.isHidden = lacksC
         tetherPointBall.isHidden = lacksO
@@ -149,19 +162,27 @@ final class KiteViewer {
         eπyAxis.isHidden = lacksC || lacksO
         
         windArrows.isHidden = lacksW
+        windArrow.isHidden = lacksW
+        apparentWindArrow.isHidden = lacksW
     }
     
     private func update(line: SCNNode, from a: Vector, to b: Vector) {
         let vector = b - a
+        
+        guard vector.norm > 0 else {
+            line.transform = Matrix(scale: Vector(1, 0, 1))
+            return
+        }
+        
         let rotationAxis = Vector.ey×vector.unit
-        let rotationAngle = vector.angle(with: .ey)
+        let rotationAngle = vector.angle(to: .ey)
         line.transform = Matrix(rotation: rotationAxis, by: rotationAngle, translation: a + 1/2*vector, scale: Vector(1, vector.norm, 1))
     }
     
     private func update(arrow: SCNNode, at a: Vector, direction: Vector) {
         let e = direction.unit
         let rotationAxis = Vector.ey×e
-        let rotationAngle = e.angle(with: .ey)
+        let rotationAngle = e.angle(to: .ey)
         arrow.transform = Matrix(rotation: rotationAxis, by: rotationAngle, translation: a + 1/2*e)
     }
     
@@ -187,14 +208,15 @@ final class KiteViewer {
     
     private static func makeWindArrows() -> SCNNode {
         let length: Scalar = 5
+        let spacing: Scalar = 5
         
         let node = SCNNode()
 
-        for z in -1...1 {
-            for y in -1...1 {
-                let arrow = makeArrow(color: .white, length: length)
-                let offset = Scalar(z)*Vector.ez + Scalar(y)*Vector.ey
-                arrow.transform = Matrix(rotation: .ez, by: -π/2, translation: -length/2*Vector.ex + offset.rotated(around: .ex, by: π/4))
+        for y in -1...1 {
+            for z in -1...1 {
+                let arrow = makeArrow(color: .lightGray, length: length)
+                let offset = Scalar(y)*Vector.ey + Scalar(z)*Vector.ez
+                arrow.transform = Matrix(rotation: .ez, by: -π/2, translation: -(length/2 + spacing)*Vector.ex + offset.rotated(around: .ex, by: π/4))
                 node.addChildNode(arrow)
             }
         }
@@ -208,6 +230,12 @@ final class KiteViewer {
         
         return SCNNode(geometry: b)
     }
+    
+//    private static func makeWindArrow() -> SCNNode {
+//        let arrow = makeArrow(color: .lightGray, length: 1)
+//        arrow.pivot = Matrix(rotation: .ez, by: π/2)
+//        return arrow
+//    }
     
     private static func makeArrow(color: NSColor, length: Scalar) -> SCNNode {
         let coneHeight: Scalar = 0.1
