@@ -16,6 +16,15 @@ public typealias Vector4 = SCNVector4
 public typealias Matrix = SCNMatrix4
 
 extension Matrix: CustomStringConvertible {
+    public static let id = SCNMatrix4Identity
+    
+    public init(vx: Vector, vy: Vector, vz: Vector) {
+        self = Matrix.init(m11: vx.x, m12: vx.y, m13: vx.z, m14: 0,
+                           m21: vy.x, m22: vy.y, m23: vy.z, m24: 0,
+                           m31: vz.x, m32: vz.y, m33: vz.z, m34: 0,
+                           m41: 0, m42: 0, m43: 0, m44: 1)
+    }
+    
     public init(rotation axis: Vector, by angle: Scalar, translation vector: Vector = .origin, scale: Vector = Vector(1, 1, 1)) {
         self = SCNMatrix4Scale(SCNMatrix4Translate(SCNMatrix4MakeRotation(angle, axis.x, axis.y, axis.z), vector.x, vector.y, vector.z), scale.x, scale.y, scale.z)
     }

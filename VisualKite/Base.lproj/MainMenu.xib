@@ -672,7 +672,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <sceneView autoenablesDefaultLighting="YES" allowsCameraControl="YES" translatesAutoresizingMaskIntoConstraints="NO" id="536">
-                        <rect key="frame" x="30" y="30" width="580" height="420"/>
+                        <rect key="frame" x="30" y="30" width="490" height="420"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     </sceneView>
                     <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SBM-Wb-U8a">
@@ -691,27 +691,63 @@
                         <rect key="frame" x="28" y="456" width="584" height="24"/>
                         <sliderCell key="cell" state="on" alignment="left" maxValue="100" tickMarkPosition="above" numberOfTickMarks="17" sliderType="linear" id="Zxb-aa-Vmz"/>
                     </slider>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SJY-Da-0kX">
+                        <rect key="frame" x="607" y="-2" width="34" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="22" id="eqc-PM-2Un"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="#" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zt9-1U-b1h">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="pause:" target="z44-Lp-cgU" id="0qc-ep-86k"/>
+                        </connections>
+                    </button>
+                    <slider horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f8Y-lY-vaO">
+                        <rect key="frame" x="526" y="27" width="24" height="425"/>
+                        <sliderCell key="cell" state="on" alignment="left" maxValue="1" tickMarkPosition="right" numberOfTickMarks="21" allowsTickMarkValuesOnly="YES" sliderType="linear" id="bXW-C4-csA"/>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="V2Y-Iw-Ti7">
+                        <rect key="frame" x="556" y="27" width="24" height="425"/>
+                        <sliderCell key="cell" state="on" alignment="left" maxValue="1" tickMarkPosition="right" numberOfTickMarks="21" allowsTickMarkValuesOnly="YES" sliderType="linear" id="qzY-Do-tvo"/>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CFI-Go-ame">
+                        <rect key="frame" x="586" y="27" width="24" height="425"/>
+                        <sliderCell key="cell" state="on" alignment="left" maxValue="1" tickMarkPosition="right" numberOfTickMarks="21" allowsTickMarkValuesOnly="YES" sliderType="linear" id="aLW-Rm-ia8"/>
+                    </slider>
                 </subviews>
                 <constraints>
                     <constraint firstItem="536" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="30" id="541"/>
                     <constraint firstItem="536" firstAttribute="top" secondItem="372" secondAttribute="top" constant="30" id="542"/>
                     <constraint firstItem="536" firstAttribute="bottom" secondItem="372" secondAttribute="bottom" constant="-30" id="543"/>
-                    <constraint firstItem="536" firstAttribute="trailing" secondItem="372" secondAttribute="trailing" constant="-30" id="544"/>
+                    <constraint firstItem="536" firstAttribute="trailing" secondItem="372" secondAttribute="trailing" constant="-120" id="544"/>
+                    <constraint firstItem="V2Y-Iw-Ti7" firstAttribute="leading" secondItem="f8Y-lY-vaO" secondAttribute="trailing" constant="8" id="15S-zs-Xca"/>
+                    <constraint firstItem="f8Y-lY-vaO" firstAttribute="leading" secondItem="536" secondAttribute="trailing" constant="8" id="3pU-fY-xtN"/>
                     <constraint firstItem="iKH-WG-6ji" firstAttribute="top" secondItem="372" secondAttribute="top" id="48v-o7-9bb"/>
                     <constraint firstAttribute="bottom" secondItem="SBM-Wb-U8a" secondAttribute="bottom" id="5YP-gg-cUw"/>
+                    <constraint firstItem="CFI-Go-ame" firstAttribute="bottom" secondItem="V2Y-Iw-Ti7" secondAttribute="bottom" id="Bug-dF-JIT"/>
+                    <constraint firstItem="V2Y-Iw-Ti7" firstAttribute="bottom" secondItem="f8Y-lY-vaO" secondAttribute="bottom" id="CDa-l6-hQo"/>
                     <constraint firstItem="X6k-ca-shT" firstAttribute="top" secondItem="372" secondAttribute="top" constant="30" id="Cn6-hN-Zpd"/>
+                    <constraint firstAttribute="bottom" secondItem="SJY-Da-0kX" secondAttribute="bottom" constant="5" id="HAz-h9-P0V"/>
+                    <constraint firstItem="V2Y-Iw-Ti7" firstAttribute="top" secondItem="f8Y-lY-vaO" secondAttribute="top" id="IcT-Vv-WLN"/>
                     <constraint firstAttribute="trailing" secondItem="SBM-Wb-U8a" secondAttribute="trailing" constant="30" id="JMx-GI-tGK"/>
+                    <constraint firstAttribute="trailing" secondItem="SJY-Da-0kX" secondAttribute="trailing" constant="5" id="JNT-fp-Xhr"/>
                     <constraint firstItem="iKH-WG-6ji" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="30" id="K1N-nz-g1z"/>
+                    <constraint firstItem="f8Y-lY-vaO" firstAttribute="bottom" secondItem="536" secondAttribute="bottom" id="LWZ-k4-6fx"/>
+                    <constraint firstItem="CFI-Go-ame" firstAttribute="top" secondItem="V2Y-Iw-Ti7" secondAttribute="top" id="M3U-yQ-Lnh"/>
                     <constraint firstAttribute="bottom" secondItem="X6k-ca-shT" secondAttribute="bottom" constant="30" id="NcP-aO-TCn"/>
                     <constraint firstAttribute="trailing" secondItem="iKH-WG-6ji" secondAttribute="trailing" constant="30" id="QUY-tq-LHY"/>
+                    <constraint firstItem="CFI-Go-ame" firstAttribute="leading" secondItem="V2Y-Iw-Ti7" secondAttribute="trailing" constant="8" id="RnN-rk-Urv"/>
                     <constraint firstItem="SBM-Wb-U8a" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="30" id="cWB-J2-xit"/>
                     <constraint firstItem="KRX-Wz-Kbk" firstAttribute="top" secondItem="372" secondAttribute="top" constant="30" id="oYm-2w-prt"/>
                     <constraint firstAttribute="bottom" secondItem="KRX-Wz-Kbk" secondAttribute="bottom" constant="30" id="pA9-Ey-YnE"/>
+                    <constraint firstItem="f8Y-lY-vaO" firstAttribute="top" secondItem="536" secondAttribute="top" id="sBi-vN-Gdr"/>
                     <constraint firstAttribute="trailing" secondItem="X6k-ca-shT" secondAttribute="trailing" id="tLJ-WB-06M"/>
                     <constraint firstItem="KRX-Wz-Kbk" firstAttribute="leading" secondItem="372" secondAttribute="leading" id="wsz-LI-Ytl"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="321" y="-196"/>
+            <point key="canvasLocation" x="449" y="-239"/>
         </window>
         <customObject id="494" customClass="AppDelegate" customModule="VisualKite" customModuleProvider="target">
             <connections>
@@ -724,6 +760,9 @@
                 <outlet property="hSlider" destination="SBM-Wb-U8a" id="mEU-WC-qgn"/>
                 <outlet property="phaseSlider" destination="X6k-ca-shT" id="Gen-nC-bkp"/>
                 <outlet property="sceneView" destination="536" id="gRp-KN-aSc"/>
+                <outlet property="slider0" destination="f8Y-lY-vaO" id="3sz-4y-h8w"/>
+                <outlet property="slider1" destination="V2Y-Iw-Ti7" id="MZE-Li-3IO"/>
+                <outlet property="slider2" destination="CFI-Go-ame" id="4K3-oP-Eqw"/>
                 <outlet property="vSlider" destination="KRX-Wz-Kbk" id="kib-bW-DvA"/>
                 <outlet property="view" destination="372" id="bTQ-MN-Ejh"/>
                 <outlet property="windSlider" destination="iKH-WG-6ji" id="RGy-yM-61K"/>

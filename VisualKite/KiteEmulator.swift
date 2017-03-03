@@ -9,10 +9,11 @@
 import Foundation
 import RxSwift
 
-func noOp<T>(value: T) -> T { return value }
-
 final class KiteEmulator: KiteType, AnalyserType {
-    private let updateFrequency: Double = 10
+    public var paused = false
+    public let forcedPhase = Variable<Scalar>(0)
+
+    private let updateFrequency: Double = 20
     private var lastUpdate: TimeInterval = 0
     
     private let bag = DisposeBag()
@@ -86,14 +87,33 @@ final class KiteEmulator: KiteType, AnalyserType {
         Observable.combineLatest(rWind.asObservable(), phiWind.asObservable(), resultSelector: getWind)
             .bindTo(wind)
             .disposed(by: bag)
-
+        
+        Observable.combineLatest(theta.asObservable(), phi.asObservable(), d.asObservable(), phaseSpeed.asObservable(), resultSelector: noOp)
+            .filter { _ in self.paused }
+            .subscribe(onNext: update)
+            .disposed(by: bag)
+        
+//        forcedPhase.asObservable()
+//            .filter { _ in self.paused }
+//            .subscribe(onNext: update)
+//            .disposed(by: bag)
+        
         // AnalyserType Output
         r.asObservable()
             .bindTo(turningRadius)
             .disposed(by: bag)
     }
     
+//    private func update(phase: Scalar) {
+//        print("Phase: \(phase)")
+//        update(theta: theta.value, phi: phi.value, d: d.value, omega: 1)
+//    }
+
     public func update(time: TimeInterval) {
+        guard !paused else {
+            return
+        }
+        
         let elapsed = time - lastUpdate
         if elapsed >= 1/updateFrequency {
             update(elapsed: elapsed)
@@ -103,7 +123,7 @@ final class KiteEmulator: KiteType, AnalyserType {
 
     private func update(elapsed: TimeInterval) {
         let omega = phaseSpeed.value
-        phase += omega*Scalar(elapsed)
+        phase += omega*Scalar(elapsed)*0.2
         update(theta: theta.value, phi: phi.value, d: d.value, omega: omega)
     }
     
@@ -112,15 +132,18 @@ final class KiteEmulator: KiteType, AnalyserType {
         let m_theta = Matrix(rotation: .ey, by: theta)
         let m = m_theta*m_phi
         
-        c = d*(.ez*m)
+        c = d*(e_z*m)
         
-        e_πz = -.ex*m
-        e_πy = .ey*m
+        e_πz = -e_x*m
+        e_πy = e_y*m
         e_kite = e_πy.rotated(around: c, by: phase)
         
         pos = c + r.value*e_kite
         vel = omega*c.unit×e_kite
-        att = Vector(0, phase, 0)
+        
+        if vel.norm > 0 {
+            att = Vector(0, 0, vel.angle(to: e_x))
+        }
         
         position.onNext(pos)
         velocity.onNext(vel)
@@ -143,7 +166,10 @@ final class KiteEmulator: KiteType, AnalyserType {
     }
     
     private func getWind(r: Scalar, phi: Scalar) -> Vector {
-//        print("GetWind; r: \(r), phi: \(phi) -> \(r*Vector.ex.rotated(around: .ez, by: phi))")
         return r*Vector.ex.rotated(around: .ez, by: phi)
     }
 }
+
+//        print("GetWind; r: \(r), phi: \(phi) -> \(r*Vector.ex.rotated(around: .ez, by: phi))")
+
+

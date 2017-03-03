@@ -54,18 +54,22 @@ final class KiteViewer {
     private let axes = KiteViewer.makeFixedAxes()
     private let windArrows = KiteViewer.makeWindArrows()
     
-    private let velocityArrow = KiteViewer.makeArrow(color: .yellow, length: 1)
+    private let velocityArrow = KiteViewer.makeArrow(color: .gray, length: 1)
     private let velocityWindArrow = KiteViewer.makeArrow(color: .white, length: 1)
     private let windArrow = KiteViewer.makeArrow(color: .white, length: 1)
-    private let apparentWindArrow = KiteViewer.makeArrow(color: .white, length: 1)
+    private let apparentWindArrow = KiteViewer.makeArrow(color: .yellow, length: 1)
 
+    private let sxAxis = KiteViewer.makeArrow(color: .red, length: 1)
+    private let syAxis = KiteViewer.makeArrow(color: .green, length: 1)
+    private let szAxis = KiteViewer.makeArrow(color: .blue, length: 1)
+
+    
     private let ship: SCNNode
     
     public init() {
         // Ship
         ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
-        ship.scale = 0.02*Vector(1, 1, 1)
-        ship.pivot = Matrix(rotation: .ez, by: -π/2)*Matrix(rotation: .ex, by: -π/2) //*Matrix(scale: 5*Vector(1, 1, 1))
+        ship.pivot = Matrix(rotation: e_x, by: -π/2)*Matrix(rotation: e_y, by: -π/2)
         
         // Camera
         let cameraNode = SCNNode()
@@ -91,8 +95,10 @@ final class KiteViewer {
         scene.rootNode.addChildNode(ambientLightNode)
         
         // Nodes
-        let nodes = [axes, tetherPointBall, tetherLine, turningPointBall, eπyAxis, eπzAxis, windArrows, windArrow, velocityArrow, velocityWindArrow, apparentWindArrow]
+        let nodes = [axes, tetherPointBall, tetherLine, turningPointBall, eπyAxis, eπzAxis, windArrows, windArrow, velocityWindArrow, apparentWindArrow]
         nodes.forEach(scene.rootNode.addChildNode)
+        
+        [sxAxis, syAxis, szAxis].forEach(scene.rootNode.addChildNode)
         
         Observable.combineLatest(position.asObservable(), velocity.asObservable(), attitude.asObservable(), wind.asObservable(), tetherPoint.asObservable(), turningPoint.asObservable(), resultSelector: noOp)
             .subscribe(onNext: updateScene)
@@ -109,30 +115,65 @@ final class KiteViewer {
 
     private func updateScene(p: Vector, v: Vector, a: Vector, w: Vector, o: Vector?, c: Vector?) {
         //        print("p: \(p), a: \(a), w: \(w), o: \(o?.description ?? "nil"), c: \(c?.description ?? "nil") ")
-        //        print("Attitude: {\(a.x/π), \(a.y/π), \(a.z/π)}")
+//        print("Euler/π: {\(a.x/π), \(a.y/π), \(a.z/π)}")
 
         let (lacksC, lacksO, lacksW) = (c == nil, o == nil, w.norm == 0)
-
-        //        let roll = Matrix(rotation: .ex, by: a.x)
-        //        let pitch = Matrix(rotation: .ey, by: a.y)
-        //        let yaw = Matrix(rotation: .ez, by: a.z)
-        //        let translation = Matrix(translation: p)
-        //        ship.transform = roll*pitch*yaw*translation
         
+//        let roll = Matrix(rotation: e_y, by: a.x)
+//        let pitch = Matrix(rotation: e_z, by: a.y)
+//        let yaw = Matrix(rotation: e_x, by: a.z)
+//        let translation = Matrix(translation: p)
+//        
+//        ship.transform = SCNMatrix4Scale(yaw*pitch*roll*translation, 0.2, 0.2, 0.2)
+        
+        ship.transform = SCNMatrix4MakeScale(0.2, 0.2, 0.2)
+
+        if (w - v).norm == 0 { return }
+        if p.norm == 0 { return }
+
+        let apparent = w - v
+        let e_p = p.unit
+
+        if apparent.norm == 0 { return }
+        
+        let sx = -apparent.unit
+        let sy = -sx×e_p
+        let sz = sx×sy
+        
+        let rotation = Matrix(vx: sx, vy: sy, vz: sz)
+        
+        ship.transform = SCNMatrix4Scale(rotation, 0.2, 0.2, 0.2)
+        
+        update(line: sxAxis, from: p, to: p + 2*sx)
+        update(line: syAxis, from: p, to: p + 2*sy)
+        update(line: szAxis, from: p, to: p + 2*sz)
+
         ship.position = p
-        ship.eulerAngles = a
+        
+//        let yaw = π + π/2 + atan2(-apparent.x, apparent.y)
+//        let pitch = atan2(apparent.z, sqrt(apparent.x*apparent.x + apparent.y*apparent.y))
+//        let pitch = atan2(apparent.z, apparent.y)
+        
+//        let a = Vector(roll, pitch, yaw)
+//        let a = Vector(a.x, a.y, a.z)
+//        let a = Vector(a.x + π/2, pitch, a.z)
+//        ship.eulerAngles = a
         
         update(line: velocityArrow, from: p, to: p + v)
-        update(line: velocityWindArrow, from: p, to: p - v)
+        
+//        let pApparent = Vector(apparent.x, apparent.y, 0)
+//        update(line: velocityArrow, from: p, to: p + 2*pApparent)
+
+        update(line: velocityWindArrow, from: p, to: p - 2*v)
         
         if !lacksW {
-            update(line: windArrow, from: p, to: p + w)
-            update(line: apparentWindArrow, from: p, to: p + w - v)
+            update(line: windArrow, from: p, to: p + 2*w)
+            update(line: apparentWindArrow, from: p, to: p + 2*apparent)
             
             if let c = c {
                 let e_w = w.unit
                 windArrows.position = c
-                windArrows.rotation = Rotation(around: Vector.ex×e_w, by: Vector.ex.angle(to: e_w))
+                windArrows.rotation = Rotation(around: e_x×e_w, by: e_x.angle(to: e_w))
             }
         }
         
@@ -147,7 +188,7 @@ final class KiteViewer {
         
         if let c = c, let o = o {
             let e_c = (c - o).unit
-            let e_πy = (Vector.ez×e_c).unit
+            let e_πy = (e_z×e_c).unit
             let e_πz = e_c×e_πy
             
             update(arrow: eπzAxis, at: c, direction: e_πz)
@@ -174,14 +215,14 @@ final class KiteViewer {
             return
         }
         
-        let rotationAxis = Vector.ey×vector.unit
+        let rotationAxis = e_y×vector.unit
         let rotationAngle = vector.angle(to: .ey)
         line.transform = Matrix(rotation: rotationAxis, by: rotationAngle, translation: a + 1/2*vector, scale: Vector(1, vector.norm, 1))
     }
     
     private func update(arrow: SCNNode, at a: Vector, direction: Vector) {
         let e = direction.unit
-        let rotationAxis = Vector.ey×e
+        let rotationAxis = e_y×e
         let rotationAngle = e.angle(to: .ey)
         arrow.transform = Matrix(rotation: rotationAxis, by: rotationAngle, translation: a + 1/2*e)
     }
@@ -192,13 +233,13 @@ final class KiteViewer {
         let length: Scalar = 10
         
         let x = makeArrow(color: .red, length: length)
-        x.transform = Matrix(rotation: .ez, by: -π/2, translation: length/2*Vector.ex)
+        x.transform = Matrix(rotation: .ez, by: -π/2, translation: length/2*e_x)
         
         let y = makeArrow(color: .green, length: length)
-        y.transform = Matrix(translation: length/2*Vector.ey)
+        y.transform = Matrix(translation: length/2*e_y)
         
         let z = makeArrow(color: .blue, length: length)
-        z.transform = Matrix(rotation: .ex, by: π/2, translation: length/2*Vector.ez)
+        z.transform = Matrix(rotation: .ex, by: π/2, translation: length/2*e_z)
         
         let node = SCNNode()
         [x, y, z].forEach(node.addChildNode)
@@ -215,8 +256,8 @@ final class KiteViewer {
         for y in -1...1 {
             for z in -1...1 {
                 let arrow = makeArrow(color: .lightGray, length: length)
-                let offset = Scalar(y)*Vector.ey + Scalar(z)*Vector.ez
-                arrow.transform = Matrix(rotation: .ez, by: -π/2, translation: -(length/2 + spacing)*Vector.ex + offset.rotated(around: .ex, by: π/4))
+                let offset = Scalar(y)*e_y + Scalar(z)*e_z
+                arrow.transform = Matrix(rotation: .ez, by: -π/2, translation: -(length/2 + spacing)*e_x + offset.rotated(around: .ex, by: π/4))
                 node.addChildNode(arrow)
             }
         }
@@ -246,7 +287,7 @@ final class KiteViewer {
         let cone = SCNCone(topRadius: 0, bottomRadius: coneHeight, height: coneHeight)
         cone.materials.first?.diffuse.contents = color
         let coneNode = SCNNode(geometry: cone)
-        coneNode.position = (length - coneHeight)/2*Vector.ey
+        coneNode.position = (length - coneHeight)/2*e_y
         node.addChildNode(coneNode)
         
         return node
