@@ -33,6 +33,10 @@ extension Matrix: CustomStringConvertible {
         self = SCNMatrix4Scale(SCNMatrix4MakeTranslation(vector.x, vector.y, vector.z), scale.x, scale.y, scale.z)
     }
 
+    public func scaled(_ factor: Scalar) -> Matrix {
+        return SCNMatrix4Scale(self, factor, factor, factor)
+    }
+    
     subscript(row: Int, col: Int) -> Scalar {
         get {
             assert(0 <= row && row < 4 && 0 <= col && col < 4, "Index out of range")

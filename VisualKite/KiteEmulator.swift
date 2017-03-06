@@ -9,30 +9,26 @@
 import Foundation
 import RxSwift
 
-final class KiteEmulator: KiteType, AnalyserType {
-    public var paused = false
-    public let forcedPhase = Variable<Scalar>(0)
-
+final class KiteEmulator: KiteType {
     private let updateFrequency: Double = 20
-    private var lastUpdate: TimeInterval = 0
     
     private let bag = DisposeBag()
     
     // MARK: Input Variables
     
     // Meta
-    public let phaseSpeed = Variable<Scalar>(0)
+    public let speedFactor = Variable<Scalar>(3)
+    public let rollDelta = Variable<Scalar>(0)
+    public let phaseDelta = Variable<Scalar>(0)
+    public let phiDelta = Variable<Scalar>(0)
 
     // Kite
     public let gamma = Variable<Scalar>(0)
-    public let phi = Variable<Scalar>(0)
-    
-    public let l = Variable<Scalar>(10)
-    public let r = Variable<Scalar>(3)
+    public let tetherLength = Variable<Scalar>(10)
+    public let turningRadius = Variable<Scalar>(3)
     
     // Wind
-    public let phiWind = Variable<Scalar>(0)
-    public let rWind = Variable<Scalar>(0.6)
+    public let wind = Variable<Vector>(e_x)
     
     // MARK: Intermediate Variables
     
@@ -41,11 +37,10 @@ final class KiteEmulator: KiteType, AnalyserType {
     private let d = Variable<Scalar>(0)
     
     // Normal
-    private var phase: Scalar = 0
     private var c: Vector = .origin
-    private var e_πz: Vector = .ez
-    private var e_πy: Vector = .ey
-    private var e_kite: Vector = .ey
+    private var e_πz: Vector = e_z
+    private var e_πy: Vector = e_y
+    private var e_kite: Vector = e_y
     
     private var pos: Vector = .origin
     private var att: Vector = .origin
@@ -56,42 +51,38 @@ final class KiteEmulator: KiteType, AnalyserType {
     // KiteDataProvider
     
     public let position = PublishSubject<Vector>()
+    public let attitude = PublishSubject<Matrix>()
     public let velocity = PublishSubject<Vector>()
-    public let attitude = PublishSubject<Vector>()
     
     // KiteDataAnalyser
     
-    public let estimatedWind = PublishSubject<Vector?>()
-    public let tetherPoint = PublishSubject<Vector?>()
-    public let turningPoint = PublishSubject<Vector?>()
-    public let turningRadius = PublishSubject<Scalar?>()
-    public let isTethered = PublishSubject<Scalar>()
-    
-    // wind
-    
-    public let wind = PublishSubject<Vector>()
+    public let tetherPoint = PublishSubject<Vector>()
+    public let turningPoint = PublishSubject<Vector>()
 
+//    public let estimatedWind = PublishSubject<Vector?>()
+//    public let tetherPoint = PublishSubject<Vector?>()
+//    public let turningPoint = PublishSubject<Vector?>()
+//    public let turningRadius = PublishSubject<Scalar?>()
+//    public let isTethered = PublishSubject<Scalar>()
+    
     // MARK: Ouput Variables
 
     public init() {
         // Emulator Input
-        Observable.combineLatest(l.asObservable(), r.asObservable(), resultSelector: getD)
+        Observable.combineLatest(tetherLength.asObservable(), turningRadius.asObservable(), resultSelector: getD)
             .bindTo(d)
             .disposed(by: bag)
-        
+
         gamma.asObservable()
             .map(getTheta)
             .bindTo(theta)
             .disposed(by: bag)
         
-        Observable.combineLatest(rWind.asObservable(), phiWind.asObservable(), resultSelector: getWind)
-            .bindTo(wind)
-            .disposed(by: bag)
-        
-        Observable.combineLatest(theta.asObservable(), phi.asObservable(), d.asObservable(), phaseSpeed.asObservable(), resultSelector: noOp)
-            .filter { _ in self.paused }
-            .subscribe(onNext: update)
-            .disposed(by: bag)
+
+//        Observable.combineLatest(theta.asObservable(), phi.asObservable(), d.asObservable(), phaseSpeed.asObservable(), resultSelector: noOp)
+//            .filter { _ in self.paused }
+//            .subscribe(onNext: update)
+//            .disposed(by: bag)
         
 //        forcedPhase.asObservable()
 //            .filter { _ in self.paused }
@@ -99,9 +90,9 @@ final class KiteEmulator: KiteType, AnalyserType {
 //            .disposed(by: bag)
         
         // AnalyserType Output
-        r.asObservable()
-            .bindTo(turningRadius)
-            .disposed(by: bag)
+//        r.asObservable()
+//            .bindTo(turningRadius)
+//            .disposed(by: bag)
     }
     
 //    private func update(phase: Scalar) {
@@ -109,25 +100,36 @@ final class KiteEmulator: KiteType, AnalyserType {
 //        update(theta: theta.value, phi: phi.value, d: d.value, omega: 1)
 //    }
 
-    public func update(time: TimeInterval) {
-        guard !paused else {
-            return
-        }
-        
-        let elapsed = time - lastUpdate
+    public func update(elapsed: TimeInterval) {
         if elapsed >= 1/updateFrequency {
             update(elapsed: elapsed)
-            lastUpdate = time
         }
     }
 
-    private func update(elapsed: TimeInterval) {
-        let omega = phaseSpeed.value
-        phase += omega*Scalar(elapsed)*0.2
-        update(theta: theta.value, phi: phi.value, d: d.value, omega: omega)
-    }
+//    private func update(elapsed: TimeInterval) {
+//        let omega = phaseSpeed.value
+//        phase += omega*Scalar(elapsed)*0.2
+//        update(theta: theta.value, phi: phi.value, d: d.value, omega: omega)
+//    }
     
     private func update(theta: Scalar, phi: Scalar, d: Scalar, omega: Scalar) {
+        
+        //        if (w - v).norm == 0 { return }
+        //        if p.norm == 0 { return }
+        //
+        //        let apparent = w - v
+        //        let e_p = p.unit
+        //
+        //        if apparent.norm == 0 { return }
+        //
+        //        // Kite
+        //
+        //        let sx = -apparent.unit
+        //        let sy = -sx×e_p
+        //        let sz = sx×sy
+        //        
+        //        let rotation = Matrix(vx: sx, vy: sy, vz: sz)
+
         let m_phi = Matrix(rotation: .ez, by: phi)
         let m_theta = Matrix(rotation: .ey, by: theta)
         let m = m_theta*m_phi
@@ -152,7 +154,6 @@ final class KiteEmulator: KiteType, AnalyserType {
         tetherPoint.onNext(.origin)
         turningPoint.onNext(c)
         
-        isTethered.onNext(1)
     }
     
     // Helper Methods - Pure
@@ -165,9 +166,6 @@ final class KiteEmulator: KiteType, AnalyserType {
         return  π/2 - gamma
     }
     
-    private func getWind(r: Scalar, phi: Scalar) -> Vector {
-        return r*Vector.ex.rotated(around: .ez, by: phi)
-    }
 }
 
 //        print("GetWind; r: \(r), phi: \(phi) -> \(r*Vector.ex.rotated(around: .ez, by: phi))")
