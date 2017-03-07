@@ -60,17 +60,18 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
     @IBOutlet weak var windDirectionSlider: NSSlider!
     
     // Kite Popover Touchbar
-    @IBOutlet weak var gammaSlider: NSSlider! // no update, but used
-    @IBOutlet weak var glideSlider: NSSlider! // no update, but used
+    @IBOutlet weak var gammaSlider: NSSlider!
+    @IBOutlet weak var glideSlider: NSSlider!
     
     // General Popover Touchbar
-    @IBOutlet weak var tetherLengthSlider: NSSlider! // no update, but used
-    @IBOutlet weak var turningRadiusSlider: NSSlider! // no update, but used
+    @IBOutlet weak var tetherLengthSlider: NSSlider!
+    @IBOutlet weak var turningRadiusSlider: NSSlider!
 
     // Tweaks Popover Touchbar
-    @IBOutlet weak var phiDeltaSlider: NSSlider! // no update, but used
-    @IBOutlet weak var rollDeltaSlider: NSSlider! // no update, NOT used
-    @IBOutlet weak var phaseDeltaSlider: NSSlider! // no update, maybe used
+    @IBOutlet weak var phiDeltaSlider: NSSlider!
+    @IBOutlet weak var rollDeltaSlider: NSSlider!
+    @IBOutlet weak var pitchDeltaSlider: NSSlider!
+    @IBOutlet weak var phaseDeltaSlider: NSSlider!
     
     // MARK: - Kite Viewer Settings
     @IBOutlet weak var kiteAxesButton: NSButton!
@@ -138,6 +139,9 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
         turningRadiusSlider.setupExp(min: 10, max: 100, current: 20)
         turningRadiusSlider.expScalar(min: 10, max: 100).bindTo(kite.turningRadius).disposed(by: bag)
 
+        phaseDeltaSlider.setup(min: -π, max: π, current: 0)
+        phaseDeltaSlider.scalar.bindTo(kite.phaseDelta).disposed(by: bag)
+
         // Tweaks
         phiDeltaSlider.setup(min: -π/8, max: π/8, current: 0)
         phiDeltaSlider.scalar.bindTo(kite.phiDelta).disposed(by: bag)
@@ -145,9 +149,9 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
         rollDeltaSlider.setup(min: -π/8, max: π/8, current: 0)
         rollDeltaSlider.scalar.bindTo(kite.rollDelta).disposed(by: bag)
         
-        phaseDeltaSlider.setup(min: -π, max: π, current: 0)
-        phaseDeltaSlider.scalar.bindTo(kite.phaseDelta).disposed(by: bag)
-        
+        pitchDeltaSlider.setup(min: -π/8, max: π/8, current: 0)
+        pitchDeltaSlider.scalar.bindTo(kite.pitchDelta).disposed(by: bag)
+
         // Kite Emulator Output
         kite.position.bindTo(viewer.position).disposed(by: bag)
         kite.velocity.bindTo(viewer.velocity).disposed(by: bag)

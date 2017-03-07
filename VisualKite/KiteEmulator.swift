@@ -20,6 +20,7 @@ final class KiteEmulator: KiteType {
     // Meta
     public let phiDelta = Variable<Scalar>(0)
     public let rollDelta = Variable<Scalar>(0)
+    public let pitchDelta = Variable<Scalar>(0)
     public let speedFactor = Variable<Scalar>(3)
     public let phaseDelta = Variable<Scalar>(0)
 
@@ -50,15 +51,7 @@ final class KiteEmulator: KiteType {
     // KiteDataAnalyser
     
     public let turningPoint = PublishSubject<Vector>()
-
-//    public let estimatedWind = PublishSubject<Vector?>()
-//    public let tetherPoint = PublishSubject<Vector?>()
-//    public let turningPoint = PublishSubject<Vector?>()
-//    public let turningRadius = PublishSubject<Scalar?>()
-//    public let isTethered = PublishSubject<Scalar>()
     
-    // MARK: Ouput Variables
-
     public init() {
         // Emulator Input
     }
@@ -111,7 +104,11 @@ final class KiteEmulator: KiteType {
         let e_ky = -e_kx×e_p
         let e_kz = e_kx×e_ky
         
-        let att = Matrix(vx: e_kx, vy: e_ky, vz: e_kz)
+        let e_kx_adj = e_kx.rotated(around: e_ky, by: pitchDelta.value)
+        let e_ky_adj = e_ky.rotated(around: e_kx, by: rollDelta.value)
+        let e_kz_adj = e_kx_adj×e_ky_adj
+
+        let att = Matrix(vx: e_kx_adj, vy: e_ky_adj, vz: e_kz_adj)
 
         attitude.onNext(att)
     }

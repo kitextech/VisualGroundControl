@@ -223,9 +223,9 @@
                                                     </sliderTouchBarItem>
                                                     <touchBarItem id="dql-v3-j97">
                                                         <viewController key="viewController" id="SbV-dI-rHH">
-                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xTJ-Dh-8tU" userLabel="Roll Button">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xTJ-Dh-8tU" userLabel="Pitch Button">
                                                                 <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
-                                                                <buttonCell key="cell" type="bevel" title="Phase" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="1Vj-F2-4Pb">
+                                                                <buttonCell key="cell" type="bevel" title="Pitch" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="1Vj-F2-4Pb">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                 </buttonCell>
@@ -297,6 +297,30 @@
                                                         <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="m2e-yC-0Hs">
                                                             <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
                                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="4io-pG-V5H"/>
+                                                        </slider>
+                                                    </sliderTouchBarItem>
+                                                    <touchBarItem id="knq-ih-0DD">
+                                                        <viewController key="viewController" id="Kvi-d1-ZCW">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QYJ-Is-83m" userLabel="Phase Button">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="bevel" title="Phase" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="vPJ-w8-Ncw">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <sliderTouchBarItem id="nfp-xJ-TLf">
+                                                        <sliderAccessory key="minimumValueAccessory" id="kyE-xq-Occ">
+                                                            <sliderAccessoryBehavior key="behavior" id="QX0-cY-bhr"/>
+                                                        </sliderAccessory>
+                                                        <sliderAccessory key="maximumValueAccessory" id="BXE-m4-shu">
+                                                            <sliderAccessoryBehavior key="behavior" id="4iE-MJ-ROa"/>
+                                                        </sliderAccessory>
+                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3DO-e4-WJM">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                            <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="Qos-2d-D3u"/>
                                                         </slider>
                                                     </sliderTouchBarItem>
                                                 </touchBarItems>
@@ -436,10 +460,11 @@
                         <outlet property="kiteAxesButton" destination="HR8-p5-b86" id="WII-ND-GNj"/>
                         <outlet property="kiteButton" destination="trg-3q-aSj" id="Oxr-VX-KvI"/>
                         <outlet property="pauseButton" destination="ACo-40-ZO2" id="nNQ-94-hTk"/>
-                        <outlet property="phaseDeltaSlider" destination="kq0-Mt-CZW" id="pIO-zs-agk"/>
+                        <outlet property="phaseDeltaSlider" destination="3DO-e4-WJM" id="fhl-tm-k4S"/>
                         <outlet property="phiDeltaSlider" destination="3Z2-vB-8nR" id="Wya-Tx-2hQ"/>
                         <outlet property="piAxesButton" destination="re0-yx-cde" id="iZR-yC-VSd"/>
                         <outlet property="piPlaneButton" destination="Wb6-zm-vyx" id="mU3-NO-Cfy"/>
+                        <outlet property="pitchDeltaSlider" destination="kq0-Mt-CZW" id="4eW-kf-kad"/>
                         <outlet property="rollDeltaSlider" destination="ve2-5L-uFJ" id="zYd-eO-2yd"/>
                         <outlet property="sceneView" destination="csm-MS-QM7" id="N4q-Dy-pWG"/>
                         <outlet property="tetherButton" destination="0Pq-rL-gqE" id="S2s-oc-KVU"/>
