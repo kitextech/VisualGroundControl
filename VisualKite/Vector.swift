@@ -68,7 +68,7 @@ extension Vector: CustomStringConvertible {
     }
     
     public func rotated(around vector: Vector, by angle: Scalar) -> Vector {
-        return self*Matrix(rotation: vector, by: angle)
+        return self*Matrix(rotation: vector.unit, by: angle)
     }
     
     public func transformed(by matrix: Matrix) -> Vector {
@@ -98,7 +98,7 @@ extension Vector: CustomStringConvertible {
         return self•b/normB
     }
     
-    public func projection(on b: Vector) -> Vector {
+    public func projected(on b: Vector) -> Vector {
         let normB = b.norm
         
         guard normB > 0 else {

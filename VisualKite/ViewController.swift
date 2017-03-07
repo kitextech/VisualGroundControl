@@ -12,6 +12,13 @@ import RxSwift
 import RxCocoa
 
 func noOp<T>(value: T) -> T { return value }
+func makeScalar(_ value: Double) -> Scalar { return Scalar(value) }
+func ignore<T>(value: T) { }
+func isOn(int: Int) -> Bool { return int == 1 }
+
+func log<T>(as name: String) -> (T) -> Void {
+    return { print(name + ": \($0)") }
+}
 
 let π = Scalar(M_PI)
 
@@ -33,13 +40,49 @@ protocol AnalyserType {
     var isTethered: PublishSubject<Scalar> { get }
 }
 
-final class GameViewController: NSViewController, SCNSceneRendererDelegate {
+final class ViewController: NSViewController, SCNSceneRendererDelegate {
     @IBOutlet weak var sceneView: SCNView!
     
     private let bag = DisposeBag()
     private let kite = KiteEmulator()
     private let viewer = KiteViewer()
     
+    private let wind = Variable<Vector>(.origin)
+
+    // MARK: - Overall Settings
+    
+    @IBOutlet weak var pauseButton: NSButton!
+    
+    // MARK: - Kite Emulator Settings
+    
+    // Wind Popover Touchbar
+    @IBOutlet weak var windSpeedSlider: NSSlider!
+    @IBOutlet weak var windDirectionSlider: NSSlider!
+    
+    // Kite Popover Touchbar
+    @IBOutlet weak var gammaSlider: NSSlider! // no update, but used
+    @IBOutlet weak var glideSlider: NSSlider! // no update, but used
+    
+    // General Popover Touchbar
+    @IBOutlet weak var tetherLengthSlider: NSSlider! // no update, but used
+    @IBOutlet weak var turningRadiusSlider: NSSlider! // no update, but used
+
+    // Tweaks Popover Touchbar
+    @IBOutlet weak var phiDeltaSlider: NSSlider! // no update, but used
+    @IBOutlet weak var rollDeltaSlider: NSSlider! // no update, NOT used
+    @IBOutlet weak var phaseDeltaSlider: NSSlider! // no update, maybe used
+    
+    // MARK: - Kite Viewer Settings
+    @IBOutlet weak var kiteAxesButton: NSButton!
+    @IBOutlet weak var piAxesButton: NSButton!
+    @IBOutlet weak var piPlaneButton: NSButton!
+    @IBOutlet weak var velocityButton: NSButton!
+    @IBOutlet weak var windButton: NSButton!
+    @IBOutlet weak var tetherButton: NSButton!
+    @IBOutlet weak var kiteButton: NSButton!
+
+    // Timer
+
     private var lastUpdate: TimeInterval = 0
     private var isPaused = false
     
@@ -47,90 +90,82 @@ final class GameViewController: NSViewController, SCNSceneRendererDelegate {
         super.viewDidLoad()
         viewer.setup(with: sceneView)
         sceneView.delegate = self
-        sceneView.play(nil)
+        sceneView.isPlaying = true
+        sceneView.showsStatistics = true
+        
+        pauseButton.bool.subscribe(onNext: togglePause).disposed(by: bag)
     }
     
-    @IBAction func pause(_ sender: Any) {
-        isPaused = !isPaused
-        
-        if isPaused { sceneView.pause(sender) }
-        else { sceneView.play(sender) }
+    private func togglePause(paused: Bool) {
+        isPaused = paused
+//        sceneView.isPlaying = !paused
     }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        if !isPaused {
+        if isPaused {
+            kite.update()
+        }
+        else {
             kite.update(elapsed: time - lastUpdate)
         }
+        
         lastUpdate = time
     }
-
+    
     override func awakeFromNib(){
         super.awakeFromNib()
         
-//        phaseSlider.minValue = Double(0)
-//        phaseSlider.maxValue = Double(2*π)
-//
-//        vSlider.minValue = Double(0)
-//        vSlider.maxValue = Double(π/2)
-//        
-//        hSlider.minValue = Double(-π)
-//        hSlider.maxValue = Double(π)
-//
-//        windSlider.minValue = Double(-π)
-//        windSlider.maxValue = Double(π)
+        // Kite emulator parameters
         
-//        phaseSlider.rx.value
-//            .map(Scalar.init(_:))
-//            .bindTo(kite.phaseSpeed)
-//            .disposed(by: bag)
-//
-//        phaseSlider.rx.value
-//            .map(Scalar.init(_:))
-//            .bindTo(kite.forcedPhase)
-//            .disposed(by: bag)
-
-//        vSlider.rx.value
-//            .map(Scalar.init(_:))
-//            .bindTo(kite.gamma)
-//            .disposed(by: bag)
-//
-//        hSlider.rx.value
-//            .map(Scalar.init(_:))
-//            .bindTo(kite.phi)
-//            .disposed(by: bag)
-//
-//        Observable.combineLatest(rWind.asObservable(), phiWind.asObservable(), resultSelector: getWind)
-//            .bindTo(wind)
-//            .disposed(by: bag)
-
-//        windSlider.rx.value
-//            .map(Scalar.init(_:))
-//            .bindTo(kite.phiWind)
-//            .disposed(by: bag)
-
-        // ----
-
-//        slider0.minValue = Double(-π)
-//        slider0.maxValue = Double(+π)
-//
-//        slider1.minValue = Double(-π)
-//        slider1.maxValue = Double(+π)
-//
-//        slider2.minValue = Double(-π)
-//        slider2.maxValue = Double(+π)
-//
-//        Observable.combineLatest(slider0.rx.value.asObservable(), slider1.rx.value.asObservable(), slider2.rx.value.asObservable(), resultSelector: Vector.init).bindTo(viewer.attitude).disposed(by: bag)
+        // Wind
+        windSpeedSlider.setup(min: 0, max: 20, current: 10)
+        windDirectionSlider.setup(min: -π, max: π, current: π/4)
         
-        // ----
+        Observable.combineLatest(windSpeedSlider.scalar, windDirectionSlider.scalar, resultSelector: getWind).bindTo(wind).disposed(by: bag)
+        wind.asObservable().bindTo(kite.wind).disposed(by: bag)
         
+        // Kite
+        gammaSlider.setup(min: 0, max: π/2, current: 0)
+        gammaSlider.scalar.bindTo(kite.gamma).disposed(by: bag)
+
+        glideSlider.setup(min: 2, max: 4, current: 3)
+        glideSlider.scalar.bindTo(kite.speedFactor).disposed(by: bag)
+
+        // General
+        tetherLengthSlider.setupExp(min: 30, max: 250, current: 100)
+        tetherLengthSlider.expScalar(min: 30, max: 250).bindTo(kite.tetherLength).disposed(by: bag)
+        
+        turningRadiusSlider.setupExp(min: 10, max: 100, current: 20)
+        turningRadiusSlider.expScalar(min: 10, max: 100).bindTo(kite.turningRadius).disposed(by: bag)
+
+        // Tweaks
+        phiDeltaSlider.setup(min: -π/8, max: π/8, current: 0)
+        phiDeltaSlider.scalar.bindTo(kite.phiDelta).disposed(by: bag)
+        
+        rollDeltaSlider.setup(min: -π/8, max: π/8, current: 0)
+        rollDeltaSlider.scalar.bindTo(kite.rollDelta).disposed(by: bag)
+        
+        phaseDeltaSlider.setup(min: -π, max: π, current: 0)
+        phaseDeltaSlider.scalar.bindTo(kite.phaseDelta).disposed(by: bag)
+        
+        // Kite Emulator Output
         kite.position.bindTo(viewer.position).disposed(by: bag)
         kite.velocity.bindTo(viewer.velocity).disposed(by: bag)
         kite.attitude.bindTo(viewer.attitude).disposed(by: bag)
         
-        kite.tetherPoint.bindTo(viewer.tetherPoint).disposed(by: bag)
         kite.turningPoint.bindTo(viewer.turningPoint).disposed(by: bag)
         
-        //        kite.wind.bindTo(viewer.wind).disposed(by: bag)
+        // Kite viewer parameters
+        wind.asObservable().bindTo(viewer.wind).disposed(by: bag)
+        
+        // Kite viewer settings
+        bind(button: kiteAxesButton, to: .kiteAxes)
+        bind(button: piAxesButton, to: .piAxes)
+        bind(button: piPlaneButton, to: .piPlane)
+        bind(button: velocityButton, to: .velocity)
+        bind(button: windButton, to: .wind)
+        bind(button: tetherButton, to: .tether)
+        bind(button: kiteButton, to: .kite)
     }
     
     override func keyDown(with event: NSEvent) {
@@ -139,8 +174,52 @@ final class GameViewController: NSViewController, SCNSceneRendererDelegate {
     
     // MARK: Helper Functions
     
+    private func bind(button: NSButton, to element: ViewerElement) {
+        button.rx.state
+            .map(isOn)
+            .map(combine(with: element))
+            .bindNext(viewer.changeVisibility)
+            .disposed(by: bag)
+    }
+    
     private func getWind(r: Scalar, phi: Scalar) -> Vector {
-        return r*Vector.ex.rotated(around: .ez, by: phi)
+        return r*e_x.rotated(around: e_z, by: phi)
+    }
+    
+    
+    private func combine<S, T>(with element: T) -> (S) -> (S, T) {
+        return {
+            return ($0, element)
+        }
+    }
+}
+
+
+extension NSSlider {
+    func setup(min minVal: Scalar, max maxVal: Scalar, current: Scalar) {
+        minValue = Double(minVal)
+        maxValue = Double(maxVal)
+        doubleValue = Double(current)
+    }
+    
+    var scalar: Observable<Scalar> {
+        return self.rx.value.map(makeScalar)
+    }
+
+    func setupExp(min minVal: Scalar, max maxVal: Scalar, current: Scalar) {
+        minValue = 0
+        maxValue = 1
+        doubleValue = Double(log(current/minVal)/log(maxVal/minVal))
+    }
+    
+    func expScalar(min minVal: Scalar, max maxVal: Scalar) -> Observable<Scalar> {
+        return rx.value.map { minVal*exp(log(maxVal/minVal)*Scalar($0)) }
+    }
+}
+
+extension NSButton {
+    var bool: Observable<Bool> {
+        return rx.state.map(isOn)
     }
 }
 
@@ -149,7 +228,7 @@ final class GameViewController: NSViewController, SCNSceneRendererDelegate {
  
  IN:
  
- paused - fixes the phase while keeping phaseSpeed (without applying it)
+ paused -
  phase -
  phaseSpeed
  

@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="KvJ-u7-H6y">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaDFRPlugin" version="7104"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <plugIn identifier="com.apple.SceneKitIBPlugin" version="11762"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+        <capability name="the Touch Bar" message="Use a version of macOS with Touch Bar support." minToolsVersion="8.1" minSystemVersion="10.12.1" requiredIntegratedClassName="NSTouchBar"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="Eqx-ED-uGP">
+            <objects>
+                <windowController showSeguePresentationStyle="single" id="KvJ-u7-H6y" customClass="WindowController" customModule="VisualKite" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="V4r-vQ-pLP">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="196" y="249" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
+                    </window>
+                    <connections>
+                        <segue destination="Pjk-ka-PHT" kind="relationship" relationship="window.shadowedContentViewController" id="219-kq-QMW"/>
+                    </connections>
+                </windowController>
+                <customObject id="Dzg-RK-4dD" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-62" y="-46"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="Hpu-k2-9q8">
+            <objects>
+                <viewController id="Pjk-ka-PHT" customClass="ViewController" customModule="VisualKite" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="rtr-JR-zX1">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="245"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <sceneView allowsCameraControl="YES" preferredRenderingAPI="1" translatesAutoresizingMaskIntoConstraints="NO" id="csm-MS-QM7">
+                                <rect key="frame" x="0.0" y="0.0" width="480" height="245"/>
+                                <touchBar key="touchBar" id="j6d-Vi-bz3">
+                                    <touchBarItems>
+                                        <touchBarItem id="b1m-Rc-qcO">
+                                            <viewController key="viewController" id="wdu-VW-koc">
+                                                <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ACo-40-ZO2">
+                                                    <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                    <buttonCell key="cell" type="push" title="Pause" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OtI-As-OCg">
+                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                        <font key="font" metaFont="system"/>
+                                                    </buttonCell>
+                                                </button>
+                                            </viewController>
+                                        </touchBarItem>
+                                        <touchBarItem id="r7X-I7-Feh">
+                                            <viewController key="viewController" id="Zfj-gu-gSC">
+                                                <textField key="view" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jsd-6d-MOD">
+                                                    <rect key="frame" x="0.0" y="0.0" width="72" height="24"/>
+                                                    <textFieldCell key="cell" borderStyle="bezel" alignment="left" title="Emulator" drawsBackground="YES" id="L2F-kg-Ugj">
+                                                        <font key="font" usesAppearanceFont="YES"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                            </viewController>
+                                        </touchBarItem>
+                                        <touchBarPopoverItem collapsedRepresentationLabel="Wind" id="WvX-oj-DXC" userLabel="Wind Popover">
+                                            <touchBar key="popoverTouchBar" id="S43-g4-SCH">
+                                                <touchBarItems>
+                                                    <touchBarItem id="Fra-Xb-76i">
+                                                        <viewController key="viewController" id="dcL-Dd-S0o">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QyI-fZ-x9h">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="bevel" title="Speed" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="t9C-3V-g0B">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <sliderTouchBarItem id="sTU-eu-J2r">
+                                                        <sliderAccessory key="minimumValueAccessory" id="scA-71-x9E">
+                                                            <sliderAccessoryBehavior key="behavior" id="zeC-uS-Afp"/>
+                                                        </sliderAccessory>
+                                                        <sliderAccessory key="maximumValueAccessory" id="UyB-eb-BxH">
+                                                            <sliderAccessoryBehavior key="behavior" id="bSs-uM-HAb"/>
+                                                        </sliderAccessory>
+                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Mo-hg-9X8">
+                                                            <rect key="frame" x="0.0" y="0.0" width="258.5" height="30"/>
+                                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="jDh-Jw-Nte"/>
+                                                        </slider>
+                                                    </sliderTouchBarItem>
+                                                    <touchBarItem id="jWW-KS-ePR">
+                                                        <viewController key="viewController" id="Ru0-Up-7Cu">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4Lp-41-Chb">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="bevel" title="Angle" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="L4G-pY-PoS">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <sliderTouchBarItem id="2M7-CZ-pSB">
+                                                        <sliderAccessory key="minimumValueAccessory" id="UNW-hh-76o">
+                                                            <sliderAccessoryBehavior key="behavior" id="8GV-e2-9qs"/>
+                                                        </sliderAccessory>
+                                                        <sliderAccessory key="maximumValueAccessory" id="3gu-C0-dYi">
+                                                            <sliderAccessoryBehavior key="behavior" id="6Sy-cl-EUu"/>
+                                                        </sliderAccessory>
+                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aV6-0v-12A">
+                                                            <rect key="frame" x="0.0" y="0.0" width="258.5" height="30"/>
+                                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="O8g-fa-ho0"/>
+                                                        </slider>
+                                                    </sliderTouchBarItem>
+                                                </touchBarItems>
+                                            </touchBar>
+                                        </touchBarPopoverItem>
+                                        <touchBarPopoverItem collapsedRepresentationLabel="Kite" id="WED-Ma-R0e" userLabel="Kite Popover">
+                                            <touchBar key="popoverTouchBar" id="vSV-3W-4II">
+                                                <touchBarItems>
+                                                    <touchBarItem id="EVj-Rw-h5k">
+                                                        <viewController key="viewController" id="VVb-HV-jem">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="l6p-pQ-0b8" userLabel="Elevation Label">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="bevel" title="Elevation" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="1p6-Fc-CB8">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <sliderTouchBarItem id="orK-vJ-ypZ">
+                                                        <sliderAccessory key="minimumValueAccessory" id="DQD-02-ALY">
+                                                            <sliderAccessoryBehavior key="behavior" id="04c-SL-n2P"/>
+                                                        </sliderAccessory>
+                                                        <sliderAccessory key="maximumValueAccessory" id="eQW-Xz-ZFo">
+                                                            <sliderAccessoryBehavior key="behavior" id="6Ny-yz-hao"/>
+                                                        </sliderAccessory>
+                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t2u-8l-xOo">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="xdF-JP-cU5"/>
+                                                        </slider>
+                                                    </sliderTouchBarItem>
+                                                    <touchBarItem id="P8n-gJ-e53">
+                                                        <viewController key="viewController" id="4X1-G6-QW8">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GiV-Ct-uz3" userLabel="Glide Button">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="bevel" title="Glide" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="zuj-AV-M2T">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <sliderTouchBarItem id="AaQ-Kp-ZlY">
+                                                        <sliderAccessory key="minimumValueAccessory" id="pkP-H9-DsA">
+                                                            <sliderAccessoryBehavior key="behavior" id="dFi-z6-W8m"/>
+                                                        </sliderAccessory>
+                                                        <sliderAccessory key="maximumValueAccessory" id="CWx-an-Cy6">
+                                                            <sliderAccessoryBehavior key="behavior" id="PxL-vv-t8d"/>
+                                                        </sliderAccessory>
+                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uf7-ax-0yK">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="TAw-3s-OBU"/>
+                                                        </slider>
+                                                    </sliderTouchBarItem>
+                                                </touchBarItems>
+                                            </touchBar>
+                                        </touchBarPopoverItem>
+                                        <touchBarPopoverItem collapsedRepresentationLabel="Tweaks" id="idI-wx-IhP" userLabel="Tweaks Popover">
+                                            <touchBar key="popoverTouchBar" id="wHC-T1-eXk">
+                                                <touchBarItems>
+                                                    <touchBarItem id="t1l-jx-gi2">
+                                                        <viewController key="viewController" id="oaS-wF-elO">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NaF-bC-1MP" userLabel="Phi Button">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="bevel" title="Phi" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="nqg-gc-4QE">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <sliderTouchBarItem id="aOf-fn-af6">
+                                                        <sliderAccessory key="minimumValueAccessory" id="lQK-Xc-H2K">
+                                                            <sliderAccessoryBehavior key="behavior" id="fMe-Qh-5uQ"/>
+                                                        </sliderAccessory>
+                                                        <sliderAccessory key="maximumValueAccessory" id="LJG-RP-6kN">
+                                                            <sliderAccessoryBehavior key="behavior" id="JfJ-Yh-uoX"/>
+                                                        </sliderAccessory>
+                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Z2-vB-8nR">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="xq1-Jt-t1P"/>
+                                                        </slider>
+                                                    </sliderTouchBarItem>
+                                                    <touchBarItem id="uzY-8b-Fmw">
+                                                        <viewController key="viewController" id="M1W-Nd-x8S">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xli-6Y-rOO" userLabel="Roll Button">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="bevel" title="Roll" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="W97-cU-tbP">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <sliderTouchBarItem id="2W6-EQ-AWq">
+                                                        <sliderAccessory key="minimumValueAccessory" id="RmW-CX-qbc">
+                                                            <sliderAccessoryBehavior key="behavior" id="mBo-zc-W5b"/>
+                                                        </sliderAccessory>
+                                                        <sliderAccessory key="maximumValueAccessory" id="IsL-Ti-JTc">
+                                                            <sliderAccessoryBehavior key="behavior" id="Xf3-G9-syz"/>
+                                                        </sliderAccessory>
+                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ve2-5L-uFJ">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="9OW-nN-bM0"/>
+                                                        </slider>
+                                                    </sliderTouchBarItem>
+                                                    <touchBarItem id="dql-v3-j97">
+                                                        <viewController key="viewController" id="SbV-dI-rHH">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xTJ-Dh-8tU" userLabel="Roll Button">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="bevel" title="Phase" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="1Vj-F2-4Pb">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <sliderTouchBarItem id="7Se-1b-iM7">
+                                                        <sliderAccessory key="minimumValueAccessory" id="LpQ-HL-3cL">
+                                                            <sliderAccessoryBehavior key="behavior" id="PRa-8t-iaA"/>
+                                                        </sliderAccessory>
+                                                        <sliderAccessory key="maximumValueAccessory" id="tLz-eA-k7Q">
+                                                            <sliderAccessoryBehavior key="behavior" id="Y7j-5b-XQ4"/>
+                                                        </sliderAccessory>
+                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kq0-Mt-CZW">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="l6U-Nr-fER"/>
+                                                        </slider>
+                                                    </sliderTouchBarItem>
+                                                </touchBarItems>
+                                            </touchBar>
+                                        </touchBarPopoverItem>
+                                        <touchBarPopoverItem collapsedRepresentationLabel="General" id="CIh-oH-SJM" userLabel="General Popover">
+                                            <touchBar key="popoverTouchBar" id="qgD-Mb-iPd">
+                                                <touchBarItems>
+                                                    <touchBarItem id="4xH-Xx-dOi">
+                                                        <viewController key="viewController" id="77v-jd-9lC">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dX3-9T-xiX">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="bevel" title="Tether" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="bzy-8X-hcN">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <sliderTouchBarItem id="x6M-z8-62t">
+                                                        <sliderAccessory key="minimumValueAccessory" id="Brg-eT-fXS">
+                                                            <sliderAccessoryBehavior key="behavior" id="BOl-ah-Cxy"/>
+                                                        </sliderAccessory>
+                                                        <sliderAccessory key="maximumValueAccessory" id="zOB-RQ-flN">
+                                                            <sliderAccessoryBehavior key="behavior" id="1wQ-H6-Oo2"/>
+                                                        </sliderAccessory>
+                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4hP-35-rWc">
+                                                            <rect key="frame" x="0.0" y="0.0" width="28" height="30"/>
+                                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="d4B-hh-ssA"/>
+                                                        </slider>
+                                                    </sliderTouchBarItem>
+                                                    <touchBarItem id="O7h-vS-XEt">
+                                                        <viewController key="viewController" id="wJP-Y6-fD5">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Cq8-20-WHX">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="bevel" title="Radius" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="zVp-aV-hbE">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <sliderTouchBarItem id="j27-Q5-Jxw">
+                                                        <sliderAccessory key="minimumValueAccessory" id="kIX-19-Idn">
+                                                            <sliderAccessoryBehavior key="behavior" id="cSC-19-deP"/>
+                                                        </sliderAccessory>
+                                                        <sliderAccessory key="maximumValueAccessory" id="e6g-T0-Zft">
+                                                            <sliderAccessoryBehavior key="behavior" id="E8G-wx-kOF"/>
+                                                        </sliderAccessory>
+                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="m2e-yC-0Hs">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="4io-pG-V5H"/>
+                                                        </slider>
+                                                    </sliderTouchBarItem>
+                                                </touchBarItems>
+                                            </touchBar>
+                                        </touchBarPopoverItem>
+                                        <touchBarSpacerItem identifier="NSTouchBarItemIdentifierFixedSpaceSmall" id="jYm-1U-F8C"/>
+                                        <touchBarItem id="lrF-VO-Ccp" userLabel="Viewer Label">
+                                            <viewController key="viewController" id="S4g-ZY-VVn">
+                                                <textField key="view" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tdo-G5-h9Q">
+                                                    <rect key="frame" x="0.0" y="0.0" width="56" height="24"/>
+                                                    <textFieldCell key="cell" borderStyle="bezel" alignment="left" title="Viewer" drawsBackground="YES" id="uwg-2h-4ns">
+                                                        <font key="font" usesAppearanceFont="YES"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                            </viewController>
+                                        </touchBarItem>
+                                        <touchBarPopoverItem collapsedRepresentationLabel="Elements" id="9W2-f2-y3n" userLabel="Elements Popover">
+                                            <touchBar key="popoverTouchBar" id="p83-wZ-6NL">
+                                                <touchBarItems>
+                                                    <touchBarItem id="Fce-m4-Efg">
+                                                        <viewController key="viewController" id="Z1W-rL-eyc">
+                                                            <textField key="view" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wPH-EU-6PQ">
+                                                                <rect key="frame" x="0.0" y="0.0" width="52" height="24"/>
+                                                                <textFieldCell key="cell" borderStyle="bezel" alignment="left" title="Show:" drawsBackground="YES" id="Se7-fa-5b9">
+                                                                    <font key="font" usesAppearanceFont="YES"/>
+                                                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                            </textField>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="52" height="24"/>
+                                                    </touchBarItem>
+                                                    <touchBarItem id="ety-gD-P7Z">
+                                                        <viewController key="viewController" id="tza-Xk-htL">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HR8-p5-b86">
+                                                                <rect key="frame" x="0.0" y="0.0" width="90" height="30"/>
+                                                                <buttonCell key="cell" type="push" title="Kite axes" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="tZn-cc-nCZ">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="90" height="30"/>
+                                                    </touchBarItem>
+                                                    <touchBarItem id="57M-Fe-apL">
+                                                        <viewController key="viewController" id="1hM-zA-uyp">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="re0-yx-cde">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="push" title="∏ axes" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SpI-Rz-fwh">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <touchBarItem id="4Co-rr-lMd">
+                                                        <viewController key="viewController" id="pH3-8P-fsO">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Wb6-zm-vyx">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="push" title="∏ plane" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="e7o-QL-J9H">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <touchBarItem id="JgX-tl-UaP">
+                                                        <viewController key="viewController" id="CnH-In-0jb">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qka-OV-A1X">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="push" title="Velocity" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nlT-BF-X1y">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <touchBarItem id="8ne-p8-PO7">
+                                                        <viewController key="viewController" id="X6V-yp-6UY">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rtB-69-iiv">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="push" title="Wind" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cwN-eF-xxM">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <touchBarItem id="fDo-Eg-JaG">
+                                                        <viewController key="viewController" id="PgM-QO-q49">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Pq-rL-gqE">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="push" title="Tether" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZVe-o9-PhH">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                    <touchBarItem id="HRt-gg-EHN">
+                                                        <viewController key="viewController" id="Uwf-1e-t0y">
+                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="trg-3q-aSj">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <buttonCell key="cell" type="push" title="Kite" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oFr-fP-IWd">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                            </button>
+                                                        </viewController>
+                                                        <size key="designTimeSize" width="72" height="30"/>
+                                                    </touchBarItem>
+                                                </touchBarItems>
+                                            </touchBar>
+                                        </touchBarPopoverItem>
+                                    </touchBarItems>
+                                </touchBar>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            </sceneView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="csm-MS-QM7" firstAttribute="leading" secondItem="rtr-JR-zX1" secondAttribute="leading" id="CWO-WO-bI2"/>
+                            <constraint firstAttribute="trailing" secondItem="csm-MS-QM7" secondAttribute="trailing" id="Gkg-NJ-pcO"/>
+                            <constraint firstItem="csm-MS-QM7" firstAttribute="top" secondItem="rtr-JR-zX1" secondAttribute="top" id="Mms-o2-15E"/>
+                            <constraint firstAttribute="bottom" secondItem="csm-MS-QM7" secondAttribute="bottom" id="XVO-UV-7qO"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="gammaSlider" destination="t2u-8l-xOo" id="ptz-dC-sJ3"/>
+                        <outlet property="glideSlider" destination="uf7-ax-0yK" id="gFV-2k-5o5"/>
+                        <outlet property="kiteAxesButton" destination="HR8-p5-b86" id="WII-ND-GNj"/>
+                        <outlet property="kiteButton" destination="trg-3q-aSj" id="Oxr-VX-KvI"/>
+                        <outlet property="pauseButton" destination="ACo-40-ZO2" id="nNQ-94-hTk"/>
+                        <outlet property="phaseDeltaSlider" destination="kq0-Mt-CZW" id="pIO-zs-agk"/>
+                        <outlet property="phiDeltaSlider" destination="3Z2-vB-8nR" id="Wya-Tx-2hQ"/>
+                        <outlet property="piAxesButton" destination="re0-yx-cde" id="iZR-yC-VSd"/>
+                        <outlet property="piPlaneButton" destination="Wb6-zm-vyx" id="mU3-NO-Cfy"/>
+                        <outlet property="rollDeltaSlider" destination="ve2-5L-uFJ" id="zYd-eO-2yd"/>
+                        <outlet property="sceneView" destination="csm-MS-QM7" id="N4q-Dy-pWG"/>
+                        <outlet property="tetherButton" destination="0Pq-rL-gqE" id="S2s-oc-KVU"/>
+                        <outlet property="tetherLengthSlider" destination="4hP-35-rWc" id="hLS-Xz-FDU"/>
+                        <outlet property="turningRadiusSlider" destination="m2e-yC-0Hs" id="Ybw-kl-E6D"/>
+                        <outlet property="velocityButton" destination="qka-OV-A1X" id="1Mp-TI-0bH"/>
+                        <outlet property="windButton" destination="rtB-69-iiv" id="0cH-Ja-Qu7"/>
+                        <outlet property="windDirectionSlider" destination="aV6-0v-12A" id="gXs-cD-yWw"/>
+                        <outlet property="windSpeedSlider" destination="0Mo-hg-9X8" id="phk-Me-wUc"/>
+                    </connections>
+                </viewController>
+                <customObject id="w6d-JT-YpW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-62" y="387"/>
+        </scene>
+    </scenes>
+</document>
