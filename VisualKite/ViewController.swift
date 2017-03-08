@@ -99,7 +99,6 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
     
     private func togglePause(paused: Bool) {
         isPaused = paused
-//        sceneView.isPlaying = !paused
     }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
