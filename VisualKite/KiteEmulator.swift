@@ -25,7 +25,7 @@ final class KiteEmulator: KiteType {
     public let phaseDelta = Variable<Scalar>(0)
 
     // Kite
-    public let gamma = Variable<Scalar>(π/8)
+    public let elevation = Variable<Scalar>(0)
     public let tetherLength = Variable<Scalar>(100)
     public let turningRadius = Variable<Scalar>(20)
     
@@ -35,7 +35,7 @@ final class KiteEmulator: KiteType {
     // MARK: Intermediate Variables
     
     private var phi: Scalar { return getWindPhi(wind: wind.value) + phiDelta.value }
-    private var theta: Scalar { return getTheta(gamma: gamma.value) }
+    private var theta: Scalar { return getTheta(elevation: elevation.value) }
     private var d: Scalar { return getD(l: tetherLength.value, r: turningRadius.value) }
 
     private var phase: Scalar = 0
@@ -101,8 +101,7 @@ final class KiteEmulator: KiteType {
         
         let e_p = pos.unit
         let e_kx = -apparent.unit
-        let e_ky = -e_kx×e_p
-        let e_kz = e_kx×e_ky
+        let e_ky = e_kx×e_p
         
         let e_kx_adj = e_kx.rotated(around: e_ky, by: pitchDelta.value)
         let e_ky_adj = e_ky.rotated(around: e_kx, by: rollDelta.value)
@@ -119,8 +118,8 @@ final class KiteEmulator: KiteType {
         return sqrt(l*l - r*r)
     }
     
-    private func getTheta(gamma: Scalar) -> Scalar {
-        return π/2 - gamma
+    private func getTheta(elevation: Scalar) -> Scalar {
+        return elevation + π/2
     }
     
     private func getWindPhi(wind: Vector) -> Scalar {

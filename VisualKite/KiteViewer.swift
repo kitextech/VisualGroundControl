@@ -91,7 +91,7 @@ final class KiteViewer {
         
         // Ship
         kite = scene.rootNode.childNode(withName: "ship", recursively: true)!
-        kite.pivot = Matrix(rotation: e_x, by: -π/2)*Matrix(rotation: e_y, by: -π/2)
+        kite.pivot = Matrix(rotation: e_x, by: π/2)*Matrix(rotation: e_y, by: -π/2)
         
         // Camera
         let cameraNode = SCNNode()
@@ -99,7 +99,7 @@ final class KiteViewer {
         cameraNode.camera?.zFar = 200
         scene.rootNode.addChildNode(cameraNode)
         cameraNode.position = SCNVector3(x: 15, y: 15, z: 5)
-        cameraNode.eulerAngles = Vector(1.45, 0, 3*π/4)
+        cameraNode.eulerAngles = Vector(1.45, π, 3*π/4)
         
         // Light
         let lightNode = SCNNode()

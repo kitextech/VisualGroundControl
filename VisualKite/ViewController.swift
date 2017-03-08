@@ -60,7 +60,7 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
     @IBOutlet weak var windDirectionSlider: NSSlider!
     
     // Kite Popover Touchbar
-    @IBOutlet weak var gammaSlider: NSSlider!
+    @IBOutlet weak var elevationSlider: NSSlider!
     @IBOutlet weak var glideSlider: NSSlider!
     
     // General Popover Touchbar
@@ -125,8 +125,8 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
         wind.asObservable().bindTo(kite.wind).disposed(by: bag)
         
         // Kite
-        gammaSlider.setup(min: 0, max: π/2, current: 0)
-        gammaSlider.scalar.bindTo(kite.gamma).disposed(by: bag)
+        elevationSlider.setup(min: 0, max: π/2, current: 0)
+        elevationSlider.scalar.bindTo(kite.elevation).disposed(by: bag)
 
         glideSlider.setup(min: 2, max: 4, current: 3)
         glideSlider.scalar.bindTo(kite.speedFactor).disposed(by: bag)

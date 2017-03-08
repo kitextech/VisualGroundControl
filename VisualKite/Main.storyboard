@@ -455,7 +455,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="gammaSlider" destination="t2u-8l-xOo" id="ptz-dC-sJ3"/>
+                        <outlet property="elevationSlider" destination="t2u-8l-xOo" id="BaX-9W-pLh"/>
                         <outlet property="glideSlider" destination="uf7-ax-0yK" id="gFV-2k-5o5"/>
                         <outlet property="kiteAxesButton" destination="HR8-p5-b86" id="WII-ND-GNj"/>
                         <outlet property="kiteButton" destination="trg-3q-aSj" id="Oxr-VX-KvI"/>
