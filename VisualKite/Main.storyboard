@@ -20,17 +20,17 @@
                         <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
                     </window>
                     <connections>
-                        <segue destination="Pjk-ka-PHT" kind="relationship" relationship="window.shadowedContentViewController" id="219-kq-QMW"/>
+                        <segue destination="2vd-3d-Vv4" kind="relationship" relationship="window.shadowedContentViewController" id="EWy-YV-oTT"/>
                     </connections>
                 </windowController>
                 <customObject id="Dzg-RK-4dD" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-62" y="-46"/>
+            <point key="canvasLocation" x="-62" y="-363"/>
         </scene>
-        <!--View Controller-->
+        <!--3d-->
         <scene sceneID="Hpu-k2-9q8">
             <objects>
-                <viewController id="Pjk-ka-PHT" customClass="ViewController" customModule="VisualKite" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="3d" id="Pjk-ka-PHT" customClass="ViewController" customModule="VisualKite" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="rtr-JR-zX1">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="245"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -123,6 +123,7 @@
                                                         <viewController key="viewController" id="VVb-HV-jem">
                                                             <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="l6p-pQ-0b8" userLabel="Elevation Label">
                                                                 <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Elevation" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="1p6-Fc-CB8">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -138,8 +139,8 @@
                                                         <sliderAccessory key="maximumValueAccessory" id="eQW-Xz-ZFo">
                                                             <sliderAccessoryBehavior key="behavior" id="6Ny-yz-hao"/>
                                                         </sliderAccessory>
-                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t2u-8l-xOo">
-                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                        <slider key="slider" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="t2u-8l-xOo">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="19"/>
                                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="xdF-JP-cU5"/>
                                                         </slider>
                                                     </sliderTouchBarItem>
@@ -147,6 +148,7 @@
                                                         <viewController key="viewController" id="4X1-G6-QW8">
                                                             <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GiV-Ct-uz3" userLabel="Glide Button">
                                                                 <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Glide" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="zuj-AV-M2T">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -162,8 +164,8 @@
                                                         <sliderAccessory key="maximumValueAccessory" id="CWx-an-Cy6">
                                                             <sliderAccessoryBehavior key="behavior" id="PxL-vv-t8d"/>
                                                         </sliderAccessory>
-                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uf7-ax-0yK">
-                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                        <slider key="slider" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uf7-ax-0yK">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="19"/>
                                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="TAw-3s-OBU"/>
                                                         </slider>
                                                     </sliderTouchBarItem>
@@ -177,6 +179,7 @@
                                                         <viewController key="viewController" id="oaS-wF-elO">
                                                             <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NaF-bC-1MP" userLabel="Phi Button">
                                                                 <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Phi" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="nqg-gc-4QE">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -192,8 +195,8 @@
                                                         <sliderAccessory key="maximumValueAccessory" id="LJG-RP-6kN">
                                                             <sliderAccessoryBehavior key="behavior" id="JfJ-Yh-uoX"/>
                                                         </sliderAccessory>
-                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Z2-vB-8nR">
-                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                        <slider key="slider" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3Z2-vB-8nR">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="19"/>
                                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="xq1-Jt-t1P"/>
                                                         </slider>
                                                     </sliderTouchBarItem>
@@ -201,6 +204,7 @@
                                                         <viewController key="viewController" id="M1W-Nd-x8S">
                                                             <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xli-6Y-rOO" userLabel="Roll Button">
                                                                 <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Roll" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="W97-cU-tbP">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -216,8 +220,8 @@
                                                         <sliderAccessory key="maximumValueAccessory" id="IsL-Ti-JTc">
                                                             <sliderAccessoryBehavior key="behavior" id="Xf3-G9-syz"/>
                                                         </sliderAccessory>
-                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ve2-5L-uFJ">
-                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                        <slider key="slider" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ve2-5L-uFJ">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="19"/>
                                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="9OW-nN-bM0"/>
                                                         </slider>
                                                     </sliderTouchBarItem>
@@ -225,6 +229,7 @@
                                                         <viewController key="viewController" id="SbV-dI-rHH">
                                                             <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xTJ-Dh-8tU" userLabel="Pitch Button">
                                                                 <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Pitch" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="1Vj-F2-4Pb">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -240,8 +245,8 @@
                                                         <sliderAccessory key="maximumValueAccessory" id="tLz-eA-k7Q">
                                                             <sliderAccessoryBehavior key="behavior" id="Y7j-5b-XQ4"/>
                                                         </sliderAccessory>
-                                                        <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kq0-Mt-CZW">
-                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                        <slider key="slider" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kq0-Mt-CZW">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="19"/>
                                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="l6U-Nr-fER"/>
                                                         </slider>
                                                     </sliderTouchBarItem>
@@ -271,7 +276,7 @@
                                                             <sliderAccessoryBehavior key="behavior" id="1wQ-H6-Oo2"/>
                                                         </sliderAccessory>
                                                         <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4hP-35-rWc">
-                                                            <rect key="frame" x="0.0" y="0.0" width="28" height="30"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="143" height="30"/>
                                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="d4B-hh-ssA"/>
                                                         </slider>
                                                     </sliderTouchBarItem>
@@ -295,7 +300,7 @@
                                                             <sliderAccessoryBehavior key="behavior" id="E8G-wx-kOF"/>
                                                         </sliderAccessory>
                                                         <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="m2e-yC-0Hs">
-                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="143" height="30"/>
                                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="4io-pG-V5H"/>
                                                         </slider>
                                                     </sliderTouchBarItem>
@@ -319,8 +324,8 @@
                                                             <sliderAccessoryBehavior key="behavior" id="4iE-MJ-ROa"/>
                                                         </sliderAccessory>
                                                         <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3DO-e4-WJM">
-                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
-                                                            <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="Qos-2d-D3u"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="143" height="30"/>
+                                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="Qos-2d-D3u"/>
                                                         </slider>
                                                     </sliderTouchBarItem>
                                                 </touchBarItems>
@@ -346,6 +351,7 @@
                                                         <viewController key="viewController" id="Z1W-rL-eyc">
                                                             <textField key="view" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wPH-EU-6PQ">
                                                                 <rect key="frame" x="0.0" y="0.0" width="52" height="24"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <textFieldCell key="cell" borderStyle="bezel" alignment="left" title="Show:" drawsBackground="YES" id="Se7-fa-5b9">
                                                                     <font key="font" usesAppearanceFont="YES"/>
                                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -357,8 +363,9 @@
                                                     </touchBarItem>
                                                     <touchBarItem id="ety-gD-P7Z">
                                                         <viewController key="viewController" id="tza-Xk-htL">
-                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HR8-p5-b86">
-                                                                <rect key="frame" x="0.0" y="0.0" width="90" height="30"/>
+                                                            <button key="view" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HR8-p5-b86">
+                                                                <rect key="frame" x="0.0" y="0.0" width="90" height="41"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Kite axes" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="tZn-cc-nCZ">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -369,8 +376,9 @@
                                                     </touchBarItem>
                                                     <touchBarItem id="57M-Fe-apL">
                                                         <viewController key="viewController" id="1hM-zA-uyp">
-                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="re0-yx-cde">
-                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                            <button key="view" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="re0-yx-cde">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="41"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="∏ axes" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SpI-Rz-fwh">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -381,8 +389,9 @@
                                                     </touchBarItem>
                                                     <touchBarItem id="4Co-rr-lMd">
                                                         <viewController key="viewController" id="pH3-8P-fsO">
-                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Wb6-zm-vyx">
-                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                            <button key="view" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wb6-zm-vyx">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="41"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="∏ plane" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="e7o-QL-J9H">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -393,8 +402,9 @@
                                                     </touchBarItem>
                                                     <touchBarItem id="JgX-tl-UaP">
                                                         <viewController key="viewController" id="CnH-In-0jb">
-                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qka-OV-A1X">
-                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                            <button key="view" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qka-OV-A1X">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="41"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Velocity" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nlT-BF-X1y">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -405,8 +415,9 @@
                                                     </touchBarItem>
                                                     <touchBarItem id="8ne-p8-PO7">
                                                         <viewController key="viewController" id="X6V-yp-6UY">
-                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rtB-69-iiv">
-                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                            <button key="view" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rtB-69-iiv">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="41"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Wind" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cwN-eF-xxM">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -417,8 +428,9 @@
                                                     </touchBarItem>
                                                     <touchBarItem id="fDo-Eg-JaG">
                                                         <viewController key="viewController" id="PgM-QO-q49">
-                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Pq-rL-gqE">
-                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                            <button key="view" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Pq-rL-gqE">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="41"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Tether" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZVe-o9-PhH">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -429,8 +441,9 @@
                                                     </touchBarItem>
                                                     <touchBarItem id="HRt-gg-EHN">
                                                         <viewController key="viewController" id="Uwf-1e-t0y">
-                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="trg-3q-aSj">
-                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="30"/>
+                                                            <button key="view" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="trg-3q-aSj">
+                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="41"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Kite" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oFr-fP-IWd">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -478,7 +491,215 @@
                 </viewController>
                 <customObject id="w6d-JT-YpW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-62" y="387"/>
+            <point key="canvasLocation" x="-62" y="456"/>
+        </scene>
+        <!--Tab View Controller-->
+        <scene sceneID="67o-Xc-VDr">
+            <objects>
+                <tabViewController id="2vd-3d-Vv4" sceneMemberID="viewController">
+                    <tabViewItems>
+                        <tabViewItem id="rnT-y1-hRe"/>
+                        <tabViewItem id="uwi-IO-PmN"/>
+                    </tabViewItems>
+                    <tabView key="tabView" type="noTabsNoBorder" id="D8r-cG-InT">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <font key="font" metaFont="message"/>
+                        <tabViewItems/>
+                    </tabView>
+                    <connections>
+                        <segue destination="CZY-rB-AJf" kind="relationship" relationship="tabItems" id="XTe-Vf-e5I"/>
+                        <segue destination="Pjk-ka-PHT" kind="relationship" relationship="tabItems" id="ULl-5G-Aka"/>
+                    </connections>
+                </tabViewController>
+                <customObject id="iCh-pS-gxM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-62" y="29"/>
+        </scene>
+        <!--Serial-->
+        <scene sceneID="FgN-Lr-0B3">
+            <objects>
+                <viewController title="Serial" id="CZY-rB-AJf" customClass="SerialViewController" customModule="VisualKite" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" wantsLayer="YES" id="NPE-pl-eMO">
+                        <rect key="frame" x="0.0" y="0.0" width="418" height="509"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Wg-Nj-owa">
+                                <rect key="frame" x="74" y="444" width="68" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Serial Port" id="LSo-cl-VxT">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="y2s-HH-kpo">
+                                <rect key="frame" x="88" y="410" width="54" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Pixhawk" id="lB1-1w-1xf">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Lgz-ts-SrC">
+                                <rect key="frame" x="150" y="439" width="125" height="26"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="120" id="A87-Lm-849"/>
+                                </constraints>
+                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="bOs-zj-WnF">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="Hwj-Rz-4tC">
+                                        <items>
+                                            <menuItem title="Item 1" state="on" id="Z4W-3P-4S5"/>
+                                            <menuItem title="Item 2" id="lsj-PI-xTj"/>
+                                            <menuItem title="Item 3" id="EfM-1F-rPU"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="CZY-rB-AJf" name="content" keyPath="kite.serialPortManager.availablePorts" id="nAt-B7-IeN"/>
+                                    <binding destination="CZY-rB-AJf" name="contentValues" keyPath="serialPortManager.availablePorts.name" previousBinding="nAt-B7-IeN" id="OWN-L8-v6E"/>
+                                    <binding destination="CZY-rB-AJf" name="selectedObject" keyPath="kite.serialPort" previousBinding="OWN-L8-v6E" id="xOn-fP-GpB"/>
+                                </connections>
+                            </popUpButton>
+                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="5bB-jd-AdZ">
+                                <rect key="frame" x="20" y="384" width="378" height="5"/>
+                            </box>
+                            <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VQH-Dv-2vr">
+                                <rect key="frame" x="20" y="84" width="378" height="284"/>
+                                <clipView key="contentView" id="K78-DV-oe7">
+                                    <rect key="frame" x="1" y="1" width="376" height="282"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textView editable="NO" importsGraphics="NO" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="Qra-v1-v2g">
+                                            <rect key="frame" x="0.0" y="0.0" width="381" height="282"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <size key="minSize" width="376" height="282"/>
+                                            <size key="maxSize" width="941" height="10000000"/>
+                                            <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                        </textView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </clipView>
+                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="qHs-zU-Djq">
+                                    <rect key="frame" x="-100" y="-100" width="87" height="18"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="UTa-fo-fVf">
+                                    <rect key="frame" x="361" y="1" width="16" height="282"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="krs-L1-mRJ">
+                                <rect key="frame" x="278" y="435" width="73" height="32"/>
+                                <buttonCell key="cell" type="push" title="Open" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OsR-aY-c90">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="openOrClosePort:" target="CZY-rB-AJf" id="ydP-GD-ray"/>
+                                </connections>
+                            </button>
+                            <button translatesAutoresizingMaskIntoConstraints="NO" id="q4W-bD-eEu">
+                                <rect key="frame" x="151" y="410" width="49" height="18"/>
+                                <buttonCell key="cell" type="radio" title="USB" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="PMe-w2-YnP">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="radioButtonSelected:" target="CZY-rB-AJf" id="jco-c0-bvd"/>
+                                </connections>
+                            </button>
+                            <button translatesAutoresizingMaskIntoConstraints="NO" id="GNM-wx-Kg4">
+                                <rect key="frame" x="213" y="410" width="64" height="18"/>
+                                <buttonCell key="cell" type="radio" title="Telem1" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="x2a-H7-P4x">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="radioButtonSelected:" target="CZY-rB-AJf" id="6b4-qo-0s0"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rzB-MT-qW6">
+                                <rect key="frame" x="331" y="36" width="72" height="32"/>
+                                <buttonCell key="cell" type="push" title="Clear" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5if-3z-gcQ">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="clearTextView:" target="CZY-rB-AJf" id="a21-cm-fZS"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="7Wg-Nj-owa" firstAttribute="centerY" secondItem="Lgz-ts-SrC" secondAttribute="centerY" id="264-nl-m78"/>
+                            <constraint firstItem="VQH-Dv-2vr" firstAttribute="leading" secondItem="5bB-jd-AdZ" secondAttribute="leading" id="2ti-eR-yzk"/>
+                            <constraint firstAttribute="bottom" secondItem="rzB-MT-qW6" secondAttribute="bottom" constant="43" id="6AH-Ba-5Gc"/>
+                            <constraint firstItem="rzB-MT-qW6" firstAttribute="top" secondItem="VQH-Dv-2vr" secondAttribute="bottom" constant="20" id="Axb-rS-Nxf"/>
+                            <constraint firstItem="rzB-MT-qW6" firstAttribute="trailing" secondItem="VQH-Dv-2vr" secondAttribute="trailing" constant="-1" id="Bd2-p2-12G"/>
+                            <constraint firstItem="krs-L1-mRJ" firstAttribute="centerY" secondItem="Lgz-ts-SrC" secondAttribute="centerY" id="C6b-DZ-ltu"/>
+                            <constraint firstItem="q4W-bD-eEu" firstAttribute="leading" secondItem="Lgz-ts-SrC" secondAttribute="leading" id="FxB-Z5-0mm"/>
+                            <constraint firstItem="GNM-wx-Kg4" firstAttribute="centerY" secondItem="q4W-bD-eEu" secondAttribute="centerY" id="I4p-qI-X6y"/>
+                            <constraint firstItem="Lgz-ts-SrC" firstAttribute="centerX" secondItem="Qra-v1-v2g" secondAttribute="centerX" id="L61-CO-rRv"/>
+                            <constraint firstItem="Lgz-ts-SrC" firstAttribute="leading" secondItem="7Wg-Nj-owa" secondAttribute="trailing" constant="12" id="MpU-NJ-OSw"/>
+                            <constraint firstItem="VQH-Dv-2vr" firstAttribute="top" secondItem="5bB-jd-AdZ" secondAttribute="bottom" constant="18" id="Qxr-Gw-bbQ"/>
+                            <constraint firstItem="VQH-Dv-2vr" firstAttribute="leading" secondItem="NPE-pl-eMO" secondAttribute="leading" constant="20" id="W9n-pp-LoQ"/>
+                            <constraint firstItem="y2s-HH-kpo" firstAttribute="centerY" secondItem="q4W-bD-eEu" secondAttribute="centerY" id="Zn9-1M-4Ua"/>
+                            <constraint firstItem="5bB-jd-AdZ" firstAttribute="top" secondItem="q4W-bD-eEu" secondAttribute="bottom" constant="24" id="cCs-eZ-ckj"/>
+                            <constraint firstItem="Lgz-ts-SrC" firstAttribute="top" secondItem="NPE-pl-eMO" secondAttribute="top" constant="46" id="cNd-mQ-3Vh"/>
+                            <constraint firstItem="y2s-HH-kpo" firstAttribute="top" secondItem="7Wg-Nj-owa" secondAttribute="bottom" constant="17" id="dnJ-8c-txt"/>
+                            <constraint firstItem="GNM-wx-Kg4" firstAttribute="leading" secondItem="q4W-bD-eEu" secondAttribute="trailing" constant="16" id="mTF-45-SS8"/>
+                            <constraint firstItem="VQH-Dv-2vr" firstAttribute="trailing" secondItem="5bB-jd-AdZ" secondAttribute="trailing" id="nN9-eC-2Og"/>
+                            <constraint firstItem="krs-L1-mRJ" firstAttribute="leading" secondItem="Lgz-ts-SrC" secondAttribute="trailing" constant="12" id="rLM-3Y-igB"/>
+                            <constraint firstAttribute="trailing" secondItem="VQH-Dv-2vr" secondAttribute="trailing" constant="20" id="umH-RV-3ty"/>
+                            <constraint firstItem="y2s-HH-kpo" firstAttribute="trailing" secondItem="7Wg-Nj-owa" secondAttribute="trailing" id="yia-PQ-Wbl"/>
+                        </constraints>
+                    </view>
+                    <touchBar key="touchBar" id="LBY-Ad-JiL">
+                        <touchBarItems>
+                            <touchBarItem id="DwP-dJ-AYR">
+                                <viewController key="viewController" id="XqX-86-0CF">
+                                    <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gNt-Z7-Y05">
+                                        <rect key="frame" x="0.0" y="0.0" width="90" height="30"/>
+                                        <buttonCell key="cell" type="push" title="Offboard" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qgP-YG-dWC">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                </viewController>
+                            </touchBarItem>
+                            <sliderTouchBarItem id="Gem-h9-wxP">
+                                <sliderAccessory key="minimumValueAccessory" id="wKD-6a-4sT">
+                                    <sliderAccessoryBehavior key="behavior" id="qcA-ls-EwA"/>
+                                </sliderAccessory>
+                                <sliderAccessory key="maximumValueAccessory" id="tpH-wR-KXC">
+                                    <sliderAccessoryBehavior key="behavior" id="0ne-ds-Qhs"/>
+                                </sliderAccessory>
+                                <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y8P-FS-uMh">
+                                    <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                    <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="vZQ-hH-xrD"/>
+                                </slider>
+                            </sliderTouchBarItem>
+                        </touchBarItems>
+                    </touchBar>
+                    <connections>
+                        <outlet property="clearButton" destination="rzB-MT-qW6" id="L3b-fB-xGD"/>
+                        <outlet property="clearTextViewButton" destination="rzB-MT-qW6" id="V6C-U3-bzA"/>
+                        <outlet property="offboardButton" destination="gNt-Z7-Y05" id="OYy-TU-7t3"/>
+                        <outlet property="openCloseButton" destination="krs-L1-mRJ" id="8ef-yb-l2c"/>
+                        <outlet property="receivedMessageTextView" destination="Qra-v1-v2g" id="jV9-o6-Xrg"/>
+                        <outlet property="telemetryRadioButton" destination="GNM-wx-Kg4" id="UQM-I2-kHF"/>
+                        <outlet property="textView" destination="Qra-v1-v2g" id="XHK-Oz-CE1"/>
+                        <outlet property="thrustSlider" destination="y8P-FS-uMh" id="ZrH-jO-s1R"/>
+                        <outlet property="toggleOpenPortButton" destination="krs-L1-mRJ" id="CzJ-NV-q5D"/>
+                        <outlet property="usbRadioButton" destination="q4W-bD-eEu" id="P2k-fA-s4Q"/>
+                    </connections>
+                </viewController>
+                <customObject id="HEe-3D-aqn" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController representsSharedInstance="YES" id="7DM-pG-pIO"/>
+            </objects>
+            <point key="canvasLocation" x="507" y="36"/>
         </scene>
     </scenes>
 </document>

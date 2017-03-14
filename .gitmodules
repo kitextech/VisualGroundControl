@@ -1,9 +1,9 @@
-[submodule "RxSwift"]
-	path = RxSwift
-	url = https://github.com/ReactiveX/RxSwift.git
 [submodule "Frameworks/Mavlink"]
 	path = Frameworks/Mavlink
 	url = https://github.com/mavlink/c_library.git
 [submodule "Frameworks/ORSSerialPort"]
 	path = Frameworks/ORSSerialPort
 	url = https://github.com/armadsen/ORSSerialPort.git
+[submodule "RxSwift"]
+	path = RxSwift
+	url = https://github.com/ReactiveX/RxSwift.git

@@ -33,6 +33,12 @@ protocol KiteType {
 }
 
 protocol AnalyserType {
+    // Input
+    var position: Variable<Vector> { get }
+    var attitude: Variable<Matrix> { get }
+    var velocity: Variable<Vector> { get }
+    
+    // Output
     var estimatedWind: PublishSubject<Vector?> { get }
     var tetherPoint: PublishSubject<Vector?> { get }
     var turningPoint: PublishSubject<Vector?> { get }
@@ -45,6 +51,9 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
     
     private let bag = DisposeBag()
     private let kite = KiteEmulator()
+    
+    private let realKite = KiteLink.shared
+    
     private let viewer = KiteViewer()
     
     private let wind = Variable<Vector>(.origin)
@@ -95,6 +104,9 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
         sceneView.showsStatistics = true
         
         pauseButton.bool.subscribe(onNext: togglePause).disposed(by: bag)
+        
+        realKite.mavlinkMessage.subscribe(onNext: { print("MESSAGE: \($0)") }).disposed(by: bag)
+        realKite.location.subscribe(onNext: { print("LOCATION: \($0)") }).disposed(by: bag)
     }
     
     private func togglePause(paused: Bool) {

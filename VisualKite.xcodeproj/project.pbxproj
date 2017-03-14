@@ -13,6 +13,15 @@
 		22389A141E66034400E596EA /* KiteEmulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22389A131E66034400E596EA /* KiteEmulator.swift */; };
 		22BFFA201E6DF6E8006BE86D /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA1F1E6DF6E8006BE86D /* WindowController.swift */; };
 		22BFFA221E6DFC4A006BE86D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22BFFA211E6DFC4A006BE86D /* Main.storyboard */; };
+		22BFFA441E72B90A006BE86D /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA421E72B909006BE86D /* Realm.framework */; };
+		22BFFA451E72B90A006BE86D /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA421E72B909006BE86D /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		22BFFA461E72B90A006BE86D /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA431E72B909006BE86D /* RealmSwift.framework */; };
+		22BFFA471E72B90A006BE86D /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA431E72B909006BE86D /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		22BFFA4A1E72B97A006BE86D /* DataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA491E72B97A006BE86D /* DataModels.swift */; };
+		22BFFA4C1E72ED54006BE86D /* KiteAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA4B1E72ED54006BE86D /* KiteAnalyzer.swift */; };
+		22BFFA501E7351F4006BE86D /* KiteListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA4F1E7351F4006BE86D /* KiteListener.swift */; };
+		22BFFA5A1E735524006BE86D /* ORSSerial.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA571E7354DB006BE86D /* ORSSerial.framework */; };
+		22BFFA621E782302006BE86D /* SerialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA611E782302006BE86D /* SerialViewController.swift */; };
 		22EC26881E61DD7E00370170 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26871E61DD7E00370170 /* AppDelegate.swift */; };
 		22EC268A1E61DD7E00370170 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26891E61DD7E00370170 /* GameView.swift */; };
 		22EC268C1E61DD7E00370170 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC268B1E61DD7E00370170 /* ViewController.swift */; };
@@ -173,7 +182,36 @@
 			remoteGlobalIDString = C8E8BA551E2C181A00A4AC2C;
 			remoteInfo = Benchmarks;
 		};
+		22BFFA561E7354DB006BE86D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22BFFA511E7354DB006BE86D /* ORSSerialPort.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9DCA89121A2BB106009285EB;
+			remoteInfo = ORSSerial;
+		};
+		22BFFA581E7354DB006BE86D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22BFFA511E7354DB006BE86D /* ORSSerialPort.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D7472131B6D7767002D8B10;
+			remoteInfo = "ORSSerialPort Tests";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		22BFFA481E72B90A006BE86D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				22BFFA471E72B90A006BE86D /* RealmSwift.framework in Embed Frameworks */,
+				22BFFA451E72B90A006BE86D /* Realm.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		223899CD1E658CB400E596EA /* Rx.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Rx.xcodeproj; path = RxSwift/Rx.xcodeproj; sourceTree = "<group>"; };
@@ -181,6 +219,13 @@
 		22389A131E66034400E596EA /* KiteEmulator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteEmulator.swift; sourceTree = "<group>"; };
 		22BFFA1F1E6DF6E8006BE86D /* WindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
 		22BFFA211E6DFC4A006BE86D /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		22BFFA421E72B909006BE86D /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
+		22BFFA431E72B909006BE86D /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
+		22BFFA491E72B97A006BE86D /* DataModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataModels.swift; sourceTree = "<group>"; };
+		22BFFA4B1E72ED54006BE86D /* KiteAnalyzer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteAnalyzer.swift; sourceTree = "<group>"; };
+		22BFFA4F1E7351F4006BE86D /* KiteListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteListener.swift; sourceTree = "<group>"; };
+		22BFFA511E7354DB006BE86D /* ORSSerialPort.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ORSSerialPort.xcodeproj; path = "Frameworks/ORSSerialPort/Framework Project/ORSSerialPort.xcodeproj"; sourceTree = "<group>"; };
+		22BFFA611E782302006BE86D /* SerialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerialViewController.swift; sourceTree = "<group>"; };
 		22EC26841E61DD7E00370170 /* VisualKite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisualKite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22EC26871E61DD7E00370170 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		22EC26891E61DD7E00370170 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
@@ -200,7 +245,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22BFFA5A1E735524006BE86D /* ORSSerial.framework in Frameworks */,
+				22BFFA441E72B90A006BE86D /* Realm.framework in Frameworks */,
 				22389A0F1E658CFD00E596EA /* RxCocoa.framework in Frameworks */,
+				22BFFA461E72B90A006BE86D /* RealmSwift.framework in Frameworks */,
 				22389A101E658CFD00E596EA /* RxSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -236,10 +284,22 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		22BFFA521E7354DB006BE86D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				22BFFA571E7354DB006BE86D /* ORSSerial.framework */,
+				22BFFA591E7354DB006BE86D /* ORSSerialPort Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		22EC267B1E61DD7E00370170 = {
 			isa = PBXGroup;
 			children = (
+				22BFFA511E7354DB006BE86D /* ORSSerialPort.xcodeproj */,
 				223899CD1E658CB400E596EA /* Rx.xcodeproj */,
+				22BFFA421E72B909006BE86D /* Realm.framework */,
+				22BFFA431E72B909006BE86D /* RealmSwift.framework */,
 				22EC26861E61DD7E00370170 /* VisualKite */,
 				22EC26851E61DD7E00370170 /* Products */,
 			);
@@ -256,10 +316,14 @@
 		22EC26861E61DD7E00370170 /* VisualKite */ = {
 			isa = PBXGroup;
 			children = (
+				22BFFA4F1E7351F4006BE86D /* KiteListener.swift */,
+				22BFFA4B1E72ED54006BE86D /* KiteAnalyzer.swift */,
+				22BFFA611E782302006BE86D /* SerialViewController.swift */,
 				22BFFA211E6DFC4A006BE86D /* Main.storyboard */,
 				22EC26871E61DD7E00370170 /* AppDelegate.swift */,
 				22BFFA1F1E6DF6E8006BE86D /* WindowController.swift */,
 				22EC26891E61DD7E00370170 /* GameView.swift */,
+				22BFFA491E72B97A006BE86D /* DataModels.swift */,
 				22EC268B1E61DD7E00370170 /* ViewController.swift */,
 				22389A131E66034400E596EA /* KiteEmulator.swift */,
 				22389A111E6602DE00E596EA /* KiteViewer.swift */,
@@ -285,6 +349,7 @@
 				22EC26801E61DD7E00370170 /* Sources */,
 				22EC26811E61DD7E00370170 /* Frameworks */,
 				22EC26821E61DD7E00370170 /* Resources */,
+				22BFFA481E72B90A006BE86D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -323,6 +388,10 @@
 			productRefGroup = 22EC26851E61DD7E00370170 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 22BFFA521E7354DB006BE86D /* Products */;
+					ProjectRef = 22BFFA511E7354DB006BE86D /* ORSSerialPort.xcodeproj */;
+				},
 				{
 					ProductGroup = 223899CE1E658CB400E596EA /* Products */;
 					ProjectRef = 223899CD1E658CB400E596EA /* Rx.xcodeproj */;
@@ -484,6 +553,20 @@
 			remoteRef = 22389A0D1E658CB500E596EA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		22BFFA571E7354DB006BE86D /* ORSSerial.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ORSSerial.framework;
+			remoteRef = 22BFFA561E7354DB006BE86D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		22BFFA591E7354DB006BE86D /* ORSSerialPort Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "ORSSerialPort Tests.xctest";
+			remoteRef = 22BFFA581E7354DB006BE86D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -504,6 +587,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22BFFA501E7351F4006BE86D /* KiteListener.swift in Sources */,
+				22BFFA4C1E72ED54006BE86D /* KiteAnalyzer.swift in Sources */,
 				22EC26A21E62219B00370170 /* Matrix.swift in Sources */,
 				22EC26A31E62219B00370170 /* Nodes.swift in Sources */,
 				22EC26A71E62219B00370170 /* Vector4.swift in Sources */,
@@ -513,8 +598,10 @@
 				22EC26881E61DD7E00370170 /* AppDelegate.swift in Sources */,
 				22BFFA201E6DF6E8006BE86D /* WindowController.swift in Sources */,
 				22389A141E66034400E596EA /* KiteEmulator.swift in Sources */,
+				22BFFA4A1E72B97A006BE86D /* DataModels.swift in Sources */,
 				22389A121E6602DE00E596EA /* KiteViewer.swift in Sources */,
 				22EC26A61E62219B00370170 /* Vector.swift in Sources */,
+				22BFFA621E782302006BE86D /* SerialViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -566,6 +653,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Modules";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -607,6 +695,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				SWIFT_INCLUDE_PATHS = "${SRCROOT}/Modules";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
@@ -616,6 +705,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = VisualKite/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = KiteX.VisualKite;
@@ -629,6 +722,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = VisualKite/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = KiteX.VisualKite;

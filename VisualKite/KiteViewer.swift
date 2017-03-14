@@ -154,9 +154,23 @@ final class KiteViewer {
         let c = turningPoint.value
         
 //        print("p: \(p), a: \(a), w: \(w), c: \(c) ")
+
+        
+        func sign(_ x: Scalar) -> Scalar {
+            return x.sign == .plus ? 1 : -1
+        }
+        
+//        let qw =              sqrt(max(0, 1 + a[0,0] + a[1,1] + a[2,2]))/2
+//        let qx = sign(a[2,1])*sqrt(max(0, 1 + a[0,0] - a[1,1] - a[2,2]))/2
+//        let qy = sign(a[0,2])*sqrt(max(0, 1 - a[0,0] + a[1,1] - a[2,2]))/2
+//        let qz = sign(a[1,0])*sqrt(max(0, 1 - a[0,0] - a[1,1] + a[2,2]))/2
         
         if shouldShow(.kite) {
             kite.transform = a.scaled(2).translated(p)
+//            kite.position = p
+//            kite.scale = 0.2*Vector(1, 1, 1)
+//            kite.orientation = SCNQuaternion(qx, qy, qz, qw)
+//            kite.orientation = SCNQuaternion(qw, qx, qy, qz)
         }
         
         if shouldShow(.kiteAxes) {
@@ -167,13 +181,16 @@ final class KiteViewer {
             update(line: velocityArrow, from: p, to: p + v)
         }
         
-        let showWind = w.norm > 0 && shouldShow(.wind)
+        let hasWind = w.norm > 0
+        let showWind = hasWind && shouldShow(.wind)
         
         if showWind {
             update(line: windArrow, from: p, to: p + w)
             update(line: velocityInducedWindArrow, from: p, to: p - v)
             update(line: apparentWindArrow, from: p, to: p + w - v)
-            
+        }
+        
+        if hasWind {
             let e_w = w.unit
             windArrows.rotation = Rotation(around: e_x×e_w, by: e_x.angle(to: e_w))
         }
@@ -210,7 +227,7 @@ final class KiteViewer {
         windArrow.isHidden = !showWind
         velocityInducedWindArrow.isHidden = !showWind
         apparentWindArrow.isHidden = !showWind
-        windArrows.isHidden = !showWind
+        windArrows.isHidden = !hasWind
         
         tetherPointBall.isHidden = !showTether
         tetherLine.isHidden = !showTether

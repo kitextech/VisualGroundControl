@@ -65,7 +65,7 @@ final class KiteEmulator: KiteType {
     }
     
     public func update() {
-        update(totalElapsed: totalElapsed)
+        update(totalElapsed: 0)
     }
 
     private func update(totalElapsed: TimeInterval) {
