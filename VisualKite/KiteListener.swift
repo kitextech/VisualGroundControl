@@ -52,8 +52,8 @@ class KiteLink: NSObject {
     
     // MARK: Mavlink Ids
 
-    private var targetSystemId: UInt8?
-    private var autopilotId: UInt8?
+    var targetSystemId: UInt8?
+    var autopilotId: UInt8?
     
     // MARK: Mavlink Misc
 
@@ -100,14 +100,16 @@ class KiteLink: NSObject {
     // MARK: Private Methods
     
     private func toggleOffBoard(on: Bool) {
+        print("Prepare offboard control: \(on)")
+
         if on {
-            print("Prepare offboard control")
-            
             // TODO: sendOffboardEnabled(on: true) Enable doesn't work before a value has been send
             
             timer = Timer(timeInterval: 0.10, repeats: true) { _ in
                 print("Thrust \(self.thrust.value)")
                 
+                print("Thrust \(self.thrust.value)")
+
                 if let serialPort = self.serialPort, let targetSystemId = self.targetSystemId, let targetComponentId = self.autopilotId {
                     
                     let msg = MavlinkMessage.setAttitudeTarget(self.systemId, self.compId, targetSystemId, targetComponentId, thrust: self.thrust.value)
@@ -143,6 +145,8 @@ class KiteLink: NSObject {
             mavlink_msg_command_long_encode(systemId, compId, &message, &com);
             
             serialPort.send(message.data)
+            
+            print("sendOffboardEnabled: \(on)")
         }
     }
     
@@ -237,6 +241,9 @@ extension KiteLink: ORSSerialPortDelegate {
             let channel = UInt8(MAVLINK_COMM_1.rawValue)
             if mavlink_parse_char(channel, byte, &message, &status) != 0 {
                 
+                targetSystemId = message.sysid // Only handles one drone
+                autopilotId = message.compid
+
                 if let point = message.localNEDDataPoint {
                     location.onNext(point)
                 }

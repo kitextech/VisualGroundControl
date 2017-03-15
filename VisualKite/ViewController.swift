@@ -105,27 +105,8 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
         
         pauseButton.bool.subscribe(onNext: togglePause).disposed(by: bag)
         
-        realKite.mavlinkMessage.subscribe(onNext: { print("MESSAGE: \($0)") }).disposed(by: bag)
-        realKite.location.subscribe(onNext: { print("LOCATION: \($0)") }).disposed(by: bag)
-    }
-    
-    private func togglePause(paused: Bool) {
-        isPaused = paused
-    }
-    
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        if isPaused {
-            kite.update()
-        }
-        else {
-            kite.update(elapsed: time - lastUpdate)
-        }
-        
-        lastUpdate = time
-    }
-    
-    override func awakeFromNib(){
-        super.awakeFromNib()
+//        realKite.mavlinkMessage.subscribe(onNext: { print("MESSAGE: \($0)") }).disposed(by: bag)
+//        realKite.location.subscribe(onNext: { print("LOCATION: \($0)") }).disposed(by: bag)
         
         // Kite emulator parameters
         
@@ -139,20 +120,20 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
         // Kite
         elevationSlider.setup(min: 0, max: π/2, current: 0)
         elevationSlider.scalar.bindTo(kite.elevation).disposed(by: bag)
-
+        
         glideSlider.setup(min: 2, max: 4, current: 3)
         glideSlider.scalar.bindTo(kite.speedFactor).disposed(by: bag)
-
+        
         // General
         tetherLengthSlider.setupExp(min: 30, max: 250, current: 100)
         tetherLengthSlider.expScalar(min: 30, max: 250).bindTo(kite.tetherLength).disposed(by: bag)
         
         turningRadiusSlider.setupExp(min: 10, max: 100, current: 20)
         turningRadiusSlider.expScalar(min: 10, max: 100).bindTo(kite.turningRadius).disposed(by: bag)
-
+        
         phaseDeltaSlider.setup(min: -π, max: π, current: 0)
         phaseDeltaSlider.scalar.bindTo(kite.phaseDelta).disposed(by: bag)
-
+        
         // Tweaks
         phiDeltaSlider.setup(min: -π/8, max: π/8, current: 0)
         phiDeltaSlider.scalar.bindTo(kite.phiDelta).disposed(by: bag)
@@ -162,7 +143,7 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
         
         pitchDeltaSlider.setup(min: -π/8, max: π/8, current: 0)
         pitchDeltaSlider.scalar.bindTo(kite.pitchDelta).disposed(by: bag)
-
+        
         // Kite Emulator Output
         kite.position.bindTo(viewer.position).disposed(by: bag)
         kite.velocity.bindTo(viewer.velocity).disposed(by: bag)
@@ -181,6 +162,21 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
         bind(button: windButton, to: .wind)
         bind(button: tetherButton, to: .tether)
         bind(button: kiteButton, to: .kite)
+    }
+    
+    private func togglePause(paused: Bool) {
+        isPaused = paused
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        if isPaused {
+            kite.update()
+        }
+        else {
+            kite.update(elapsed: time - lastUpdate)
+        }
+        
+        lastUpdate = time
     }
     
     override func keyDown(with event: NSEvent) {

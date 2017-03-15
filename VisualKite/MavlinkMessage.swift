@@ -125,7 +125,6 @@ extension MavlinkMessage {
         setPositionTarget.y = y
         setPositionTarget.z = z
         
-        
         setPositionTarget.target_component = tarCompId
         setPositionTarget.target_system = tarSysId
         

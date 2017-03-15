@@ -12,8 +12,8 @@ import RxCocoa
 import ORSSerial
 
 class SerialViewController: NSViewController {
-    private let lineCount = 100
-    private let maxLineCount = 1000
+    private let lineCount = 10
+    private let maxLineCount = 50
     
     // MARK: - Outlets
     @IBOutlet weak var toggleOpenPortButton: NSButton!
@@ -25,7 +25,7 @@ class SerialViewController: NSViewController {
     
     // MARK: - Private Properties
 
-    private let kite = KiteLink.shared
+    let kite = KiteLink.shared
     private let bag = DisposeBag()
     
     private var messages = [String]()
@@ -45,8 +45,6 @@ class SerialViewController: NSViewController {
     
     private func addMessage(message: String) {
         messages.append(message)
-        
-        print("Added message: \(message)")
         
         if messages.count > maxLineCount {
             messages.removeFirst(maxLineCount - lineCount)

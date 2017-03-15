@@ -491,15 +491,17 @@
                 </viewController>
                 <customObject id="w6d-JT-YpW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-62" y="484"/>
+            <point key="canvasLocation" x="-62" y="625"/>
         </scene>
         <!--Tab View Controller-->
         <scene sceneID="67o-Xc-VDr">
             <objects>
-                <tabViewController id="2vd-3d-Vv4" sceneMemberID="viewController">
+                <tabViewController selectedTabViewItemIndex="0" id="2vd-3d-Vv4" sceneMemberID="viewController">
                     <tabViewItems>
-                        <tabViewItem id="rnT-y1-hRe"/>
+                        <tabViewItem id="4Sy-je-tle"/>
                         <tabViewItem id="uwi-IO-PmN"/>
+                        <tabViewItem id="rnT-y1-hRe"/>
+                        <tabViewItem id="zIN-hl-fZO"/>
                     </tabViewItems>
                     <tabView key="tabView" type="noTabsNoBorder" id="D8r-cG-InT">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
@@ -508,13 +510,72 @@
                         <tabViewItems/>
                     </tabView>
                     <connections>
-                        <segue destination="CZY-rB-AJf" kind="relationship" relationship="tabItems" id="XTe-Vf-e5I"/>
+                        <segue destination="AV6-Qh-fxc" kind="relationship" relationship="tabItems" id="9RV-3M-3gm"/>
                         <segue destination="Pjk-ka-PHT" kind="relationship" relationship="tabItems" id="ULl-5G-Aka"/>
+                        <segue destination="CZY-rB-AJf" kind="relationship" relationship="tabItems" id="XTe-Vf-e5I"/>
+                        <segue destination="hAS-Qs-S5Y" kind="relationship" relationship="tabItems" id="1M7-Ei-ZuH"/>
                     </connections>
                 </tabViewController>
                 <customObject id="iCh-pS-gxM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-62" y="85"/>
+        </scene>
+        <!--Leap-->
+        <scene sceneID="gem-Rb-9uz">
+            <objects>
+                <viewController title="Leap" id="AV6-Qh-fxc" customClass="LeapSettingsViewController" customModule="VisualKite" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="yWd-jd-f6S">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nQs-xV-XV0">
+                                <rect key="frame" x="19" y="228" width="98" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="radio" title="Attitude" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="j4F-qi-1Lc">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="controlChanged:" target="AV6-Qh-fxc" id="cw4-SR-SpQ"/>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jEp-Mm-rB3">
+                                <rect key="frame" x="20" y="263" width="49" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Control" id="ACG-zZ-4Xx">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="XZu-cj-x8U">
+                                <rect key="frame" x="19" y="206" width="130" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="radio" title="Free position" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="yWz-6U-ocI">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="controlChanged:" target="AV6-Qh-fxc" id="OEN-82-aWx"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="sv7-O8-SI5">
+                                <rect key="frame" x="19" y="184" width="130" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="radio" title="Tethered position" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="VlJ-Aa-FHw">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="controlChanged:" target="AV6-Qh-fxc" id="ZyN-sj-553"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                </viewController>
+                <customObject id="ql4-5J-0VC" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-574" y="652"/>
         </scene>
         <!--Serial-->
         <scene sceneID="FgN-Lr-0B3">
@@ -558,8 +619,8 @@
                                 </popUpButtonCell>
                                 <connections>
                                     <binding destination="CZY-rB-AJf" name="content" keyPath="kite.serialPortManager.availablePorts" id="nAt-B7-IeN"/>
-                                    <binding destination="CZY-rB-AJf" name="contentValues" keyPath="serialPortManager.availablePorts.name" previousBinding="nAt-B7-IeN" id="OWN-L8-v6E"/>
-                                    <binding destination="CZY-rB-AJf" name="selectedObject" keyPath="kite.serialPort" previousBinding="OWN-L8-v6E" id="xOn-fP-GpB"/>
+                                    <binding destination="CZY-rB-AJf" name="contentValues" keyPath="kite.serialPortManager.availablePorts.name" previousBinding="nAt-B7-IeN" id="Fl4-Uj-7Zo"/>
+                                    <binding destination="CZY-rB-AJf" name="selectedObject" keyPath="kite.serialPort" previousBinding="Fl4-Uj-7Zo" id="kLD-Wj-Pxg"/>
                                 </connections>
                             </popUpButton>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="5bB-jd-AdZ">
@@ -597,9 +658,6 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
-                                <connections>
-                                    <action selector="openOrClosePort:" target="CZY-rB-AJf" id="ydP-GD-ray"/>
-                                </connections>
                             </button>
                             <button translatesAutoresizingMaskIntoConstraints="NO" id="q4W-bD-eEu">
                                 <rect key="frame" x="151" y="410" width="49" height="18"/>
@@ -607,9 +665,6 @@
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
-                                <connections>
-                                    <action selector="radioButtonSelected:" target="CZY-rB-AJf" id="jco-c0-bvd"/>
-                                </connections>
                             </button>
                             <button translatesAutoresizingMaskIntoConstraints="NO" id="GNM-wx-Kg4">
                                 <rect key="frame" x="213" y="410" width="64" height="18"/>
@@ -617,9 +672,6 @@
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
-                                <connections>
-                                    <action selector="radioButtonSelected:" target="CZY-rB-AJf" id="6b4-qo-0s0"/>
-                                </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rzB-MT-qW6">
                                 <rect key="frame" x="331" y="36" width="72" height="32"/>
@@ -627,9 +679,6 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
-                                <connections>
-                                    <action selector="clearTextView:" target="CZY-rB-AJf" id="a21-cm-fZS"/>
-                                </connections>
                             </button>
                         </subviews>
                         <constraints>
@@ -678,28 +727,61 @@
                                 </sliderAccessory>
                                 <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y8P-FS-uMh">
                                     <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="vZQ-hH-xrD"/>
+                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="1" tickMarkPosition="above" sliderType="linear" id="vZQ-hH-xrD"/>
                                 </slider>
                             </sliderTouchBarItem>
                         </touchBarItems>
                     </touchBar>
                     <connections>
                         <outlet property="clearButton" destination="rzB-MT-qW6" id="L3b-fB-xGD"/>
-                        <outlet property="clearTextViewButton" destination="rzB-MT-qW6" id="V6C-U3-bzA"/>
                         <outlet property="offboardButton" destination="gNt-Z7-Y05" id="OYy-TU-7t3"/>
-                        <outlet property="openCloseButton" destination="krs-L1-mRJ" id="8ef-yb-l2c"/>
-                        <outlet property="receivedMessageTextView" destination="Qra-v1-v2g" id="jV9-o6-Xrg"/>
-                        <outlet property="telemetryRadioButton" destination="GNM-wx-Kg4" id="UQM-I2-kHF"/>
                         <outlet property="textView" destination="Qra-v1-v2g" id="XHK-Oz-CE1"/>
                         <outlet property="thrustSlider" destination="y8P-FS-uMh" id="ZrH-jO-s1R"/>
                         <outlet property="toggleOpenPortButton" destination="krs-L1-mRJ" id="CzJ-NV-q5D"/>
-                        <outlet property="usbRadioButton" destination="q4W-bD-eEu" id="P2k-fA-s4Q"/>
                     </connections>
                 </viewController>
                 <customObject id="HEe-3D-aqn" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="7DM-pG-pIO"/>
             </objects>
-            <point key="canvasLocation" x="507" y="36"/>
+            <point key="canvasLocation" x="463" y="757"/>
+        </scene>
+        <!--Kite settings-->
+        <scene sceneID="Wkm-DZ-0Pg">
+            <objects>
+                <viewController title="Kite settings" id="hAS-Qs-S5Y" sceneMemberID="viewController">
+                    <view key="view" id="gkp-rs-Ann">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bxV-kI-9Rc">
+                                <rect key="frame" x="61" y="261" width="330" height="19"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="BzM-zC-xpx"/>
+                            </slider>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eQx-8t-FVf">
+                                <rect key="frame" x="20" y="263" width="37" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="3jL-KZ-TSq">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rpr-lv-vv9">
+                                <rect key="frame" x="395" y="263" width="37" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="3Ge-iy-7vI">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                    </view>
+                </viewController>
+                <customObject id="Vgv-Xi-3wv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="963" y="652"/>
         </scene>
     </scenes>
 </document>
