@@ -1,5 +1,5 @@
 //
-//  GameViewController.swift
+//  SceneViewController.swift
 //  VisualKite
 //
 //  Created by Gustaf Kugelberg on 2017-02-25.
@@ -46,12 +46,13 @@ protocol AnalyserType {
     var isTethered: PublishSubject<Scalar> { get }
 }
 
-final class ViewController: NSViewController, SCNSceneRendererDelegate {
+final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
     @IBOutlet weak var sceneView: SCNView!
     
     private let bag = DisposeBag()
     private let kite = KiteEmulator()
     
+    private let leap = LeapListener.shared
     private let realKite = KiteLink.shared
     
     private let viewer = KiteViewer()
@@ -104,6 +105,12 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
         sceneView.showsStatistics = true
         
         pauseButton.bool.subscribe(onNext: togglePause).disposed(by: bag)
+        
+        leap.start()
+        
+        leap.rightHand.bindNext { hand in
+            print("hand: \(hand.palmPosition)")
+        }.disposed(by: bag)
         
 //        realKite.mavlinkMessage.subscribe(onNext: { print("MESSAGE: \($0)") }).disposed(by: bag)
 //        realKite.location.subscribe(onNext: { print("LOCATION: \($0)") }).disposed(by: bag)
@@ -197,7 +204,6 @@ final class ViewController: NSViewController, SCNSceneRendererDelegate {
         return r*e_x.rotated(around: e_z, by: phi)
     }
     
-    
     private func combine<S, T>(with element: T) -> (S) -> (S, T) {
         return {
             return ($0, element)
@@ -234,67 +240,29 @@ extension NSButton {
     }
 }
 
-/*
- Emulator:
- 
- IN:
- 
- paused -
- phase -
- phaseSpeed
- 
- wind
- phi? - if not set, uses wind value
- theta
- 
- turningRadius
- tetherLength
- rollAdjustment - relative to tether
- 
- OUT:
- 
- position
- attitude - euler?
- velocity
- 
- c
- turningRadius
- tetherLength
+class TraceView: NSView {
+    private var points = [NSPoint]()
+    
+    private var path = NSBezierPath()
+    
+    public func add(point: NSPoint) {
+        points.append(point)
+        
+        path.line(to: scaler(rect: bounds)(point))
 
- ----------------
- 
- Viewer:
- 
- IN:
- 
- position
- attitude - euler?
- velocity
+        setNeedsDisplay(bounds)
+    }
+    
+    override func draw(_ dirtyRect: NSRect) {
+        path.stroke()
+    }
+}
 
- calcC
- calcTurningRadius
- calcTetherLength
- 
- wind
- 
- TOGGLES:
- 
- showKiteAxes
- showPiAxes
- showPiPlane
- 
- showC
- showTether
- showTurningRadius
-
- showVelocity
- showWind
- showInducedWind
- showApparentWind
- 
- showPiPropjection
-
- */
+private func scaler(rect: NSRect) -> (NSPoint) -> NSPoint {
+    return { point in
+        NSPoint(x: rect.minX + rect.width*point.x, y: rect.minY + rect.height*point.y)
+    }
+}
 
 //        Observable.combineLatest(windSlider.rx.value, vSlider.rx.value, hSlider.rx.value, resultSelector: Vector.init)
 //            .bindTo(viewer.attitude).disposed(by: bag)

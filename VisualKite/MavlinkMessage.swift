@@ -9,53 +9,27 @@
 import Foundation
 import Mavlink
 
-public typealias MavlinkMessage = mavlink_message_t
-
-extension MavlinkMessage: CustomStringConvertible {
-    public var description: String {
-        var message = self
-        switch msgid {
-        case 0:
-            var heartbeat = mavlink_heartbeat_t()
-            mavlink_msg_heartbeat_decode(&message, &heartbeat);
-            return "HEARTBEAT mavlink_version: \(heartbeat.mavlink_version)\n"
-        case 1:
-            var sys_status = mavlink_sys_status_t()
-            mavlink_msg_sys_status_decode(&message, &sys_status)
-            return "SYS_STATUS comms drop rate: \(sys_status.drop_rate_comm)%\n"
-        case 30:
-            var attitude = mavlink_attitude_t()
-            mavlink_msg_attitude_decode(&message, &attitude)
-            return "ATTITUDE roll: \(attitude.roll) pitch: \(attitude.pitch) yaw: \(attitude.yaw)\n"
-        case 32:
-            var local_position_ned = mavlink_local_position_ned_t()
-            mavlink_msg_local_position_ned_decode(&message, &local_position_ned)
-            return "LOCAL POSITION NED x: \(local_position_ned.x) y: \(local_position_ned.y) z: \(local_position_ned.z)\n"
-        case 33:
-            return "GLOBAL_POSITION_INT\n"
-        case 74:
-            var vfr_hud = mavlink_vfr_hud_t()
-            mavlink_msg_vfr_hud_decode(&message, &vfr_hud)
-            return "VFR_HUD heading: \(vfr_hud.heading) degrees\n"
-        case 87:
-            return "POSITION_TARGET_GLOBAL_INT\n"
-        case 105:
-            var highres_imu = mavlink_highres_imu_t()
-            mavlink_msg_highres_imu_decode(&message, &highres_imu)
-            return "HIGHRES_IMU Pressure: \(highres_imu.abs_pressure) millibar\n"
-        case 147:
-            var battery_status = mavlink_battery_status_t()
-            mavlink_msg_battery_status_decode(&message, &battery_status)
-            return "BATTERY_STATUS current consumed: \(battery_status.current_consumed) mAh\n"
-        default:
-            return "OTHER Message id \(message.msgid) received\n"
-        }
-    }
-}
-
-extension MavlinkMessage {
-    public static func setPositionTarget(_ sysId: UInt8, _ compId: UInt8, _ tarSysId: UInt8, _ tarCompId: UInt8, x: Float32, y: Float32, z: Float32) -> MavlinkMessage {
+struct MessageBox {
+    public let sysId: UInt8
+    public let compId: UInt8
+    public let tarSysId: UInt8
+    public let tarCompId: UInt8
+    
+    public func setOffboardEnabled(on: Bool) -> MavlinkMessage {
+        var com = mavlink_command_long_t()
+        com.target_system = tarSysId
+        com.target_component = tarCompId
+        com.command = UInt16(MAV_CMD_NAV_GUIDED_ENABLE.rawValue)
+        com.confirmation = UInt8(true)
+        com.param1 = on ? 1 : 0 // // flag >0.5 => start, <0.5 => stop
         
+        var message = mavlink_message_t()
+        mavlink_msg_command_long_encode(sysId, compId, &message, &com);
+        
+        return message
+    }
+
+    public func setPositionTarget(vector: Vector) -> MavlinkMessage {
         var setPositionTarget = mavlink_set_position_target_local_ned_t()
         
         //        time_boot_ms    uint32_t    Timestamp in milliseconds since system boot
@@ -121,9 +95,9 @@ extension MavlinkMessage {
         setPositionTarget.type_mask = MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_POSITION // Bitmask should work for now.
         setPositionTarget.coordinate_frame = UInt8(MAV_FRAME_LOCAL_NED.rawValue)
         
-        setPositionTarget.x = x
-        setPositionTarget.y = y
-        setPositionTarget.z = z
+        setPositionTarget.x = Float32(vector.x)
+        setPositionTarget.y = Float32(vector.y)
+        setPositionTarget.z = Float32(vector.z)
         
         setPositionTarget.target_component = tarCompId
         setPositionTarget.target_system = tarSysId
@@ -134,27 +108,9 @@ extension MavlinkMessage {
         return msg
     }
     
-    public static func toggleOffboard(_ sysId: UInt8, _ compId: UInt8, _ tarSysId: UInt8, _ tarCompId: UInt8, on: Bool) -> MavlinkMessage {
-        var com = mavlink_command_long_t()
-        com.target_system = tarSysId
-        com.target_component = tarCompId // This seems right
-        com.command = UInt16(MAV_CMD_NAV_GUIDED_ENABLE.rawValue)
-        com.confirmation = UInt8(true)
-        com.param1 = on ? 1 : 0 // // flag >0.5 => start, <0.5 => stop
-        
-        var message = mavlink_message_t()
-        mavlink_msg_command_long_encode(sysId, compId, &message, &com);
-        
-        return message
-    }
-    
-    public static func setAttitudeTarget(_ sysId: UInt8, _ compId: UInt8, _ tarSysId: UInt8, _ tarCompId: UInt8, thrust: Float32) -> MavlinkMessage {
-        
+    public func setAttitudeTarget(quaternion q: Quaternion, thrust: Scalar) -> MavlinkMessage {
         var setAttitudeTarget = mavlink_set_attitude_target_t()
         
-        //        time_boot_ms          uint32_t	Timestamp in milliseconds since system boot
-        //        target_system         uint8_t     System ID
-        //        target_component      uint8_t     Component ID
         //        type_mask             uint8_t     Mappings: If any of these bits are set, the corresponding input should be ignored: bit 1: body roll rate, bit 2: body pitch rate, bit 3: body yaw rate. bit 4-bit 6: reserved, bit 7: throttle, bit 8: attitude
         //        q	float[4]	Attitude quaternion (w, x, y, z order, zero-rotation is 1, 0, 0, 0)
         //        body_roll_rate        float       Body roll rate in radians per second
@@ -163,16 +119,16 @@ extension MavlinkMessage {
         //        thrust                float       Collective thrust, normalized to 0 .. 1 (-1 .. 1 for vehicles capable of reverse trust)
         
         
-        setAttitudeTarget.time_boot_ms = UInt32(ProcessInfo.processInfo.systemUptime * 1000)
-        setAttitudeTarget.type_mask = UInt8(0) // Bitmask should work for now.
+        setAttitudeTarget.time_boot_ms = UInt32(ProcessInfo.processInfo.systemUptime*1000)
+        setAttitudeTarget.type_mask = 0 // Bitmask should work for now.
         
-        setAttitudeTarget.q = (1, 0, 0, 0)
+        setAttitudeTarget.q = (Float(q.w), Float(q.x), Float(q.y), Float(q.z))
         
         setAttitudeTarget.body_roll_rate = 0
         setAttitudeTarget.body_pitch_rate = 0
         setAttitudeTarget.body_yaw_rate = 0
         
-        setAttitudeTarget.thrust = thrust
+        setAttitudeTarget.thrust = Float32(thrust)
         
         setAttitudeTarget.target_component = tarCompId
         setAttitudeTarget.target_system = tarSysId
@@ -184,7 +140,7 @@ extension MavlinkMessage {
         return msg
     }
     
-    public static func requestParamList(_ sysId: UInt8, _ compId: UInt8, _ tarSysId: UInt8, _ tarCompId: UInt8) -> MavlinkMessage {
+    public func requestParamList() -> MavlinkMessage {
         var parameterRequestList = mavlink_param_request_list_t()
         parameterRequestList.target_component = tarCompId
         parameterRequestList.target_system = tarSysId
@@ -196,7 +152,113 @@ extension MavlinkMessage {
         return msg
     }
     
-    var localNEDDataPoint: KiteLocation? {
+    public func setParameter(id: String, value: Float, type: MAV_PARAM_TYPE) -> MavlinkMessage {
+        var paramSet = mavlink_param_set_t()
+        paramSet.target_component = tarCompId
+        paramSet.target_system = tarSysId
+        
+        paramSet.param_id = id.paramId
+        paramSet.param_value = value
+        paramSet.param_type = UInt8(type.rawValue)
+        
+        var msg = mavlink_message_t()
+        
+        mavlink_msg_param_set_encode(sysId, compId, &msg, &paramSet)
+        
+        return msg
+    }
+}
+
+extension String {
+    var paramId: ParamId {
+        let a = unicodeScalars.filter { $0.isASCII }.map { Int8($0.value) } + Array(repeating: 0, count: 16)
+        return (a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15])
+    }
+}
+
+public typealias ParamId = (Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8)
+
+public typealias MavlinkMessage = mavlink_message_t
+
+extension MavlinkMessage: CustomStringConvertible {
+    public var description: String {
+        var message = self
+        switch msgid {
+        case 0:
+            var heartbeat = mavlink_heartbeat_t()
+            mavlink_msg_heartbeat_decode(&message, &heartbeat);
+            return "HEARTBEAT mavlink_version: \(heartbeat.mavlink_version)"
+        case 1:
+            var sys_status = mavlink_sys_status_t()
+            mavlink_msg_sys_status_decode(&message, &sys_status)
+            return "SYS_STATUS comms drop rate: \(sys_status.drop_rate_comm)%"
+        case 30:
+            var attitude = mavlink_attitude_t()
+            mavlink_msg_attitude_decode(&message, &attitude)
+            return "ATTITUDE roll: \(attitude.roll) pitch: \(attitude.pitch) yaw: \(attitude.yaw)"
+        case 32:
+            var local_position_ned = mavlink_local_position_ned_t()
+            mavlink_msg_local_position_ned_decode(&message, &local_position_ned)
+            return "LOCAL POSITION NED x: \(local_position_ned.x) y: \(local_position_ned.y) z: \(local_position_ned.z)"
+        case 33:
+            return "GLOBAL_POSITION_INT"
+        case 74:
+            var vfr_hud = mavlink_vfr_hud_t()
+            mavlink_msg_vfr_hud_decode(&message, &vfr_hud)
+            return "VFR_HUD heading: \(vfr_hud.heading) degrees"
+        case 87:
+            return "POSITION_TARGET_GLOBAL_INT"
+        case 105:
+            var highres_imu = mavlink_highres_imu_t()
+            mavlink_msg_highres_imu_decode(&message, &highres_imu)
+            return "HIGHRES_IMU Pressure: \(highres_imu.abs_pressure) millibar"
+        case 147:
+            var battery_status = mavlink_battery_status_t()
+            mavlink_msg_battery_status_decode(&message, &battery_status)
+            return "BATTERY_STATUS current consumed: \(battery_status.current_consumed) mAh"
+        default:
+            return "OTHER Message with id \(message.msgid)"
+        }
+    }
+}
+
+extension MavlinkMessage {
+    var attitude: KiteAttitude? {
+        guard msgid == 30 else {
+            return nil
+        }
+        
+        var message = self
+        
+        var att = mavlink_attitude_t()
+        mavlink_msg_attitude_decode(&message, &att)
+        
+        let time = Double(att.time_boot_ms)
+        let euler = Vector(att.yaw, att.pitch, att.roll)
+        let rate = Vector(att.yawspeed, att.pitchspeed, att.rollspeed)
+        
+        return KiteAttitude(time: time, att: euler, rate: rate)
+    }
+
+    var quaternion: KiteQuaternion? {
+        guard msgid == 31 else {
+            return nil
+        }
+
+        var message = self
+        
+        var q = mavlink_attitude_quaternion_t()
+        mavlink_msg_attitude_quaternion_decode(&message, &q)
+        
+        let time = Double(q.time_boot_ms)
+
+        let quat = Quaternion(q.q1, q.q2, q.q3, q.q4)
+        let rate = Vector(q.yawspeed, q.pitchspeed, q.rollspeed)
+
+        return KiteQuaternion(time: time, quaternion: quat, rate: rate)
+    }
+    
+    var location: KiteLocation? {
         guard msgid == 32 else {
             return nil
         }

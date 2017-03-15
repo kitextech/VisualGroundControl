@@ -19,14 +19,18 @@
 		22BFFA471E72B90A006BE86D /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA431E72B909006BE86D /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		22BFFA4A1E72B97A006BE86D /* DataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA491E72B97A006BE86D /* DataModels.swift */; };
 		22BFFA4C1E72ED54006BE86D /* KiteAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA4B1E72ED54006BE86D /* KiteAnalyzer.swift */; };
-		22BFFA501E7351F4006BE86D /* KiteListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA4F1E7351F4006BE86D /* KiteListener.swift */; };
+		22BFFA501E7351F4006BE86D /* KiteLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA4F1E7351F4006BE86D /* KiteLink.swift */; };
 		22BFFA5A1E735524006BE86D /* ORSSerial.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA571E7354DB006BE86D /* ORSSerial.framework */; };
 		22BFFA621E782302006BE86D /* SerialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA611E782302006BE86D /* SerialViewController.swift */; };
 		22BFFA7B1E7841E6006BE86D /* MavlinkMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA7A1E7841E6006BE86D /* MavlinkMessage.swift */; };
 		22BFFA7D1E78863B006BE86D /* LeapMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA7C1E78863B006BE86D /* LeapMotion.swift */; };
+		22BFFA841E793700006BE86D /* LeapObjectiveC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA831E793700006BE86D /* LeapObjectiveC.mm */; };
+		22BFFA861E793771006BE86D /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA851E793771006BE86D /* libLeap.dylib */; };
+		22BFFA881E793810006BE86D /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22BFFA851E793771006BE86D /* libLeap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		22BFFA8A1E798A01006BE86D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA891E798A01006BE86D /* SettingsViewController.swift */; };
 		22EC26881E61DD7E00370170 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26871E61DD7E00370170 /* AppDelegate.swift */; };
 		22EC268A1E61DD7E00370170 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26891E61DD7E00370170 /* GameView.swift */; };
-		22EC268C1E61DD7E00370170 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC268B1E61DD7E00370170 /* ViewController.swift */; };
+		22EC268C1E61DD7E00370170 /* SceneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC268B1E61DD7E00370170 /* SceneViewController.swift */; };
 		22EC268E1E61DD7E00370170 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 22EC268D1E61DD7E00370170 /* art.scnassets */; };
 		22EC26901E61DD7E00370170 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22EC268F1E61DD7E00370170 /* Assets.xcassets */; };
 		22EC26A21E62219B00370170 /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC269B1E62219B00370170 /* Matrix.swift */; };
@@ -213,6 +217,16 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		22BFFA871E7937F5006BE86D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				22BFFA881E793810006BE86D /* libLeap.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -225,15 +239,22 @@
 		22BFFA431E72B909006BE86D /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
 		22BFFA491E72B97A006BE86D /* DataModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataModels.swift; sourceTree = "<group>"; };
 		22BFFA4B1E72ED54006BE86D /* KiteAnalyzer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteAnalyzer.swift; sourceTree = "<group>"; };
-		22BFFA4F1E7351F4006BE86D /* KiteListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteListener.swift; sourceTree = "<group>"; };
+		22BFFA4F1E7351F4006BE86D /* KiteLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteLink.swift; sourceTree = "<group>"; };
 		22BFFA511E7354DB006BE86D /* ORSSerialPort.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ORSSerialPort.xcodeproj; path = "Frameworks/ORSSerialPort/Framework Project/ORSSerialPort.xcodeproj"; sourceTree = "<group>"; };
 		22BFFA611E782302006BE86D /* SerialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerialViewController.swift; sourceTree = "<group>"; };
 		22BFFA7A1E7841E6006BE86D /* MavlinkMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MavlinkMessage.swift; sourceTree = "<group>"; };
 		22BFFA7C1E78863B006BE86D /* LeapMotion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeapMotion.swift; sourceTree = "<group>"; };
+		22BFFA7F1E7936FF006BE86D /* VisualKite-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VisualKite-Bridging-Header.h"; sourceTree = "<group>"; };
+		22BFFA801E793700006BE86D /* Leap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Leap.h; sourceTree = "<group>"; };
+		22BFFA811E793700006BE86D /* LeapMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeapMath.h; sourceTree = "<group>"; };
+		22BFFA821E793700006BE86D /* LeapObjectiveC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeapObjectiveC.h; sourceTree = "<group>"; };
+		22BFFA831E793700006BE86D /* LeapObjectiveC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LeapObjectiveC.mm; sourceTree = "<group>"; };
+		22BFFA851E793771006BE86D /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libLeap.dylib; sourceTree = "<group>"; };
+		22BFFA891E798A01006BE86D /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsViewController.swift; path = ../SettingsViewController.swift; sourceTree = "<group>"; };
 		22EC26841E61DD7E00370170 /* VisualKite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisualKite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22EC26871E61DD7E00370170 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		22EC26891E61DD7E00370170 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
-		22EC268B1E61DD7E00370170 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		22EC268B1E61DD7E00370170 /* SceneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViewController.swift; sourceTree = "<group>"; };
 		22EC268D1E61DD7E00370170 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		22EC268F1E61DD7E00370170 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		22EC26941E61DD7F00370170 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -249,6 +270,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22BFFA861E793771006BE86D /* libLeap.dylib in Frameworks */,
 				22BFFA5A1E735524006BE86D /* ORSSerial.framework in Frameworks */,
 				22BFFA441E72B90A006BE86D /* Realm.framework in Frameworks */,
 				22389A0F1E658CFD00E596EA /* RxCocoa.framework in Frameworks */,
@@ -297,6 +319,20 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		22BFFA7E1E7936CC006BE86D /* LeapMotion */ = {
+			isa = PBXGroup;
+			children = (
+				22BFFA851E793771006BE86D /* libLeap.dylib */,
+				22BFFA801E793700006BE86D /* Leap.h */,
+				22BFFA811E793700006BE86D /* LeapMath.h */,
+				22BFFA821E793700006BE86D /* LeapObjectiveC.h */,
+				22BFFA831E793700006BE86D /* LeapObjectiveC.mm */,
+				22BFFA7F1E7936FF006BE86D /* VisualKite-Bridging-Header.h */,
+			);
+			name = LeapMotion;
+			path = VisualKite;
+			sourceTree = "<group>";
+		};
 		22EC267B1E61DD7E00370170 = {
 			isa = PBXGroup;
 			children = (
@@ -306,6 +342,7 @@
 				22BFFA431E72B909006BE86D /* RealmSwift.framework */,
 				22EC26861E61DD7E00370170 /* VisualKite */,
 				22EC26851E61DD7E00370170 /* Products */,
+				22BFFA7E1E7936CC006BE86D /* LeapMotion */,
 			);
 			sourceTree = "<group>";
 		};
@@ -320,17 +357,18 @@
 		22EC26861E61DD7E00370170 /* VisualKite */ = {
 			isa = PBXGroup;
 			children = (
-				22BFFA7C1E78863B006BE86D /* LeapMotion.swift */,
-				22BFFA4F1E7351F4006BE86D /* KiteListener.swift */,
-				22BFFA4B1E72ED54006BE86D /* KiteAnalyzer.swift */,
+				22BFFA1F1E6DF6E8006BE86D /* WindowController.swift */,
+				22EC268B1E61DD7E00370170 /* SceneViewController.swift */,
+				22BFFA891E798A01006BE86D /* SettingsViewController.swift */,
 				22BFFA611E782302006BE86D /* SerialViewController.swift */,
+				22BFFA7C1E78863B006BE86D /* LeapMotion.swift */,
+				22BFFA4F1E7351F4006BE86D /* KiteLink.swift */,
+				22BFFA4B1E72ED54006BE86D /* KiteAnalyzer.swift */,
 				22BFFA211E6DFC4A006BE86D /* Main.storyboard */,
 				22BFFA7A1E7841E6006BE86D /* MavlinkMessage.swift */,
 				22EC26871E61DD7E00370170 /* AppDelegate.swift */,
-				22BFFA1F1E6DF6E8006BE86D /* WindowController.swift */,
 				22EC26891E61DD7E00370170 /* GameView.swift */,
 				22BFFA491E72B97A006BE86D /* DataModels.swift */,
-				22EC268B1E61DD7E00370170 /* ViewController.swift */,
 				22389A131E66034400E596EA /* KiteEmulator.swift */,
 				22389A111E6602DE00E596EA /* KiteViewer.swift */,
 				22EC268D1E61DD7E00370170 /* art.scnassets */,
@@ -356,6 +394,7 @@
 				22EC26811E61DD7E00370170 /* Frameworks */,
 				22EC26821E61DD7E00370170 /* Resources */,
 				22BFFA481E72B90A006BE86D /* Embed Frameworks */,
+				22BFFA871E7937F5006BE86D /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -378,6 +417,7 @@
 				TargetAttributes = {
 					22EC26831E61DD7E00370170 = {
 						CreatedOnToolsVersion = 8.2.1;
+						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -593,21 +633,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22BFFA501E7351F4006BE86D /* KiteListener.swift in Sources */,
+				22BFFA501E7351F4006BE86D /* KiteLink.swift in Sources */,
 				22BFFA7D1E78863B006BE86D /* LeapMotion.swift in Sources */,
 				22BFFA4C1E72ED54006BE86D /* KiteAnalyzer.swift in Sources */,
 				22EC26A21E62219B00370170 /* Matrix.swift in Sources */,
 				22EC26A31E62219B00370170 /* Nodes.swift in Sources */,
+				22BFFA8A1E798A01006BE86D /* SettingsViewController.swift in Sources */,
 				22EC26A71E62219B00370170 /* Vector4.swift in Sources */,
 				22EC268A1E61DD7E00370170 /* GameView.swift in Sources */,
 				22BFFA7B1E7841E6006BE86D /* MavlinkMessage.swift in Sources */,
 				22EC26A41E62219B00370170 /* Rotations.swift in Sources */,
-				22EC268C1E61DD7E00370170 /* ViewController.swift in Sources */,
+				22EC268C1E61DD7E00370170 /* SceneViewController.swift in Sources */,
 				22EC26881E61DD7E00370170 /* AppDelegate.swift in Sources */,
 				22BFFA201E6DF6E8006BE86D /* WindowController.swift in Sources */,
 				22389A141E66034400E596EA /* KiteEmulator.swift in Sources */,
 				22BFFA4A1E72B97A006BE86D /* DataModels.swift in Sources */,
 				22389A121E6602DE00E596EA /* KiteViewer.swift in Sources */,
+				22BFFA841E793700006BE86D /* LeapObjectiveC.mm in Sources */,
 				22EC26A61E62219B00370170 /* Vector.swift in Sources */,
 				22BFFA621E782302006BE86D /* SerialViewController.swift in Sources */,
 			);
@@ -712,6 +754,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -719,8 +762,14 @@
 				);
 				INFOPLIST_FILE = VisualKite/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/VisualKite",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = KiteX.VisualKite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "VisualKite/VisualKite-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -729,6 +778,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -736,8 +786,13 @@
 				);
 				INFOPLIST_FILE = VisualKite/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/VisualKite",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = KiteX.VisualKite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "VisualKite/VisualKite-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

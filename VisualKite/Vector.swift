@@ -9,10 +9,15 @@
 import Foundation
 import SceneKit
 
+public struct Sphere {
+    let center: Vector
+    let radius: Scalar
+}
+
 infix operator •: MultiplicationPrecedence
 infix operator ×: MultiplicationPrecedence
 
-extension Vector: CustomStringConvertible {
+extension Vector: CustomStringConvertible, Equatable {
     // Creation
     
     public static var zero: Vector {
@@ -20,7 +25,7 @@ extension Vector: CustomStringConvertible {
     }
     
     public static var origin: Vector {
-        return Vector(x: 0, y: 0, z: 0)
+        return SCNVector3Zero
     }
 
     public static var ex: Vector {
@@ -119,9 +124,17 @@ extension Vector: CustomStringConvertible {
     }
 
     public var norm: Scalar {
-        return sqrt(self•self)
+        return sqrt(squaredNorm)
     }
     
+    public var squaredNorm: Scalar {
+        return self•self
+    }
+
+    public func distance(to sphere: Sphere) -> Scalar {
+        return (self - sphere.center).norm - sphere.radius
+    }
+
     public var unit: Vector {
         let r = norm
         

@@ -20,6 +20,10 @@ extension Rotation {
 extension Vector4 {
     // Creation
     
+    public static var id: Vector4 {
+        return Vector4(x: 0, y: 0, z: 0, w: 1)
+    }
+
     public static var zero: Vector4 {
         return SCNVector4Zero
     }

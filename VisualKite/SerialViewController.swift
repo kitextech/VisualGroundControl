@@ -12,8 +12,7 @@ import RxCocoa
 import ORSSerial
 
 class SerialViewController: NSViewController {
-    private let lineCount = 10
-    private let maxLineCount = 50
+    private let lineCount = 20
     
     // MARK: - Outlets
     @IBOutlet weak var toggleOpenPortButton: NSButton!
@@ -25,7 +24,7 @@ class SerialViewController: NSViewController {
     
     // MARK: - Private Properties
 
-    let kite = KiteLink.shared
+    private let kite = KiteLink.shared
     private let bag = DisposeBag()
     
     private var messages = [String]()
@@ -36,21 +35,20 @@ class SerialViewController: NSViewController {
         clearButton.rx.tap.bindNext(clearText).disposed(by: bag)
         toggleOpenPortButton.rx.tap.bindNext(kite.togglePort).disposed(by: bag)
         
-        thrustSlider.rx.value.map(Float.init).bindTo(kite.thrust).disposed(by: bag)
+//        thrustSlider.rx.value.map(Float.init).bindTo(kite.thrust).disposed(by: bag)
         
         offboardButton.bool.bindTo(kite.isOffboard).disposed(by: bag)
 
         kite.mavlinkMessage.subscribe(onNext: addMessage).disposed(by: bag)
     }
     
-    private func addMessage(message: String) {
-        messages.append(message)
+    private func addMessage(message: MavlinkMessage) {
+        messages.append(message.description)
         
-        if messages.count > maxLineCount {
-            messages.removeFirst(maxLineCount - lineCount)
+        if messages.count > lineCount {
+            updateUI()
+            messages.removeAll()
         }
-        
-        updateUI()
     }
     
     private func clearText() {
@@ -59,17 +57,7 @@ class SerialViewController: NSViewController {
     }
     
     private func updateUI() {
-        let contents: String
-        
-        if messages.isEmpty {
-            contents = " -- No messages --"
-        }
-        else {
-            let range = max(messages.count - lineCount, 0)..<messages.count
-            contents = messages[range].joined()
-        }
-        
-        textView.textStorage?.mutableString.setString(contents)
+        textView.textStorage?.mutableString.setString(messages.joined())
         textView.needsDisplay = true
     }
 }

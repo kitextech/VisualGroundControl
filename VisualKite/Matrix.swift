@@ -13,6 +13,7 @@ import SceneKit
 public typealias Scalar = SCNFloat
 public typealias Vector = SCNVector3
 public typealias Vector4 = SCNVector4
+public typealias Quaternion = SCNQuaternion
 public typealias Matrix = SCNMatrix4
 
 extension Matrix: CustomStringConvertible {
@@ -41,7 +42,6 @@ extension Matrix: CustomStringConvertible {
         return SCNMatrix4Translate(self, vector.x, vector.y, vector.z)
     }
 
-    
     subscript(row: Int, col: Int) -> Scalar {
         get {
             assert(0 <= row && row < 4 && 0 <= col && col < 4, "Index out of range")
@@ -68,6 +68,7 @@ extension Matrix: CustomStringConvertible {
             default: fatalError("Index out of range")
             }
         }
+        
         set {
             assert((0 <= row && row < 4) && (0 <= col && col < 4), "Index out of range")
             switch (row, col) {

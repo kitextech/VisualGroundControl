@@ -11,18 +11,29 @@ import RealmSwift
 import RxSwift
 import RxCocoa
 
+public struct Estimate<T> {
+    let value: T
+    let certainty: Double
+}
+
 class KiteAnalyzer {
     // Inputs
     
-    public let position = Variable<Vector>(.origin)
-    public let velocity = Variable<Vector>(.origin)
-    public let attitude = Variable<Matrix>(.id)
+    public let location = Variable<KiteLocation>(KiteLocation())
+    public let attitude = Variable<KiteAttitude>(KiteAttitude())
+    public let tetherLength = Variable<Scalar>(100)
+    
+//    public let position = Variable<Vector>(.origin)
+//    public let velocity = Variable<Vector>(.origin)
+//    public let attitude = Variable<Matrix>(.id)
     
     // Outputs
     
-    public let positionOut = PublishSubject<Vector>()
-    public let velocityOut = PublishSubject<Vector>()
-    public let attitudeOut = PublishSubject<Matrix>()
+    public let estimatedB = PublishSubject<Estimate<Vector>>()
+
+//    public let positionOut = PublishSubject<Vector>()
+//    public let velocityOut = PublishSubject<Vector>()
+//    public let attitudeOut = PublishSubject<Matrix>()
 
     // Internal
 
@@ -32,7 +43,10 @@ class KiteAnalyzer {
     
     private var data: KiteData?
     
+    private var locations = [KiteLocation]()
+    
     init() {
+//        location.asObservable().bindNext(receivedLocation).disposed(by: bag)
     }
     
     public func start() {
@@ -43,5 +57,19 @@ class KiteAnalyzer {
         }
     }
     
+    private func error(with sphere: Sphere, points: [Vector]) -> Scalar {
+        var rSquared: Scalar = 0
+        
+        for point in points {
+            rSquared += point.distance(to: sphere)
+        }
+        
+        return rSquared
+    }
     
 }
+
+
+
+
+
