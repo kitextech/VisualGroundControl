@@ -1,0 +1,4 @@
+module Mavlink [system] {
+    header "../Frameworks/Mavlink/common/mavlink.h"
+    export *
+}
