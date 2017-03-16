@@ -86,7 +86,7 @@ enum OffboardPositionFlightMode {
 class KiteLink: NSObject {
     public var flightMode: FlightMode = .manual(subMode: .normal)
 
-    public let isOffboard = Variable<Bool>(false)
+    public let isOffboard = Variable<Bool>(true)
 
     // MARK: Parameters
     
@@ -158,7 +158,7 @@ class KiteLink: NSObject {
 
     private let bag = DisposeBag()
 
-    private var unsentMessages = [MavlinkMessage]()
+    private var unsentMessages = [String : MavlinkMessage]()
 
     // MARK: Initializers
     
@@ -229,7 +229,7 @@ class KiteLink: NSObject {
     private func heartbeat(timer: Timer) {
         guard let box = box else { return }
     
-        unsentMessages.forEach(send)
+        unsentMessages.values.forEach(send)
         unsentMessages.removeAll()
         
         switch flightMode {
@@ -250,7 +250,7 @@ class KiteLink: NSObject {
     
     // MARK: - Helper Methods for Linking Rx and Mavlink Parameter Messages
     
-    private func bind<T: Equatable>(_ variable: Variable<T>, with function: @escaping (T) -> [MavlinkMessage]) {
+    private func bind<T: Equatable>(_ variable: Variable<T>, with function: @escaping (T) -> [(MavlinkMessage, String)]) {
         variable.asObservable()
             .distinctUntilChanged()
             .map(function)
@@ -258,34 +258,34 @@ class KiteLink: NSObject {
             .disposed(by: bag)
     }
     
-    private func push(_ messages: [MavlinkMessage]) {
-        unsentMessages.append(contentsOf: messages)
+    private func push(_ messages: [(MavlinkMessage, String)]) {
+        messages.forEach { (message, id) in
+            unsentMessages[id] = message
+        }
     }
     
-    private func setBool(id: String) -> (Bool) -> [MavlinkMessage] {
+    private func setBool(id: String) -> (Bool) -> [(MavlinkMessage, String)] {
         return { bool in
-            guard let box = self.box else { return [] }
-            
-            return [box.setParameter(id: id, value: bool ? 1 : 0, type: MAV_PARAM_TYPE_REAL32)]
+            return self.setRealParameter(id: id, value: bool ? 1 : 0)
         }
     }
     
-    private func setScalar(id: String) -> (Scalar) -> [MavlinkMessage] {
+    private func setScalar(id: String) -> (Scalar) -> [(MavlinkMessage, String)] {
         return { value in
-            guard let box = self.box else { return [] }
-            
-            return [box.setParameter(id: id, value: Float(value), type: MAV_PARAM_TYPE_REAL32)]
+            return self.setRealParameter(id: id, value: value)
         }
     }
     
-    private func setVector(ids: (String, String, String)) -> (Vector) -> [MavlinkMessage] {
-        return { vector in
-            guard let box = self.box else { return [] }
-            
-            return [box.setParameter(id: ids.0, value: Float(vector.x), type: MAV_PARAM_TYPE_REAL32),
-                    box.setParameter(id: ids.1, value: Float(vector.y), type: MAV_PARAM_TYPE_REAL32),
-                    box.setParameter(id: ids.2, value: Float(vector.z), type: MAV_PARAM_TYPE_REAL32)]
+    private func setVector(ids: (String, String, String)) -> (Vector) -> [(MavlinkMessage, String)] {
+        return { v in
+            return self.setRealParameter(id: ids.0, value: v.x) + self.setRealParameter(id: ids.1, value: v.y) + self.setRealParameter(id: ids.2, value: v.z)
         }
+    }
+
+    private func setRealParameter(id: String, value: Scalar) -> [(MavlinkMessage, String)] {
+        guard let box = self.box else { return [] }
+
+        return [(box.setParameter(id: id, value: Float(value), type: MAV_PARAM_TYPE_REAL32), id)]
     }
 
     // MARK: - Private Methods

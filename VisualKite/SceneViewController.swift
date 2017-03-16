@@ -13,6 +13,11 @@ import RxCocoa
 
 func noOp<T>(value: T) -> T { return value }
 func makeScalar(_ value: Double) -> Scalar { return Scalar(value) }
+
+func makeVector(_ value: (Scalar, Scalar, Scalar)) -> Vector { return Vector(value.0, value.1, value.2) }
+
+func makeVec(_ x: Scalar, y: Scalar, z: Scalar) -> Vector { return Vector(x, y, z) }
+
 func ignore<T>(value: T) { }
 func isOn(int: Int) -> Bool { return int == 1 }
 
@@ -57,7 +62,7 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
     
     private let viewer = KiteViewer()
     
-    private let wind = Variable<Vector>(.origin)
+    private let wind = Variable<Vector>(.zero)
 
     // MARK: - Overall Settings
     
@@ -107,7 +112,7 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         pauseButton.bool.subscribe(onNext: togglePause).disposed(by: bag)
         
         leap.start()
-        
+
         leap.rightHand.bindNext { hand in
             print("hand: \(hand.palmPosition)")
         }.disposed(by: bag)
@@ -150,14 +155,23 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         
         pitchDeltaSlider.setup(min: -π/8, max: π/8, current: 0)
         pitchDeltaSlider.scalar.bindTo(kite.pitchDelta).disposed(by: bag)
-        
+
+
+        let tetherPoint = Variable<Vector>(.zero)
+
+        Observable.combineLatest(phiDeltaSlider.scalar, rollDeltaSlider.scalar, pitchDeltaSlider.scalar, resultSelector: makeVector).bindTo(tetherPoint).disposed(by: bag)
+
+        tetherPoint.asObservable().bindTo(kite.tetherPoint).disposed(by: bag) // new
+
         // Kite Emulator Output
         kite.position.bindTo(viewer.position).disposed(by: bag)
         kite.velocity.bindTo(viewer.velocity).disposed(by: bag)
         kite.attitude.bindTo(viewer.attitude).disposed(by: bag)
         
         kite.turningPoint.bindTo(viewer.turningPoint).disposed(by: bag)
-        
+
+        tetherPoint.asObservable().bindTo(viewer.tetherPoint).disposed(by: bag) // new
+
         // Kite viewer parameters
         wind.asObservable().bindTo(viewer.wind).disposed(by: bag)
         
@@ -210,7 +224,6 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         }
     }
 }
-
 
 extension NSSlider {
     func setup(min minVal: Scalar, max maxVal: Scalar, current: Scalar) {

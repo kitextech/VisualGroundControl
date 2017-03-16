@@ -135,7 +135,7 @@ final class KiteViewer {
         let b = tetherPoint.value
 		let c = turningPoint.value
 
-//        print("p: \(p), a: \(a), w: \(w), c: \(c) ")
+        print("b: \(b), w: \(w), c: \(c) ")
 
         if shouldShow(.kite) {
             kite.transform = a.scaled(2).translated(p)
