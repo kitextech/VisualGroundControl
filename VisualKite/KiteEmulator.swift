@@ -21,11 +21,13 @@ final class KiteEmulator: KiteType {
     public let phiDelta = Variable<Scalar>(0)
     public let rollDelta = Variable<Scalar>(0)
     public let pitchDelta = Variable<Scalar>(0)
+
     public let speedFactor = Variable<Scalar>(3)
     public let phaseDelta = Variable<Scalar>(0)
 
     // Kite
-    public let elevation = Variable<Scalar>(0)
+	public let tetherPoint = Variable<Vector>(.origin)
+	public let elevation = Variable<Scalar>(0)
     public let tetherLength = Variable<Scalar>(100)
     public let turningRadius = Variable<Scalar>(20)
     
@@ -73,8 +75,10 @@ final class KiteEmulator: KiteType {
         let m_phi = Matrix(rotation: .ez, by: phi)
         let m_theta = Matrix(rotation: .ey, by: theta)
         let m = m_theta*m_phi
-        
-        let c = d*(e_z*m)
+
+        let b = tetherPoint.value
+
+        let c = b + d*(e_z*m)
         
         turningPoint.onNext(c)
 

@@ -11,7 +11,6 @@ import Mavlink
 import ORSSerial
 import RxSwift
 
-
 let MPC_PITCH_HVR = "MPC_PITCH_HVR"
 let MPC_TET_POS_CTL = "MPC_TET_POS_CTL"
 let MPC_THR_TETHER = "MPC_THR_TETHER"
@@ -181,7 +180,7 @@ class KiteLink: NSObject {
         bind(tetheredHoverThrust, with: setScalar(id: MPC_THR_TETHER))
         
         bind(offboardPositionTethered, with: setBool(id: MPC_TET_POS_CTL))
-        
+
 //        bind(phiC, with: setScalar(id: MPC_LOOP_PHI_C))
 //        bind(thetaC, with: setScalar(id: MPC_LOOP_THETA_C))
 //        bind(turningRadius, with: setScalar(id: MPC_LOOP_TURN_R))
@@ -267,7 +266,7 @@ class KiteLink: NSObject {
         return { bool in
             guard let box = self.box else { return [] }
             
-            return [box.setParameter(id: id, value: bool ? 1 : 0, type: MAV_PARAM_TYPE_INT32)]
+            return [box.setParameter(id: id, value: bool ? 1 : 0, type: MAV_PARAM_TYPE_REAL32)]
         }
     }
     

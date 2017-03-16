@@ -10,22 +10,6 @@ import Cocoa
 import RxSwift
 import SceneKit
 
-final class KiteAnalyser {
-    private var positions = [(pos: Vector, time: Date)]()
-    private var attitudes = [(att: Vector, time: Date)]()
-    
-    public let tetherPoint = PublishSubject<Vector>()
-    public let turningPoint = PublishSubject<Vector>()
-    
-    public func addPosition(pos: Vector, time: Date) {
-        
-    }
-    
-    public func addAttitude(att: Vector, time: Date) {
-        
-    }
-}
-
 enum ViewerElement {
     case kiteAxes
     case piAxes
@@ -41,20 +25,18 @@ enum ViewerElement {
 private let baseLength: Scalar = 10
 
 final class KiteViewer {
-    // Public Variables - Visible Elements
-    
     // Public Variables - Mandatory Input
 
     public let position = Variable<Vector>(.origin)
-    public let velocity = Variable<Vector>(.origin)
+    public let velocity = Variable<Vector>(.zero)
     public let attitude = Variable<Matrix>(.id)
     
-    public let wind = Variable<Vector>(.origin)
-    
+    public let wind = Variable<Vector>(.zero)
+
     // Public Variables - Optional Input
 
-    public let tetherPoint = Variable<Vector>(.origin)
-    public let turningPoint = Variable<Vector>(e_x)
+    public let tetherPoint = Variable<Vector>(.origin) // B
+    public let turningPoint = Variable<Vector>(e_x) // C
 
     // Private Variables
 
@@ -73,7 +55,7 @@ final class KiteViewer {
     private let piAxes = KiteViewer.makeAxes(length: 10)
     private let piPlane = KiteViewer.makePlane(color: .white, side: 30)
     
-    private let turningPointBall = KiteViewer.makeBall(color: .orange)
+	private let turningPointBall = KiteViewer.makeBall(color: .orange)
 
     private let tetherLine = KiteViewer.makeLine(color: .orange)
     private let tetherPointBall = KiteViewer.makeBall(color: .orange)
@@ -150,27 +132,13 @@ final class KiteViewer {
         let v = velocity.value
         let a = attitude.value
         let w = wind.value
-        let o = tetherPoint.value
-        let c = turningPoint.value
-        
+        let b = tetherPoint.value
+		let c = turningPoint.value
+
 //        print("p: \(p), a: \(a), w: \(w), c: \(c) ")
 
-        
-        func sign(_ x: Scalar) -> Scalar {
-            return x.sign == .plus ? 1 : -1
-        }
-        
-//        let qw =              sqrt(max(0, 1 + a[0,0] + a[1,1] + a[2,2]))/2
-//        let qx = sign(a[2,1])*sqrt(max(0, 1 + a[0,0] - a[1,1] - a[2,2]))/2
-//        let qy = sign(a[0,2])*sqrt(max(0, 1 - a[0,0] + a[1,1] - a[2,2]))/2
-//        let qz = sign(a[1,0])*sqrt(max(0, 1 - a[0,0] - a[1,1] + a[2,2]))/2
-        
         if shouldShow(.kite) {
             kite.transform = a.scaled(2).translated(p)
-//            kite.position = p
-//            kite.scale = 0.2*Vector(1, 1, 1)
-//            kite.orientation = SCNQuaternion(qx, qy, qz, qw)
-//            kite.orientation = SCNQuaternion(qw, qx, qy, qz)
         }
         
         if shouldShow(.kiteAxes) {
@@ -197,12 +165,12 @@ final class KiteViewer {
         
         let showTether = shouldShow(.tether)
         if showTether {
-            tetherPointBall.position = o
-            update(line: tetherLine, from: o, to: p)
+            tetherPointBall.position = b
+            update(line: tetherLine, from: b, to: p)
         }
         
         // Pi axes, pi plane
-        let e_c = (c - o).unit
+        let e_c = (c - b).unit
         let e_πy = (e_z×e_c).unit
         let e_πz = e_c×e_πy
         
