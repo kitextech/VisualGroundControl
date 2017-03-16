@@ -54,10 +54,13 @@ class SerialViewController: NSViewController {
     private func clearText() {
         messages = []
         updateUI()
+        
+        // temp 
+        kite.requestParameterList()
     }
     
     private func updateUI() {
-        textView.textStorage?.mutableString.setString(messages.joined())
+        textView.textStorage?.mutableString.setString(messages.joined(separator: "\n"))
         textView.needsDisplay = true
     }
 }

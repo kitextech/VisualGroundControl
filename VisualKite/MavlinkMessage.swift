@@ -174,6 +174,16 @@ extension String {
         let a = unicodeScalars.filter { $0.isASCII }.map { Int8($0.value) } + Array(repeating: 0, count: 16)
         return (a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15])
     }
+    
+    init(paramId p: ParamId) {
+        let array = [p.0, p.1, p.2, p.3, p.4, p.5, p.6, p.7, p.8, p.9, p.10, p.11, p.12, p.13, p.14, p.15]
+        
+        let chars = array.map { Character( UnicodeScalar(UInt8($0)) ) }
+        
+        let str = String(chars)
+        
+        self = str
+    }
 }
 
 public typealias ParamId = (Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8)
@@ -195,6 +205,11 @@ extension MavlinkMessage: CustomStringConvertible {
         case 22:
             var param_value = mavlink_param_value_t()
             mavlink_msg_param_value_decode(&message, &param_value)
+            
+            let p = param_value
+            
+            print("PARAM_VALUE: id: \(String(paramId: p.param_id)), \(p.param_type),  \(p.param_value), \(p.param_index),  \(p.param_count)")
+            
             return "PARAM_VALUE: id: \(param_value.param_id), \(param_value.param_type) \(param_value.param_value)"
         case 30:
             var attitude = mavlink_attitude_t()

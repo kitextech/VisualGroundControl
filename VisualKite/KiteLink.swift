@@ -206,6 +206,15 @@ class KiteLink: NSObject {
         }
     }
 
+    public func requestParameterList() {
+        
+        guard let data = box?.requestParamList().data else {
+            return
+        }
+        
+        serialPort?.send(data)
+    }
+    
     // MARK: Private Methods
     
     private func toggleOffBoard(on: Bool) {
@@ -221,8 +230,8 @@ class KiteLink: NSObject {
         else {
             timer?.invalidate()
             
-            guard let message = box?.setOffboardEnabled(on: false) else { return }
-            send(message)
+//            guard let message = box?.setOffboardEnabled(on: false) else { return }
+//            send(message)
         }
     }
     
