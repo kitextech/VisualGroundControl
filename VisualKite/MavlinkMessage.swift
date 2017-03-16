@@ -192,6 +192,10 @@ extension MavlinkMessage: CustomStringConvertible {
             var sys_status = mavlink_sys_status_t()
             mavlink_msg_sys_status_decode(&message, &sys_status)
             return "SYS_STATUS comms drop rate: \(sys_status.drop_rate_comm)%"
+        case 22:
+            var param_value = mavlink_param_value_t()
+            mavlink_msg_param_value_decode(&message, &param_value)
+            return "PARAM_VALUE: id: \(param_value.param_id), \(param_value.param_type) \(param_value.param_value)"
         case 30:
             var attitude = mavlink_attitude_t()
             mavlink_msg_attitude_decode(&message, &attitude)
