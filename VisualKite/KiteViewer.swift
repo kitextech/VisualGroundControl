@@ -29,11 +29,13 @@ final class KiteViewer {
 
     public let position = Variable<Vector>(.origin)
     public let velocity = Variable<Vector>(.zero)
-    public let attitude = Variable<Matrix>(.id)
+    public let attitude = Variable<Quaternion>(.id)
     
     public let wind = Variable<Vector>(.zero)
 
     // Public Variables - Optional Input
+
+    public let positionTarget = Variable<Vector>(.origin)
 
     public let tetherPoint = Variable<Vector>(.origin) // B
     public let turningPoint = Variable<Vector>(e_x) // C
@@ -46,6 +48,8 @@ final class KiteViewer {
     // Private Variables - Nodes
     
     private let kite: SCNNode
+
+    private let kiteBall = KiteViewer.makeBall(color: .yellow)
 
     private let mainAxes = KiteViewer.makeAxes(length: 50)
     private let windArrows = KiteViewer.makeWindArrows()
@@ -65,7 +69,9 @@ final class KiteViewer {
     private let windArrow = KiteViewer.makeArrow(color: .white, length: baseLength)
     private let velocityInducedWindArrow = KiteViewer.makeArrow(color: .white, length: baseLength)
     private let apparentWindArrow = KiteViewer.makeArrow(color: .yellow, length: baseLength)
-    
+
+    private let positionTargetBall = KiteViewer.makeBall(color: .purple)
+
     private var visibleElements: Set<ViewerElement> = []
 
     public init() {
@@ -73,12 +79,13 @@ final class KiteViewer {
         
         // Ship
         kite = scene.rootNode.childNode(withName: "ship", recursively: true)!
-        kite.pivot = Matrix(rotation: e_x, by: π/2)*Matrix(rotation: e_y, by: -π/2)
-        
+        kite.pivot = Matrix().rotated(e_y, by: π).rotated(e_z, by: π/2)
+        kite.scale = 3*Vector(1, 1, 1)
+
         // Camera
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
-        cameraNode.camera?.zFar = 200
+        cameraNode.camera?.zFar = 400
         scene.rootNode.addChildNode(cameraNode)
         cameraNode.position = SCNVector3(x: 15, y: 15, z: 5)
         cameraNode.eulerAngles = Vector(1.45, π, 3*π/4)
@@ -102,14 +109,14 @@ final class KiteViewer {
         // Nodes
         let axes = [mainAxes, kiteAxes, piAxes, piPlane]
         let arrows = [velocityArrow, windArrows, windArrow, velocityInducedWindArrow, apparentWindArrow]
-        let misc = [turningPointBall, tetherLine, tetherPointBall]
+        let misc = [kiteBall, turningPointBall, tetherLine, tetherPointBall, positionTargetBall]
         (axes + arrows + misc).forEach(scene.rootNode.addChildNode)
         
         Observable.combineLatest(position.asObservable(), velocity.asObservable(), attitude.asObservable(), wind.asObservable(), tetherPoint.asObservable(), turningPoint.asObservable(), resultSelector: ignore)
             .subscribe(onNext: updateScene)
             .disposed(by: bag)
     }
-    
+
     // Public Methods
 
     public func setup(with sceneView: SCNView) {
@@ -135,14 +142,21 @@ final class KiteViewer {
         let b = tetherPoint.value
 		let c = turningPoint.value
 
-        print("b: \(b), w: \(w), c: \(c) ")
+        let t = positionTarget.value
+
+//        print("b: \(b), w: \(w), c: \(c) ")
 
         if shouldShow(.kite) {
-            kite.transform = a.scaled(2).translated(p)
+            kite.orientation = a
+            kite.position = p
+        }
+        else {
+            kiteBall.position = p
         }
         
         if shouldShow(.kiteAxes) {
-            kiteAxes.transform = a.translated(p)
+            kiteAxes.orientation = a
+            kiteAxes.position = p
         }
         
         if shouldShow(.velocity) {
@@ -162,10 +176,11 @@ final class KiteViewer {
             let e_w = w.unit
             windArrows.rotation = Rotation(around: e_x×e_w, by: e_x.angle(to: e_w))
         }
-        
+
+        tetherPointBall.position = b
+
         let showTether = shouldShow(.tether)
         if showTether {
-            tetherPointBall.position = b
             update(line: tetherLine, from: b, to: p)
         }
         
@@ -185,10 +200,13 @@ final class KiteViewer {
         }
 
         turningPointBall.position = c
+        positionTargetBall.position = t
 
         // Hide certain elements
 
         kite.isHidden = !shouldShow(.kite)
+        kiteBall.isHidden = shouldShow(.kite)
+
         kiteAxes.isHidden = !shouldShow(.kiteAxes)
         velocityArrow.isHidden = !shouldShow(.velocity)
         
@@ -197,7 +215,6 @@ final class KiteViewer {
         apparentWindArrow.isHidden = !showWind
         windArrows.isHidden = !hasWind
         
-        tetherPointBall.isHidden = !showTether
         tetherLine.isHidden = !showTether
         
         piAxes.isHidden = !shouldShow(.piAxes)
@@ -321,7 +338,6 @@ final class KiteViewer {
 //        let translation = Matrix(translation: p)
 //
 //        ship.transform = SCNMatrix4Scale(yaw*pitch*roll*translation, 0.2, 0.2, 0.2)
-
 
 //        kite.position = p
 

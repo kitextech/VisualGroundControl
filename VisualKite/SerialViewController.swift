@@ -19,7 +19,6 @@ class SerialViewController: NSViewController {
     @IBOutlet var textView: NSTextView!
     @IBOutlet weak var clearButton: NSButton!
 
-    @IBOutlet weak var thrustSlider: NSSlider!
     @IBOutlet weak var offboardButton: NSButton!
     
     // MARK: - Private Properties
@@ -34,9 +33,7 @@ class SerialViewController: NSViewController {
         
         clearButton.rx.tap.bindNext(clearText).disposed(by: bag)
         toggleOpenPortButton.rx.tap.bindNext(kite.togglePort).disposed(by: bag)
-        
-//        thrustSlider.rx.value.map(Float.init).bindTo(kite.thrust).disposed(by: bag)
-        
+
         offboardButton.bool.bindTo(kite.isOffboard).disposed(by: bag)
 
         kite.mavlinkMessage.subscribe(onNext: addMessage).disposed(by: bag)
@@ -54,9 +51,8 @@ class SerialViewController: NSViewController {
     private func clearText() {
         messages = []
         updateUI()
-        
-        // temp 
-        kite.requestParameterList()
+
+        kite.requestParameterList() // REMOVEME
     }
     
     private func updateUI() {

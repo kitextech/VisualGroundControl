@@ -36,6 +36,14 @@ struct KiteLocation {
         self.pos = pos
         self.vel = vel
     }
+
+    static func getPosition(kiteLocation: KiteLocation) -> Vector {
+        return kiteLocation.pos
+    }
+
+    static func getVelocity(kiteLocation: KiteLocation) -> Vector {
+        return kiteLocation.vel
+    }
 }
 
 struct KiteAttitude {
@@ -47,6 +55,10 @@ struct KiteAttitude {
         self.time = time
         self.att = att
         self.rate = rate
+    }
+
+    static func getAttitude(kiteAttitude: KiteAttitude) -> Vector {
+        return kiteAttitude.att
     }
 }
 
@@ -60,31 +72,14 @@ struct KiteQuaternion {
         self.quaternion = quaternion
         self.rate = rate
     }
-}
 
-enum FlightMode {
-    case manual(subMode: ManualFlightMode)
-    case offboard(subMode: OffboardFlightMode)
-}
-
-enum ManualFlightMode {
-    case normal
-    case tethered
-}
-
-enum OffboardFlightMode {
-    case position(subMode: OffboardPositionFlightMode)
-    case attitude
-    case looping
-}
-
-enum OffboardPositionFlightMode {
-    case normal
-    case tethered
+    static func getQuaternion(kiteQuaternion: KiteQuaternion) -> Quaternion {
+        return kiteQuaternion.quaternion
+    }
 }
 
 class KiteLink: NSObject {
-    public var flightMode: FlightMode = .manual(subMode: .normal)
+    public let flightMode: Variable<FlightMode> = Variable(.offboard(subMode: .position(subMode: .normal)))
 
     public let isOffboard = Variable<Bool>(true)
 
@@ -114,9 +109,9 @@ class KiteLink: NSObject {
     public let mavlinkMessage = PublishSubject<MavlinkMessage>()
     
     public let location = PublishSubject<KiteLocation>()
-    public let attitude = PublishSubject<KiteAttitude>()
     public let quaternion = PublishSubject<KiteQuaternion>()
-    
+    public let attitude = PublishSubject<KiteAttitude>()
+
     public var isSerialPortOpen: Bool { return serialPort?.isOpen ?? false }
 
     // MARK: Singleton
@@ -165,8 +160,8 @@ class KiteLink: NSObject {
     private override init() {
         super.init()
         
-        isOffboard.asObservable().bindNext(toggleOffBoard).disposed(by: bag)
-        
+//        isOffboard.asObservable().bindNext(toggleOffBoard).disposed(by: bag)
+
         let center = NotificationCenter.default
         
         center.addObserver(self, selector: #selector(serialPortsWereConnected), name: .ORSSerialPortsWereConnected, object: nil)
@@ -181,6 +176,8 @@ class KiteLink: NSObject {
         
         bind(offboardPositionTethered, with: setBool(id: MPC_TET_POS_CTL))
 
+        flightMode.asObservable().bindNext(changedFlightMode).disposed(by: bag)
+
 //        bind(phiC, with: setScalar(id: MPC_LOOP_PHI_C))
 //        bind(thetaC, with: setScalar(id: MPC_LOOP_THETA_C))
 //        bind(turningRadius, with: setScalar(id: MPC_LOOP_TURN_R))
@@ -189,7 +186,18 @@ class KiteLink: NSObject {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-    
+
+    private func changedFlightMode(mode: FlightMode) {
+        print("Changed to: \(mode)")
+
+        if case FlightMode.offboard = mode {
+            toggleOffBoard(on: true)
+        }
+        else {
+            toggleOffBoard(on: false)
+        }
+    }
+
     // MARK: Public Methods
 
     public func togglePort() {
@@ -207,19 +215,16 @@ class KiteLink: NSObject {
     }
 
     public func requestParameterList() {
-        
-        guard let data = box?.requestParamList().data else {
+        guard let messages = box?.requestParamList() else {
             return
         }
         
-        serialPort?.send(data)
+        send(messages)
     }
     
     // MARK: Private Methods
     
     private func toggleOffBoard(on: Bool) {
-        print("Prepare offboard control: \(on)")
-        
         if on {
             // TODO: sendOffboardEnabled(on: true) Enable doesn't work before a value has been send
             
@@ -241,7 +246,7 @@ class KiteLink: NSObject {
         unsentMessages.values.forEach(send)
         unsentMessages.removeAll()
         
-        switch flightMode {
+        switch flightMode.value {
         case .manual:
             break
         
@@ -302,8 +307,6 @@ class KiteLink: NSObject {
     private func send(_ message: MavlinkMessage) {
         guard let serialPort = serialPort else { return }
 
-        print("Sending message: \(message)")
-        
         serialPort.send(message.data)
     }
     
@@ -405,6 +408,8 @@ extension KiteLink: ORSSerialPortDelegate {
                 }
                 
                 if let att = message.attitude {
+                    print("A: \(att.att)")
+                    print(Matrix(euler: att.att))
                     attitude.onNext(att)
                 }
                 
@@ -436,6 +441,72 @@ extension KiteLink: NSUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {
         return true
+    }
+}
+
+enum FlightMode: CustomStringConvertible {
+    case manual(subMode: ManualFlightMode)
+    case offboard(subMode: OffboardFlightMode)
+
+    public var description: String {
+        let result = "FlightMode."
+        switch self {
+        case .manual(subMode: let manualMode): return result + manualMode.description
+        case .offboard(subMode: let offboardMode): return result + offboardMode.description
+        }
+    }
+}
+
+enum ManualFlightMode: CustomStringConvertible {
+    case normal
+    case tethered
+
+    public var description: String {
+        let result = "manual."
+        switch self {
+        case .normal: return result + "normal"
+        case .tethered: return result + "tethered"
+        }
+    }
+}
+
+enum OffboardFlightMode: CustomStringConvertible {
+    case position(subMode: OffboardPositionFlightMode)
+    case attitude
+    case looping
+
+    init(_ number: Int, subNumber: Int?) {
+        let all: [OffboardFlightMode] = [.position(subMode: OffboardPositionFlightMode(subNumber!)), .attitude, .looping]
+        self = all[number]
+    }
+
+    public var description: String {
+        let result = "offboard."
+
+        switch self {
+        case .position(subMode: let positionMode): return result + positionMode.description
+        case .attitude: return result + "attitude"
+        case .looping: return result + "looping"
+        }
+    }
+
+    enum OffboardPositionFlightMode: CustomStringConvertible {
+        case normal
+        case tethered
+
+        init(_ number: Int) {
+            let all: [OffboardPositionFlightMode] = [.normal, .tethered]
+            self = all[number]
+        }
+
+        public var description: String {
+            let result = "position."
+
+            switch self {
+            case .normal: return result + "normal"
+            case .tethered: return result + "tethered"
+            }
+        }
     }
 }
 

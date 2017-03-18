@@ -28,6 +28,7 @@
 		22BFFA861E793771006BE86D /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA851E793771006BE86D /* libLeap.dylib */; };
 		22BFFA881E793810006BE86D /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22BFFA851E793771006BE86D /* libLeap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		22BFFA8A1E798A01006BE86D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA891E798A01006BE86D /* SettingsViewController.swift */; };
+		22E1D5631E7D8CFA005B8237 /* TraceViewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA8B1E7D7D07006BE86D /* TraceViewsViewController.swift */; };
 		22EC26881E61DD7E00370170 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26871E61DD7E00370170 /* AppDelegate.swift */; };
 		22EC268A1E61DD7E00370170 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26891E61DD7E00370170 /* GameView.swift */; };
 		22EC268C1E61DD7E00370170 /* SceneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC268B1E61DD7E00370170 /* SceneViewController.swift */; };
@@ -251,6 +252,7 @@
 		22BFFA831E793700006BE86D /* LeapObjectiveC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LeapObjectiveC.mm; sourceTree = "<group>"; };
 		22BFFA851E793771006BE86D /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libLeap.dylib; sourceTree = "<group>"; };
 		22BFFA891E798A01006BE86D /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsViewController.swift; path = ../SettingsViewController.swift; sourceTree = "<group>"; };
+		22BFFA8B1E7D7D07006BE86D /* TraceViewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TraceViewsViewController.swift; path = ../TraceViewsViewController.swift; sourceTree = "<group>"; };
 		22EC26841E61DD7E00370170 /* VisualKite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisualKite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22EC26871E61DD7E00370170 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		22EC26891E61DD7E00370170 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
@@ -361,6 +363,7 @@
 				22EC268B1E61DD7E00370170 /* SceneViewController.swift */,
 				22BFFA891E798A01006BE86D /* SettingsViewController.swift */,
 				22BFFA611E782302006BE86D /* SerialViewController.swift */,
+				22BFFA8B1E7D7D07006BE86D /* TraceViewsViewController.swift */,
 				22BFFA7C1E78863B006BE86D /* LeapMotion.swift */,
 				22BFFA4F1E7351F4006BE86D /* KiteLink.swift */,
 				22BFFA4B1E72ED54006BE86D /* KiteAnalyzer.swift */,
@@ -634,6 +637,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				22BFFA501E7351F4006BE86D /* KiteLink.swift in Sources */,
+				22E1D5631E7D8CFA005B8237 /* TraceViewsViewController.swift in Sources */,
 				22BFFA7D1E78863B006BE86D /* LeapMotion.swift in Sources */,
 				22BFFA4C1E72ED54006BE86D /* KiteAnalyzer.swift in Sources */,
 				22EC26A21E62219B00370170 /* Matrix.swift in Sources */,

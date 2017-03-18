@@ -14,12 +14,21 @@ public struct Sphere {
     let radius: Scalar
 }
 
+public struct Plane {
+    let center: Vector
+    let normal: Vector
+}
+
 infix operator •: MultiplicationPrecedence
 infix operator ×: MultiplicationPrecedence
 
 extension Vector: CustomStringConvertible, Equatable {
     // Creation
-    
+
+    public static func fromScalars(_ x: Scalar, y: Scalar, z: Scalar) -> Vector {
+        return Vector(x, y, z)
+    }
+
     public static var zero: Vector {
         return SCNVector3Zero
     }

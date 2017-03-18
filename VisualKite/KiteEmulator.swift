@@ -72,8 +72,8 @@ final class KiteEmulator: KiteType {
 
     private func update(totalElapsed: TimeInterval) {
         // Find C
-        let m_phi = Matrix(rotation: .ez, by: phi)
-        let m_theta = Matrix(rotation: .ey, by: theta)
+        let m_phi = Matrix().rotated(.ez, by: phi)
+        let m_theta = Matrix().rotated(.ey, by: theta)
         let m = m_theta*m_phi
 
         let b = tetherPoint.value

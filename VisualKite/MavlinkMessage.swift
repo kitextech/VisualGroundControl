@@ -91,7 +91,7 @@ struct MessageBox {
         //        let MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_YAW_ANGLE     : UInt16 = 0b0000100111111111
         //        let MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_YAW_RATE      : UInt16 = 0b0000010111111111
         //
-        setPositionTarget.time_boot_ms = UInt32(ProcessInfo.processInfo.systemUptime * 1000)
+        setPositionTarget.time_boot_ms = UInt32(ProcessInfo.processInfo.systemUptime*1000)
         setPositionTarget.type_mask = MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_POSITION // Bitmask should work for now.
         setPositionTarget.coordinate_frame = UInt8(MAV_FRAME_LOCAL_NED.rawValue)
         
@@ -177,12 +177,7 @@ extension String {
     
     init(paramId p: ParamId) {
         let array = [p.0, p.1, p.2, p.3, p.4, p.5, p.6, p.7, p.8, p.9, p.10, p.11, p.12, p.13, p.14, p.15]
-        
-        let chars = array.map { Character( UnicodeScalar(UInt8($0)) ) }
-        
-        let str = String(chars)
-        
-        self = str
+        self = String(array.map { Character(UnicodeScalar(UInt8($0))) })
     }
 }
 
@@ -203,14 +198,13 @@ extension MavlinkMessage: CustomStringConvertible {
             mavlink_msg_sys_status_decode(&message, &sys_status)
             return "SYS_STATUS comms drop rate: \(sys_status.drop_rate_comm)%"
         case 22:
-            var param_value = mavlink_param_value_t()
-            mavlink_msg_param_value_decode(&message, &param_value)
-            
-            let p = param_value
-            
-            print("PARAM_VALUE: id: \(String(paramId: p.param_id)), \(p.param_type),  \(p.param_value), \(p.param_index),  \(p.param_count)")
-            
-            return "PARAM_VALUE: id: \(param_value.param_id), \(param_value.param_type) \(param_value.param_value)"
+            var p = mavlink_param_value_t()
+            mavlink_msg_param_value_decode(&message, &p)
+            return "PARAM_VALUE: id: \(String(paramId: p.param_id)), type: \(p.param_type), \(p.param_value), \(p.param_index), \(p.param_count)"
+        case 23:
+            var param_set = mavlink_param_set_t()
+            mavlink_msg_param_set_decode(&message, &param_set)
+            return "PARAM_SET: \(String(paramId: param_set.param_id)) = \(param_set.param_value)"
         case 30:
             var attitude = mavlink_attitude_t()
             mavlink_msg_attitude_decode(&message, &attitude)

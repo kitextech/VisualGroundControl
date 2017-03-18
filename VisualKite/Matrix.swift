@@ -18,20 +18,60 @@ public typealias Matrix = SCNMatrix4
 
 extension Matrix: CustomStringConvertible {
     public static let id = SCNMatrix4Identity
-    
-    public init(vx: Vector, vy: Vector, vz: Vector) {
-        self = Matrix.init(m11: vx.x, m12: vx.y, m13: vx.z, m14: 0,
-                           m21: vy.x, m22: vy.y, m23: vy.z, m24: 0,
-                           m31: vz.x, m32: vz.y, m33: vz.z, m34: 0,
-                           m41: 0, m42: 0, m43: 0, m44: 1)
+
+    public init(euler: Vector) {
+        let cosPhi = cos(euler.x)
+        let sinPhi = sin(euler.x)
+        let cosThe = cos(euler.y)
+        let sinThe = sin(euler.y)
+        let cosPsi = cos(euler.z)
+        let sinPsi = sin(euler.z)
+
+        let vx = Vector(cosThe*cosPsi, -cosPhi*sinPsi + sinPhi*sinThe*cosPsi, sinPhi*sinPsi + cosPhi*sinThe*cosPsi)
+        let vy = Vector(cosThe*sinPsi, cosPhi*cosPsi + sinPhi*sinThe*sinPsi, -sinPhi*cosPsi + cosPhi*sinThe*sinPsi)
+        let vz = Vector(-sinThe, sinPhi*cosThe, cosPhi*cosThe)
+
+        self = Matrix(vx: vx, vy: vy, vz: vz)
     }
-    
+
+    public init(quaternion: Quaternion) {
+        let a = quaternion.w
+        let b = quaternion.x
+        let c = quaternion.y
+        let d = quaternion.z
+
+        let vx = Vector(a*a + b*b - c*c - d*d, 2*(b*c - a*d), 2*(a*c + b*d))
+        let vy = Vector(2*(b*c + a*d), a*a - b*b + c*c - d*d, 2*(c*d - a*b))
+        let vz = Vector(2*(b*d - a*c), 2*(a*b + c*d), a*a - b*b - c*c + d*d)
+        
+        self = Matrix(vx: vx, vy: vy, vz: vz)
+    }
+
+    public init(vx: Vector, vy: Vector, vz: Vector) {
+        self = Matrix(m11: vx.x, m12: vx.y, m13: vx.z, m14: 0,
+                      m21: vy.x, m22: vy.y, m23: vy.z, m24: 0,
+                      m31: vz.x, m32: vz.y, m33: vz.z, m34: 0,
+                      m41: 0, m42: 0, m43: 0, m44: 1)
+    }
+
+    public init() {
+        self = SCNMatrix4Identity
+    }
+
     public init(rotation axis: Vector, by angle: Scalar, translation vector: Vector = .origin, scale: Vector = Vector(1, 1, 1)) {
         self = SCNMatrix4Scale(SCNMatrix4Translate(SCNMatrix4MakeRotation(angle, axis.x, axis.y, axis.z), vector.x, vector.y, vector.z), scale.x, scale.y, scale.z)
     }
-    
-    public init(translation vector: Vector = .origin, scale: Vector = Vector(1, 1, 1)) {
+
+    public init(translation vector: Vector = .zero, scale: Vector = Vector(1, 1, 1)) {
         self = SCNMatrix4Scale(SCNMatrix4MakeTranslation(vector.x, vector.y, vector.z), scale.x, scale.y, scale.z)
+    }
+
+    public init(scaling scale: Vector) {
+        self = SCNMatrix4MakeScale(scale.x, scale.y, scale.z)
+    }
+
+    public func rotated(_ axis: Vector, by angle: Scalar) -> Matrix {
+        return SCNMatrix4Rotate(self, angle, axis.x, axis.y, axis.z)
     }
 
     public func scaled(_ factor: Scalar) -> Matrix {
@@ -103,7 +143,7 @@ extension Matrix: CustomStringConvertible {
             " [\(m41), \(m42), \(m43), \(m44)]]"
     }
     
-    public var transpose: Matrix {
+    public var t: Matrix {
         return Matrix(m11: m11, m12: m21, m13: m31, m14: m41,
                       m21: m12, m22: m22, m23: m32, m24: m42,
                       m31: m13, m32: m23, m33: m33, m34: m43,
