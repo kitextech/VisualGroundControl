@@ -9,6 +9,33 @@
 import Foundation
 import SceneKit
 
+public struct Line {
+    let start: Vector
+    let end: Vector
+
+    func translated(_ vector: Vector) -> Line {
+        return Line(start: start + vector, end: end + vector)
+    }
+
+    func scaled(_ scalar: Scalar) -> Line {
+        return Line(start: scalar*start, end: scalar*end)
+    }
+}
+
+extension Line {
+    public static func *(scalar: Scalar, line: Line) -> Line {
+        return line.scaled(scalar)
+    }
+
+    public static func +(line: Line, translation: Vector) -> Line {
+        return line.translated(translation)
+    }
+
+    public static func -(line: Line, translation: Vector) -> Line {
+        return line.translated(-translation)
+    }
+}
+
 public struct Sphere {
     let center: Vector
     let radius: Scalar
@@ -185,7 +212,11 @@ extension Vector: CustomStringConvertible, Equatable {
         
         return Vector(x: x, y: y, z: z)
     }
-    
+
+    public static func *(vector: Vector, scalar: Scalar) -> Vector {
+        return scalar*vector
+    }
+
 //    public static func *(int: Int, vector: Vector) -> Vector {
 //        return Scalar(int)*vector
 //    }

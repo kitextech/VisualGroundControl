@@ -38,7 +38,7 @@
 		22EC26A31E62219B00370170 /* Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC269C1E62219B00370170 /* Nodes.swift */; };
 		22EC26A41E62219B00370170 /* Rotations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC269D1E62219B00370170 /* Rotations.swift */; };
 		22EC26A61E62219B00370170 /* Vector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC269F1E62219B00370170 /* Vector.swift */; };
-		22EC26A71E62219B00370170 /* Vector4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26A01E62219B00370170 /* Vector4.swift */; };
+		22EC26A71E62219B00370170 /* Quaternion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26A01E62219B00370170 /* Quaternion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -264,7 +264,7 @@
 		22EC269C1E62219B00370170 /* Nodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Nodes.swift; sourceTree = "<group>"; };
 		22EC269D1E62219B00370170 /* Rotations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rotations.swift; sourceTree = "<group>"; };
 		22EC269F1E62219B00370170 /* Vector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector.swift; sourceTree = "<group>"; };
-		22EC26A01E62219B00370170 /* Vector4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector4.swift; sourceTree = "<group>"; };
+		22EC26A01E62219B00370170 /* Quaternion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Quaternion.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -380,7 +380,7 @@
 				22EC269F1E62219B00370170 /* Vector.swift */,
 				22EC269B1E62219B00370170 /* Matrix.swift */,
 				22EC269C1E62219B00370170 /* Nodes.swift */,
-				22EC26A01E62219B00370170 /* Vector4.swift */,
+				22EC26A01E62219B00370170 /* Quaternion.swift */,
 				22EC269D1E62219B00370170 /* Rotations.swift */,
 			);
 			path = VisualKite;
@@ -643,7 +643,7 @@
 				22EC26A21E62219B00370170 /* Matrix.swift in Sources */,
 				22EC26A31E62219B00370170 /* Nodes.swift in Sources */,
 				22BFFA8A1E798A01006BE86D /* SettingsViewController.swift in Sources */,
-				22EC26A71E62219B00370170 /* Vector4.swift in Sources */,
+				22EC26A71E62219B00370170 /* Quaternion.swift in Sources */,
 				22EC268A1E61DD7E00370170 /* GameView.swift in Sources */,
 				22BFFA7B1E7841E6006BE86D /* MavlinkMessage.swift in Sources */,
 				22EC26A41E62219B00370170 /* Rotations.swift in Sources */,

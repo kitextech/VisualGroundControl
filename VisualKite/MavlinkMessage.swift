@@ -264,8 +264,7 @@ extension MavlinkMessage {
         mavlink_msg_attitude_quaternion_decode(&message, &q)
         
         let time = Double(q.time_boot_ms)
-
-        let quat = Quaternion(q.q1, q.q2, q.q3, q.q4)
+        let quat = Quaternion(q.q2, q.q3, q.q4, q.q1)
         let rate = Vector(q.yawspeed, q.pitchspeed, q.rollspeed)
 
         return KiteQuaternion(time: time, quaternion: quat, rate: rate)

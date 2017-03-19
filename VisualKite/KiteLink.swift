@@ -408,12 +408,12 @@ extension KiteLink: ORSSerialPortDelegate {
                 }
                 
                 if let att = message.attitude {
-                    print("A: \(att.att)")
-                    print(Matrix(euler: att.att))
+//                    print("E: \(att.att)")
                     attitude.onNext(att)
                 }
                 
                 if let q = message.quaternion {
+//                    print("Q: \(att.att)")
                     quaternion.onNext(q)
                 }
                 

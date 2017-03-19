@@ -29,7 +29,7 @@ final class KiteViewer {
 
     public let position = Variable<Vector>(.origin)
     public let velocity = Variable<Vector>(.zero)
-    public let attitude = Variable<Quaternion>(.id)
+    public let quaternion = Variable<Quaternion>(.id)
     
     public let wind = Variable<Vector>(.zero)
 
@@ -112,7 +112,7 @@ final class KiteViewer {
         let misc = [kiteBall, turningPointBall, tetherLine, tetherPointBall, positionTargetBall]
         (axes + arrows + misc).forEach(scene.rootNode.addChildNode)
         
-        Observable.combineLatest(position.asObservable(), velocity.asObservable(), attitude.asObservable(), wind.asObservable(), tetherPoint.asObservable(), turningPoint.asObservable(), resultSelector: ignore)
+        Observable.combineLatest(position.asObservable(), velocity.asObservable(), quaternion.asObservable(), wind.asObservable(), tetherPoint.asObservable(), turningPoint.asObservable(), resultSelector: ignore)
             .subscribe(onNext: updateScene)
             .disposed(by: bag)
     }
@@ -137,7 +137,7 @@ final class KiteViewer {
     public func updateScene() {
         let p = position.value
         let v = velocity.value
-        let a = attitude.value
+        let q = quaternion.value
         let w = wind.value
         let b = tetherPoint.value
 		let c = turningPoint.value
@@ -147,7 +147,7 @@ final class KiteViewer {
 //        print("b: \(b), w: \(w), c: \(c) ")
 
         if shouldShow(.kite) {
-            kite.orientation = a
+            kite.orientation = q
             kite.position = p
         }
         else {
@@ -155,7 +155,7 @@ final class KiteViewer {
         }
         
         if shouldShow(.kiteAxes) {
-            kiteAxes.orientation = a
+            kiteAxes.orientation = q
             kiteAxes.position = p
         }
         
@@ -174,7 +174,7 @@ final class KiteViewer {
         
         if hasWind {
             let e_w = w.unit
-            windArrows.rotation = Rotation(around: e_x×e_w, by: e_x.angle(to: e_w))
+            windArrows.rotation = Vector4.rotationVector(axis: e_x×e_w, angle: e_x.angle(to: e_w))
         }
 
         tetherPointBall.position = b
@@ -331,22 +331,3 @@ final class KiteViewer {
         return visibleElements.contains(element)
     }
 }
-
-//        let roll = Matrix(rotation: e_y, by: a.x)
-//        let pitch = Matrix(rotation: e_z, by: a.y)
-//        let yaw = Matrix(rotation: e_x, by: a.z)
-//        let translation = Matrix(translation: p)
-//
-//        ship.transform = SCNMatrix4Scale(yaw*pitch*roll*translation, 0.2, 0.2, 0.2)
-
-//        kite.position = p
-
-//        let yaw = π + π/2 + atan2(-apparent.x, apparent.y)
-//        let pitch = atan2(apparent.z, sqrt(apparent.x*apparent.x + apparent.y*apparent.y))
-//        let pitch = atan2(apparent.z, apparent.y)
-
-//        let a = Vector(roll, pitch, yaw)
-//        let a = Vector(a.x, a.y, a.z)
-//        let a = Vector(a.x + π/2, pitch, a.z)
-//        ship.eulerAngles = a
-
