@@ -145,7 +145,7 @@ class KiteLink: NSObject {
     
     // MARK: Mavlink Misc
 
-    internal var box: MessageBox?
+    internal var box: MessageBox!
     private var timer: Timer?
     private var count: Int = 0
     
@@ -169,12 +169,12 @@ class KiteLink: NSObject {
         
         NSUserNotificationCenter.default.delegate = self
         
-        bind(positionB, with: setVector(ids: (MPC_X_POS_B, MPC_Y_POS_B, MPC_Z_POS_B)))
-        bind(tetherLength, with: setScalar(id: MPC_TETHER_LEN))
-        bind(hoverPitchAngle, with: setScalar(id: MPC_PITCH_HVR))
-        bind(tetheredHoverThrust, with: setScalar(id: MPC_THR_TETHER))
+        bind(positionB, with: box.setVector(ids: (MPC_X_POS_B, MPC_Y_POS_B, MPC_Z_POS_B)))
+        bind(tetherLength, with: box.setScalar(id: MPC_TETHER_LEN))
+        bind(hoverPitchAngle, with: box.setScalar(id: MPC_PITCH_HVR))
+        bind(tetheredHoverThrust, with: box.setScalar(id: MPC_THR_TETHER))
         
-        bind(offboardPositionTethered, with: setBool(id: MPC_TET_POS_CTL))
+        bind(offboardPositionTethered, with: box.setBool(id: MPC_TET_POS_CTL))
 
         flightMode.asObservable().bindNext(changedFlightMode).disposed(by: bag)
 
@@ -201,25 +201,21 @@ class KiteLink: NSObject {
     // MARK: Public Methods
 
     public func togglePort() {
-        guard let port = serialPort else {
+        guard let serialPort = serialPort else {
             return
         }
         
-        if port.isOpen {
-            port.close()
+        if serialPort.isOpen {
+            serialPort.close()
         }
         else {
-            port.open()
+            serialPort.open()
             startUsbMavlinkSession() // TODO: Maybe depend on USB vs Telemetry
         }
     }
 
     public func requestParameterList() {
-        guard let messages = box?.requestParamList() else {
-            return
-        }
-        
-        send(messages)
+        send(box.requestParamList())
     }
     
     // MARK: Private Methods
@@ -241,8 +237,6 @@ class KiteLink: NSObject {
     }
     
     private func heartbeat(timer: Timer) {
-        guard let box = box else { return }
-    
         unsentMessages.values.forEach(send)
         unsentMessages.removeAll()
         
@@ -276,30 +270,6 @@ class KiteLink: NSObject {
         messages.forEach { (message, id) in
             unsentMessages[id] = message
         }
-    }
-    
-    private func setBool(id: String) -> (Bool) -> [(MavlinkMessage, String)] {
-        return { bool in
-            return self.setRealParameter(id: id, value: bool ? 1 : 0)
-        }
-    }
-    
-    private func setScalar(id: String) -> (Scalar) -> [(MavlinkMessage, String)] {
-        return { value in
-            return self.setRealParameter(id: id, value: value)
-        }
-    }
-    
-    private func setVector(ids: (String, String, String)) -> (Vector) -> [(MavlinkMessage, String)] {
-        return { v in
-            return self.setRealParameter(id: ids.0, value: v.x) + self.setRealParameter(id: ids.1, value: v.y) + self.setRealParameter(id: ids.2, value: v.z)
-        }
-    }
-
-    private func setRealParameter(id: String, value: Scalar) -> [(MavlinkMessage, String)] {
-        guard let box = self.box else { return [] }
-
-        return [(box.setParameter(id: id, value: Float(value), type: MAV_PARAM_TYPE_REAL32), id)]
     }
 
     // MARK: - Private Methods

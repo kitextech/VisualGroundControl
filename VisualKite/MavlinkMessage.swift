@@ -14,7 +14,31 @@ struct MessageBox {
     public let compId: UInt8
     public let tarSysId: UInt8
     public let tarCompId: UInt8
-    
+
+    public func setBool(id: String) -> (Bool) -> [(MavlinkMessage, String)] {
+        return { bool in
+            return self.setRealParameter(id: id, value: bool ? 1 : 0)
+        }
+    }
+
+    public func setScalar(id: String) -> (Scalar) -> [(MavlinkMessage, String)] {
+        return { value in
+            return self.setRealParameter(id: id, value: value)
+        }
+    }
+
+    public func setVector(ids: (String, String, String)) -> (Vector) -> [(MavlinkMessage, String)] {
+        return { v in
+            return self.setRealParameter(id: ids.0, value: v.x)
+                + self.setRealParameter(id: ids.1, value: v.y)
+                + self.setRealParameter(id: ids.2, value: v.z)
+        }
+    }
+
+    public func setRealParameter(id: String, value: Scalar) -> [(MavlinkMessage, String)] {
+        return [(setParameter(id: id, value: Float(value), type: MAV_PARAM_TYPE_REAL32), id)]
+    }
+
     public func setOffboardEnabled(on: Bool) -> MavlinkMessage {
         var com = mavlink_command_long_t()
         com.target_system = tarSysId

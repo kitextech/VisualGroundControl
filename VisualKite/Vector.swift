@@ -23,10 +23,6 @@ public struct Line {
 }
 
 extension Line {
-    public static func translator(by v: Vector) -> (Line) -> Line {
-        return { $0 + v }
-    }
-
     public static func *(scalar: Scalar, line: Line) -> Line {
         return line.scaled(scalar)
     }
@@ -38,20 +34,68 @@ extension Line {
     public static func -(line: Line, translation: Vector) -> Line {
         return line.translated(-translation)
     }
+
+    // MARK: - Higher order functions
+
+    public static func translator(by v: Vector) -> (Line) -> Line {
+        return { $0 + v }
+    }
 }
 
 public struct Sphere {
     let center: Vector
     let radius: Scalar
+
+    public static var unit: Sphere { return Sphere(center: .origin, radius: 1) }
+
+    public func spherify(vector: Vector, along normal: Vector) -> Vector {
+        let v = vector - center
+
+        guard v.norm < radius else {
+            return radius*v.unit + center
+        }
+
+        return v + sqrt(radius*radius - v.squaredNorm)*normal + center
+    }
+
+    // MARK: - Higher order functions
+
+    public func spherifier(along normal: Vector) -> (Vector) -> Vector {
+        return { self.spherify(vector: $0, along: normal) }
+    }
+
+    public static func spherifier(along normal: Vector, on sphere: Sphere) -> (Vector) -> Vector {
+        return { sphere.spherify(vector: $0, along: normal) }
+    }
 }
 
 public struct Plane {
     let center: Vector
     let normal: Vector
+
+    public var bases: (Vector, Vector) {
+        if normal || e_z {
+            return (e_x, -e_y)
+        }
+
+        let x = (normal×e_z).unit
+        let y = x×normal
+
+        return (x, y)
+    }
 }
 
 infix operator •: MultiplicationPrecedence
 infix operator ×: MultiplicationPrecedence
+infix operator -|: MultiplicationPrecedence
+
+infix operator >>>: MultiplicationPrecedence
+
+// x >> sin >> cos = (x >> sin) >> cos
+
+func >><T, S>(argument: T, function: (T) -> S) -> S {
+    return function(argument)
+}
 
 extension Vector: CustomStringConvertible, Equatable {
     // Creation
@@ -160,6 +204,15 @@ extension Vector: CustomStringConvertible, Equatable {
         return (self•b/pow(normB, 2))*b
     }
 
+    public func projected(on bases: (x: Vector, y: Vector)) -> NSPoint {
+        return NSPoint(x: component(along: bases.x), y: component(along: bases.y))
+    }
+
+
+    public func projected(on plane: Plane) -> Vector {
+        return self - projected(on: plane.normal)
+    }
+
     public func angle(to b: Vector) -> Scalar {
         let m = norm*b.norm
         
@@ -212,6 +265,34 @@ extension Vector: CustomStringConvertible, Equatable {
 
     public static func ==(lhs: Vector, rhs: Vector) -> Bool {
         return SCNVector3EqualToVector3(lhs, rhs)
+    }
+
+    // Parallel
+
+    public static func ||(lhs: Vector, rhs: Vector) -> Bool {
+        return lhs×rhs == .zero
+    }
+
+    public static func ||(lhs: Vector, rhs: Plane) -> Bool {
+        return lhs -| rhs.normal
+    }
+
+    public static func ||(lhs: Plane, rhs: Vector) -> Bool {
+        return rhs || lhs
+    }
+
+    // Perpendicular
+
+    public static func -|(lhs: Vector, rhs: Vector) -> Bool {
+        return lhs•rhs == 0
+    }
+
+    public static func -|(lhs: Vector, rhs: Plane) -> Bool {
+        return lhs || rhs.normal
+    }
+
+    public static func -|(lhs: Plane, rhs: Vector) -> Bool {
+        return rhs -| lhs
     }
 
     // Scalar multiplication
@@ -268,5 +349,11 @@ extension Vector: CustomStringConvertible, Equatable {
         let z = -vector.z
         
         return Vector(x: x, y: y, z: z)
+    }
+
+    // MARK: - Higher order functions
+
+    public static func translator(by vector: Vector) -> (Vector) -> Vector {
+        return { $0 + vector }
     }
 }
