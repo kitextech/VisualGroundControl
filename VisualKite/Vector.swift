@@ -23,6 +23,10 @@ public struct Line {
 }
 
 extension Line {
+    public static func translator(by v: Vector) -> (Line) -> Line {
+        return { $0 + v }
+    }
+
     public static func *(scalar: Scalar, line: Line) -> Line {
         return line.scaled(scalar)
     }
@@ -74,6 +78,13 @@ extension Vector: CustomStringConvertible, Equatable {
     
     public static var ez: Vector {
         return Vector(x: 0, y: 0, z: 1)
+    }
+
+    public init(phi: Scalar, theta: Scalar, r: Scalar) {
+        let x = r*sin(theta)*cos(phi)
+        let y = r*sin(theta)*sin(phi)
+        let z = r*cos(theta)
+        self = Vector(x, y, z)
     }
 
     public init(_ array: [Scalar]) {

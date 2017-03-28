@@ -52,10 +52,10 @@
         <!--Tab View Controller-->
         <scene sceneID="4R5-Gu-vr6">
             <objects>
-                <tabViewController id="UMu-RG-tWc" sceneMemberID="viewController">
+                <tabViewController selectedTabViewItemIndex="1" id="UMu-RG-tWc" sceneMemberID="viewController">
                     <tabViewItems>
-                        <tabViewItem identifier="" id="Ugr-kH-Hpg"/>
-                        <tabViewItem identifier="" id="v2Y-qK-Dog"/>
+                        <tabViewItem id="Bo4-W3-SWB"/>
+                        <tabViewItem id="1TC-Yi-t4a"/>
                     </tabViewItems>
                     <tabView key="tabView" type="noTabsNoBorder" id="MRW-tB-TTj">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
@@ -64,39 +64,13 @@
                         <tabViewItems/>
                     </tabView>
                     <connections>
-                        <segue destination="Yei-W4-V2R" kind="relationship" relationship="tabItems" id="GKA-RV-acK"/>
-                        <segue destination="ZwI-Sy-NE1" kind="relationship" relationship="tabItems" id="9fc-Ma-uy3"/>
+                        <segue destination="CZY-rB-AJf" kind="relationship" relationship="tabItems" id="Iut-gS-DZp"/>
+                        <segue destination="hAS-Qs-S5Y" kind="relationship" relationship="tabItems" id="LrE-w8-uJe"/>
                     </connections>
                 </tabViewController>
                 <customObject id="8ye-XB-5Za" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="42" y="-292"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="x3u-0u-ecP">
-            <objects>
-                <viewController id="Yei-W4-V2R" sceneMemberID="viewController">
-                    <view key="view" id="0Lr-k3-KHV">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </view>
-                </viewController>
-                <customObject id="c8F-oB-MNC" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="733" y="-437"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="dg0-3M-khV">
-            <objects>
-                <viewController id="ZwI-Sy-NE1" sceneMemberID="viewController">
-                    <view key="view" id="ztR-86-2i0">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </view>
-                </viewController>
-                <customObject id="k9w-j3-UfA" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="733" y="-76"/>
         </scene>
         <!--3d-->
         <scene sceneID="Hpu-k2-9q8">
@@ -678,13 +652,11 @@
         <!--Tab View Controller-->
         <scene sceneID="67o-Xc-VDr">
             <objects>
-                <tabViewController selectedTabViewItemIndex="0" id="2vd-3d-Vv4" sceneMemberID="viewController">
+                <tabViewController selectedTabViewItemIndex="1" id="2vd-3d-Vv4" sceneMemberID="viewController">
                     <tabViewItems>
-                        <tabViewItem id="4Sy-je-tle"/>
-                        <tabViewItem id="uwi-IO-PmN"/>
-                        <tabViewItem id="rnT-y1-hRe"/>
-                        <tabViewItem id="zIN-hl-fZO"/>
                         <tabViewItem id="2Nz-72-5fJ"/>
+                        <tabViewItem id="uwi-IO-PmN"/>
+                        <tabViewItem id="4Sy-je-tle"/>
                     </tabViewItems>
                     <tabView key="tabView" type="noTabsNoBorder" id="D8r-cG-InT">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
@@ -693,11 +665,9 @@
                         <tabViewItems/>
                     </tabView>
                     <connections>
-                        <segue destination="AV6-Qh-fxc" kind="relationship" relationship="tabItems" id="9RV-3M-3gm"/>
-                        <segue destination="Pjk-ka-PHT" kind="relationship" relationship="tabItems" id="ULl-5G-Aka"/>
-                        <segue destination="CZY-rB-AJf" kind="relationship" relationship="tabItems" id="XTe-Vf-e5I"/>
-                        <segue destination="hAS-Qs-S5Y" kind="relationship" relationship="tabItems" id="1M7-Ei-ZuH"/>
                         <segue destination="zmR-yv-d42" kind="relationship" relationship="tabItems" id="K8Q-Mx-2ay"/>
+                        <segue destination="Pjk-ka-PHT" kind="relationship" relationship="tabItems" id="ULl-5G-Aka"/>
+                        <segue destination="AV6-Qh-fxc" kind="relationship" relationship="tabItems" id="9RV-3M-3gm"/>
                     </connections>
                 </tabViewController>
                 <customObject id="iCh-pS-gxM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -964,7 +934,7 @@
                 <customObject id="HEe-3D-aqn" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="7DM-pG-pIO"/>
             </objects>
-            <point key="canvasLocation" x="418" y="810"/>
+            <point key="canvasLocation" x="681" y="-292"/>
         </scene>
         <!--Settings-->
         <scene sceneID="Wkm-DZ-0Pg">
@@ -975,8 +945,8 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bxV-kI-9Rc">
-                                <rect key="frame" x="72" y="321" width="329" height="19"/>
-                                <sliderCell key="cell" state="on" alignment="left" minValue="1" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="BzM-zC-xpx"/>
+                                <rect key="frame" x="72" y="314" width="329" height="24"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="10" maxValue="100" doubleValue="50" tickMarkPosition="above" numberOfTickMarks="91" allowsTickMarkValuesOnly="YES" sliderType="linear" id="BzM-zC-xpx"/>
                             </slider>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eQx-8t-FVf">
                                 <rect key="frame" x="8" y="321" width="68" height="17"/>
@@ -1060,12 +1030,12 @@
                                     <action selector="selectedOffboardMode:" target="hAS-Qs-S5Y" id="V65-5O-MFT"/>
                                 </connections>
                             </button>
-                            <slider verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Luj-jT-PF5">
-                                <rect key="frame" x="74" y="228" width="329" height="19"/>
-                                <sliderCell key="cell" state="on" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="above" sliderType="linear" id="UZR-OH-mRf"/>
+                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Luj-jT-PF5">
+                                <rect key="frame" x="72" y="221" width="331" height="24"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="above" numberOfTickMarks="41" allowsTickMarkValuesOnly="YES" sliderType="linear" id="UZR-OH-mRf"/>
                             </slider>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K7i-kd-dPa">
-                                <rect key="frame" x="10" y="228" width="68" height="17"/>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K7i-kd-dPa">
+                                <rect key="frame" x="8" y="228" width="68" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="64" id="EIL-LC-iLB"/>
                                 </constraints>
@@ -1086,12 +1056,12 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <slider verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fIg-Ij-7jQ">
-                                <rect key="frame" x="74" y="199" width="329" height="19"/>
-                                <sliderCell key="cell" state="on" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="above" sliderType="linear" id="0x7-Xq-h1Y"/>
+                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fIg-Ij-7jQ">
+                                <rect key="frame" x="72" y="192" width="331" height="24"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="above" numberOfTickMarks="41" allowsTickMarkValuesOnly="YES" sliderType="linear" id="0x7-Xq-h1Y"/>
                             </slider>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b0x-WK-t5n">
-                                <rect key="frame" x="10" y="199" width="68" height="17"/>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b0x-WK-t5n">
+                                <rect key="frame" x="8" y="199" width="68" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="64" id="vuj-rg-bhU"/>
                                 </constraints>
@@ -1112,12 +1082,12 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <slider verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="K6U-eq-HSX">
-                                <rect key="frame" x="74" y="174" width="329" height="19"/>
-                                <sliderCell key="cell" state="on" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="above" sliderType="linear" id="Rdi-ba-7mT"/>
+                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="K6U-eq-HSX">
+                                <rect key="frame" x="72" y="167" width="331" height="24"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="above" numberOfTickMarks="41" allowsTickMarkValuesOnly="YES" sliderType="linear" id="Rdi-ba-7mT"/>
                             </slider>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jrc-Hy-uPs">
-                                <rect key="frame" x="10" y="174" width="68" height="17"/>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jrc-Hy-uPs">
+                                <rect key="frame" x="8" y="174" width="68" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="64" id="r72-8G-D7B"/>
                                 </constraints>
@@ -1138,6 +1108,43 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oP5-Co-433">
+                                <rect key="frame" x="103" y="72" width="111" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Position Ctr" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="DUM-Pb-BgP">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="togglePosCtr:" target="hAS-Qs-S5Y" id="OcX-9f-F3z"/>
+                                </connections>
+                            </button>
+                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yN8-8P-INd">
+                                <rect key="frame" x="72" y="137" width="331" height="24"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.10000000000000001" maxValue="0.5" doubleValue="0.20000000000000001" tickMarkPosition="above" numberOfTickMarks="41" allowsTickMarkValuesOnly="YES" sliderType="linear" id="gkb-Kr-gsf"/>
+                            </slider>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uBq-rF-ZhE">
+                                <rect key="frame" x="8" y="144" width="68" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="64" id="5zN-yp-TJy"/>
+                                </constraints>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Tet H Thr" id="Zp8-fR-mdN">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xui-An-q8Q">
+                                <rect key="frame" x="407" y="144" width="37" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="33" id="uF0-Xl-eRR"/>
+                                </constraints>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="10" id="X85-Xf-ZUd">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="Luj-jT-PF5" firstAttribute="top" secondItem="K7i-kd-dPa" secondAttribute="top" id="0nV-H6-LZw"/>
@@ -1147,14 +1154,18 @@
                             <constraint firstAttribute="trailing" secondItem="DHv-Zr-zdP" secondAttribute="trailing" constant="8" id="3Zq-Jv-FTL"/>
                             <constraint firstItem="eQx-8t-FVf" firstAttribute="top" secondItem="gkp-rs-Ann" secondAttribute="top" constant="20" id="7PD-MI-6z6"/>
                             <constraint firstItem="A7Q-Tm-WOD" firstAttribute="top" secondItem="fIg-Ij-7jQ" secondAttribute="top" id="7kf-mY-yPo"/>
+                            <constraint firstAttribute="trailing" secondItem="xui-An-q8Q" secondAttribute="trailing" constant="8" id="8cC-KC-TBI"/>
                             <constraint firstItem="K6U-eq-HSX" firstAttribute="top" secondItem="Jrc-Hy-uPs" secondAttribute="top" id="AMw-65-Jdz"/>
                             <constraint firstItem="TvX-Na-Rfb" firstAttribute="top" secondItem="eQx-8t-FVf" secondAttribute="bottom" constant="11" id="Brn-D4-Wfz"/>
                             <constraint firstItem="eQx-8t-FVf" firstAttribute="leading" secondItem="gkp-rs-Ann" secondAttribute="leading" constant="10" id="EqU-n5-qZ4"/>
+                            <constraint firstItem="uBq-rF-ZhE" firstAttribute="leading" secondItem="Jrc-Hy-uPs" secondAttribute="leading" id="H4K-sK-fh2"/>
+                            <constraint firstItem="xui-An-q8Q" firstAttribute="leading" secondItem="yN8-8P-INd" secondAttribute="trailing" constant="8" id="Hba-kV-aH4"/>
                             <constraint firstItem="K7i-kd-dPa" firstAttribute="top" secondItem="Kub-mf-Lzr" secondAttribute="bottom" constant="19" id="InL-Xl-ole"/>
                             <constraint firstItem="TvX-Na-Rfb" firstAttribute="leading" secondItem="gkp-rs-Ann" secondAttribute="leading" constant="12" id="M3d-Vf-oBU"/>
                             <constraint firstItem="bxV-kI-9Rc" firstAttribute="leading" secondItem="eQx-8t-FVf" secondAttribute="trailing" id="O0p-gY-5df"/>
                             <constraint firstItem="b0x-WK-t5n" firstAttribute="leading" secondItem="K7i-kd-dPa" secondAttribute="leading" id="OVB-yZ-ejX"/>
                             <constraint firstItem="Jrc-Hy-uPs" firstAttribute="leading" secondItem="b0x-WK-t5n" secondAttribute="leading" id="QOK-Rz-hMq"/>
+                            <constraint firstItem="uBq-rF-ZhE" firstAttribute="top" secondItem="Jrc-Hy-uPs" secondAttribute="bottom" constant="13" id="QtI-Bj-nnZ"/>
                             <constraint firstAttribute="trailing" secondItem="IBc-f8-WMw" secondAttribute="trailing" constant="8" id="RnI-Tz-o3J"/>
                             <constraint firstItem="Luj-jT-PF5" firstAttribute="leading" secondItem="K7i-kd-dPa" secondAttribute="trailing" id="UCe-fI-Uvw"/>
                             <constraint firstItem="IBc-f8-WMw" firstAttribute="leading" secondItem="K6U-eq-HSX" secondAttribute="trailing" constant="8" id="Um4-kc-3K0"/>
@@ -1169,9 +1180,12 @@
                             <constraint firstItem="K7i-kd-dPa" firstAttribute="leading" secondItem="Kub-mf-Lzr" secondAttribute="leading" id="geA-zL-SyF"/>
                             <constraint firstAttribute="trailing" secondItem="A7Q-Tm-WOD" secondAttribute="trailing" constant="8" id="hIG-aL-iR5"/>
                             <constraint firstItem="Jrc-Hy-uPs" firstAttribute="top" secondItem="b0x-WK-t5n" secondAttribute="bottom" constant="8" id="hnY-Lj-c8m"/>
+                            <constraint firstItem="yN8-8P-INd" firstAttribute="top" secondItem="uBq-rF-ZhE" secondAttribute="top" id="ilb-aa-RT6"/>
                             <constraint firstItem="fIg-Ij-7jQ" firstAttribute="top" secondItem="b0x-WK-t5n" secondAttribute="top" id="q36-7H-ndC"/>
+                            <constraint firstItem="yN8-8P-INd" firstAttribute="leading" secondItem="uBq-rF-ZhE" secondAttribute="trailing" id="qfl-ws-oQc"/>
                             <constraint firstItem="Kub-mf-Lzr" firstAttribute="leading" secondItem="gkp-rs-Ann" secondAttribute="leading" constant="10" id="qly-PN-0KB"/>
                             <constraint firstItem="Rpr-lv-vv9" firstAttribute="top" secondItem="bxV-kI-9Rc" secondAttribute="top" id="vLo-lE-LPi"/>
+                            <constraint firstItem="xui-An-q8Q" firstAttribute="top" secondItem="yN8-8P-INd" secondAttribute="top" id="zJE-nD-jrb"/>
                         </constraints>
                     </view>
                     <connections>
@@ -1181,12 +1195,13 @@
                         <outlet property="positionLabel" destination="TvX-Na-Rfb" id="rut-Z2-OmO"/>
                         <outlet property="tetherLengthLabel" destination="Rpr-lv-vv9" id="qs5-T4-9nd"/>
                         <outlet property="tetherLengthSlider" destination="bxV-kI-9Rc" id="THl-Zf-h9d"/>
+                        <outlet property="tetheredHoverThrustSlider" destination="yN8-8P-INd" id="O6h-Q8-gSP"/>
                     </connections>
                 </viewController>
                 <customObject id="Vgv-Xi-3wv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController id="DOF-Md-dtC"/>
             </objects>
-            <point key="canvasLocation" x="934" y="734"/>
+            <point key="canvasLocation" x="42" y="172"/>
         </scene>
     </scenes>
 </document>

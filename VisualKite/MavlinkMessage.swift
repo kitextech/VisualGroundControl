@@ -286,7 +286,21 @@ extension MavlinkMessage {
         
         return KiteLocation(time: time, pos: pos, vel: vel)
     }
-    
+
+    var positionTarget: Vector? {
+        guard msgid == 85 else {
+            return nil
+        }
+
+        var message = self
+
+        var local_position_ned = mavlink_position_target_local_ned_t()
+        mavlink_msg_position_target_local_ned_decode(&message, &local_position_ned)
+        let pos = Vector(local_position_ned.x, local_position_ned.y, local_position_ned.z)
+
+        return pos
+    }
+
     var data: Data {
         let buffer = Data(count: 300) // 300 from mavlink example c_uart_interface_example
         

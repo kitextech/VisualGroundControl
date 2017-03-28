@@ -86,7 +86,7 @@ class KiteLink: NSObject {
     // MARK: Parameters
     
     public let positionB = Variable<Vector>(.zero) // Offboard
-    public let tetherLength = Variable<Scalar>(100) // Offboard
+    public let tetherLength = Variable<Scalar>(50) // Offboard
     
     public let offboardPositionTethered = Variable<Bool>(true) // Offboard>Position
 
@@ -406,18 +406,20 @@ extension KiteLink: ORSSerialPortDelegate {
                 if let loc = message.location {
                     location.onNext(loc)
                 }
-                
+
                 if let att = message.attitude {
-//                    print("E: \(att.att)")
                     attitude.onNext(att)
                 }
                 
                 if let q = message.quaternion {
-//                    print("Q: \(att.att)")
                     quaternion.onNext(q)
                 }
                 
                 mavlinkMessage.onNext(message)
+
+                if message.msgid == 22 {
+                    print(message)
+                }
             }
         }
         

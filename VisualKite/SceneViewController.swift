@@ -267,7 +267,7 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         print("Binding kite quaternion to overlay")
         quaternion.asObservable().bindTo(overlay.quaternion).disposed(by: bag)
 
-        quaternion.asObservable().subscribe(onNext: { print("Q: \($0)") }).disposed(by: bag)
+//        quaternion.asObservable().subscribe(onNext: { print("Q: \($0)") }).disposed(by: bag)
 
         // Kite viewer parameters
         wind.asObservable().bindTo(viewer.wind).disposed(by: bag)

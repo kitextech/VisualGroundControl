@@ -59,7 +59,13 @@ class TraceViewsViewController: NSViewController {
         kite.positionB.asObservable().bindTo(yzView.positionB).disposed(by: bag)
         kite.positionB.asObservable().bindTo(zxView.positionB).disposed(by: bag)
 
-        kite.positionB.asObservable().subscribe(onNext: { print("B: \($0)") }).disposed(by: bag)
+        kite.positionTarget.asObservable().bindTo(xyView.positionTarget).disposed(by: bag)
+        kite.positionTarget.asObservable().bindTo(yzView.positionTarget).disposed(by: bag)
+        kite.positionTarget.asObservable().bindTo(zxView.positionTarget).disposed(by: bag)
+
+        kite.tetherLength.asObservable().bindTo(xyView.tetherLength).disposed(by: bag)
+        kite.tetherLength.asObservable().bindTo(yzView.tetherLength).disposed(by: bag)
+        kite.tetherLength.asObservable().bindTo(zxView.tetherLength).disposed(by: bag)
     }
 
     var axis = e_x
@@ -80,21 +86,34 @@ class TraceView: NSView {
     public let position = Variable<Vector>(.origin)
     public let quaternion = Variable<Quaternion>(.id)
     public let positionB = Variable<Vector>(.origin)
+    public let positionTarget = Variable<Vector>(.origin)
+
+    public let tetherLength = Variable<Scalar>(50)
 
     // MARK: - Parameters
     public var viewDirection: Axis = .z { didSet { projector = NSPoint.collapser(viewDirection) } }
-    public var scale: Scalar = 1/100 { didSet { downScaler = NSPoint.scaler(scale) } }
+    public var scale: Scalar = 1/70 { didSet { downScaler = NSPoint.scaler(scale) } }
+
+    // MARK: - Outputs
 
     // MARK: - Private
     private var path = NSBezierPath()
 
     private var kitePaths = [NSBezierPath]()
 
+    private var spherePaths = [NSBezierPath]()
+
     private var projector = NSPoint.collapser(.x)
-    private var downScaler = NSPoint.scaler(1/100)
+    private var downScaler = NSPoint.scaler(1/70)
+
+    private var lineTranslator = Line.translator(by: .zero)
 
     private var kitePoint: NSPoint = .zero
     private var bPoint: NSPoint = .zero
+    private var kitePointTarget: NSPoint = .zero
+
+    private var leftWingPoint: NSPoint = .zero
+    private var rightWingPoint: NSPoint = .zero
 
     private var hasStartedDrawing = false
 
@@ -107,12 +126,39 @@ class TraceView: NSView {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
 
-        path.lineWidth = 3
+        path.lineWidth = 1
 
         // Drawing
 
-        path.move(to: kitePoint)
-        Observable.combineLatest(position.asObservable(), quaternion.asObservable(), positionB.asObservable(), resultSelector: noOp).bindNext(add).disposed(by: bag)
+        Observable.combineLatest(position.asObservable(), quaternion.asObservable(), resultSelector: noOp).bindNext(add).disposed(by: bag)
+
+        positionB.asObservable().subscribe(onNext: bChanged).disposed(by: bag)
+        tetherLength.asObservable().subscribe(onNext: tetherLengthChanged).disposed(by: bag)
+        positionTarget.asObservable().subscribe(onNext: targetChanged).disposed(by: bag)
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        let point = convert(event.locationInWindow, from: nil)
+        let downScaled = point.deScaled(bounds)
+        let upScaled = downScaled.scaled(1/scale)
+        let vector = NSPoint.deCollapser(viewDirection)(upScaled)
+
+        let bSphere = Sphere(center: positionB.value, radius: tetherLength.value)
+        let projected = project(vector: vector, on: bSphere, along: viewDirection)
+
+        KiteLink.shared.positionTarget.value = projected
+    }
+
+    private func project(vector v: Vector, on sphere: Sphere, along axis: Axis) -> Vector {
+        let r = sphere.radius
+        let u = v - sphere.center
+        let w = u.norm > r ? r*u.unit : u
+
+        switch axis {
+        case .x: return Vector(sqrt(r*r - w.y*w.y - w.z*w.z), w.y, w.z) + sphere.center
+        case .y: return Vector(w.x, sqrt(r*r - w.z*w.z - w.x*w.x), w.z) + sphere.center
+        case .z: return Vector(w.x, w.y, -sqrt(r*r - w.x*w.x - w.y*w.y)) + sphere.center
+        }
     }
 
     override func viewDidEndLiveResize() {
@@ -122,7 +168,7 @@ class TraceView: NSView {
 //        upScaler = NSPoint.scaler(bounds)
     }
 
-    private func drawablePoint(_ v: Vector, constantScale: Bool = false) -> NSPoint {
+    private func drawablePoint(_ v: Vector) -> NSPoint {
         let projected = projector(v)
         let scaledDown = downScaler(projected)
         let scaledUp = NSPoint.scaler(bounds)(scaledDown)
@@ -130,19 +176,41 @@ class TraceView: NSView {
         return scaledUp
     }
 
-    private func add(v: Vector, q: Quaternion, b: Vector) {
-        kitePoint = drawablePoint(v)
+    // Changes
+
+    private func targetChanged(t: Vector) {
+        kitePointTarget = drawablePoint(t)
+        setNeedsDisplay(bounds)
+    }
+
+    private func tetherLengthChanged(r: Scalar) {
+        spherePaths = sphereLines(s: Sphere(center: positionB.value, radius: r)).map(makePath)
+        setNeedsDisplay(bounds)
+    }
+
+    private func bChanged(b: Vector) {
         bPoint = drawablePoint(b)
+        spherePaths = sphereLines(s: Sphere(center: b, radius: tetherLength.value)).map(makePath)
+        setNeedsDisplay(bounds)
+    }
 
-        if hasStartedDrawing {
-            path.line(to: kitePoint)
-        }
-        else {
-            path.move(to: kitePoint)
-            hasStartedDrawing = true
-        }
+    private func add(p: Vector, q: Quaternion) {
+        lineTranslator = Line.translator(by: p)
 
-        kitePaths = kite.lines.map(q.apply).map(makePath)
+        kitePoint = drawablePoint(p)
+
+        leftWingPoint = drawablePoint(q.apply(kite.wingstips[0] + p))
+        rightWingPoint = drawablePoint(q.apply(kite.wingstips[1] + p))
+
+//        if hasStartedDrawing {
+//            path.line(to: kitePoint)
+//        }
+//        else {
+//            path.move(to: kitePoint)
+//            hasStartedDrawing = true
+//        }
+
+        kitePaths = kite.lines.map(q.apply).map(lineTranslator).map(makePath)
 
         setNeedsDisplay(bounds)
     }
@@ -151,7 +219,7 @@ class TraceView: NSView {
         let p = NSBezierPath()
         p.move(to: drawablePoint(line.start))
         p.line(to: drawablePoint(line.end))
-        p.lineWidth = 3
+        p.lineWidth = 2
         return p
     }
 
@@ -160,13 +228,14 @@ class TraceView: NSView {
     }
 
     override func draw(_ dirtyRect: NSRect) {
-        NSColor.white.set()
-        path.stroke()
+        NSColor.lightGray.set()
+//        path.stroke()
 
         NSColor.lightGray.set()
         let border = NSBezierPath(roundedRect: bounds.insetBy(dx: 4, dy: 4), xRadius: 5, yRadius: 5)
         border.lineWidth = 3
         border.stroke()
+        spherePaths.forEach { $0.stroke() }
 
         let crossPath = NSBezierPath()
         crossPath.move(to: NSPoint(x: -0.3, y: 0).scaled(bounds))
@@ -175,18 +244,6 @@ class TraceView: NSView {
         crossPath.line(to: NSPoint(x: 0, y: 0.3).scaled(bounds))
         crossPath.lineWidth = 1
         crossPath.stroke()
-
-        NSColor.purple.set()
-        ballPath(at: kitePoint, radius: 5).fill()
-
-        NSColor.orange.set()
-        ballPath(at: bPoint, radius: 5).fill()
-
-        let tether = NSBezierPath()
-        tether.move(to: bPoint)
-        tether.line(to: kitePoint)
-        tether.lineWidth = 2
-        tether.stroke()
 
         let axesPaths = axes.map(makePath)
         NSColor.red.set()
@@ -198,8 +255,59 @@ class TraceView: NSView {
         NSColor.blue.set()
         axesPaths[2].stroke()
 
+        NSColor.orange.set()
+        ballPath(at: bPoint, radius: 5).fill()
+
+        let tether = NSBezierPath()
+        tether.move(to: bPoint)
+        tether.line(to: kitePoint)
+        tether.lineWidth = 2
+        tether.stroke()
+
+        NSColor.purple.set()
+        ballPath(at: kitePointTarget, radius: 5).fill()
+
         NSColor.black.set()
         kitePaths.forEach { $0.stroke() }
+        ballPath(at: kitePoint, radius: 3).fill()
+
+        NSColor.green.set()
+        ballPath(at: leftWingPoint, radius: 3).fill()
+
+        NSColor.red.set()
+        ballPath(at: rightWingPoint, radius: 3).fill()
+    }
+
+    private func sphereLines(s: Sphere) -> [Line] {
+        let longitudes = 20
+        let latitudes = 10
+
+        let longDelta = 2*π/Scalar(longitudes)
+        let latDelta = (π/2)/Scalar(latitudes)
+
+        var lines = [Line]()
+        for i in 0...longitudes {
+            let phi = -π/2 + Scalar(i)*longDelta
+
+            for j in 0..<latitudes {
+                let theta = π/2 + Scalar(j)*latDelta
+                let start = Vector(phi: phi, theta: theta, r: s.radius)
+                let end = Vector(phi: phi, theta: theta + latDelta, r: s.radius)
+                lines.append(Line(start: start, end: end) + s.center)
+            }
+        }
+
+        for j in 0..<latitudes {
+            let theta = π/2 + Scalar(j)*latDelta
+            for i in 0...longitudes {
+                let phi = -π/2 + Scalar(i)*longDelta
+                let start = Vector(phi: phi, theta: theta, r: s.radius)
+                let end = Vector(phi: phi + longDelta, theta: theta, r: s.radius)
+                lines.append(Line(start: start, end: end) + s.center)
+            }
+        }
+
+        return lines
     }
 }
 
@@ -214,6 +322,10 @@ struct LineArtKite {
     private let rudderSize: Scalar = 0.3
 
     private let sideWingPlacement: Scalar = 0.5
+
+    var wingstips: [Vector] {
+        return [-e_y, e_y].map { span/2*$0 }
+    }
 
     var lines: [Line] {
         let halfSpan = span/2
@@ -230,7 +342,7 @@ struct LineArtKite {
 
         let stabiliser = stabiliserSize*wing + stabiliserProportion*tail
 
-        let rudder = rudderSize*span*verticalWing + tail
+        let rudder = rudderSize*span*verticalWing + tail - 0.4*rudderSize*span*e_x
 
         return [wing, rightSideWing, leftSideWing, body, stabiliser, rudder]
     }
@@ -267,6 +379,14 @@ extension NSPoint {
         }
     }
 
+    public static func deCollapser(_ axis: Axis) -> (NSPoint) -> Vector {
+        switch axis {
+        case .x: return { p in Vector(0, p.x, -p.y) }
+        case .y: return { p in Vector(p.x, 0, -p.y) }
+        case .z: return { p in Vector(p.x, p.y, 0) }
+        }
+    }
+
     public static func scaler(_ factor: Scalar) -> (NSPoint) -> NSPoint {
         return { $0.scaled(factor) }
     }
@@ -281,5 +401,13 @@ extension NSPoint {
 
     public func scaled(_ rect: NSRect) -> NSPoint {
         return NSPoint(x: rect.minX + rect.width*(0.5 + x), y: rect.minY + rect.height*(0.5 + y))
+    }
+
+    public static func deScaler(_ rect: NSRect) -> (NSPoint) -> NSPoint {
+        return { $0.deScaled(rect) }
+    }
+
+    public func deScaled(_ rect: NSRect) -> NSPoint {
+        return NSPoint(x: (x - rect.minX)/rect.width - 0.5, y: (y - rect.minY)/rect.height - 0.5)
     }
 }
