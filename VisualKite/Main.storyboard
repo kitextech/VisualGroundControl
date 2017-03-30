@@ -652,7 +652,7 @@
         <!--Tab View Controller-->
         <scene sceneID="67o-Xc-VDr">
             <objects>
-                <tabViewController selectedTabViewItemIndex="1" id="2vd-3d-Vv4" sceneMemberID="viewController">
+                <tabViewController selectedTabViewItemIndex="0" id="2vd-3d-Vv4" sceneMemberID="viewController">
                     <tabViewItems>
                         <tabViewItem id="2Nz-72-5fJ"/>
                         <tabViewItem id="uwi-IO-PmN"/>
@@ -696,56 +696,94 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView focusRingType="none" translatesAutoresizingMaskIntoConstraints="NO" id="6qR-EE-Bzh" userLabel="XY-Trace View" customClass="TraceView" customModule="VisualKite" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="132" width="240" height="240"/>
+                                <rect key="frame" x="5" y="135" width="233" height="232"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="6qR-EE-Bzh" secondAttribute="height" multiplier="1:1" id="rIq-PH-8vB"/>
                                 </constraints>
                             </customView>
                             <customView focusRingType="none" translatesAutoresizingMaskIntoConstraints="NO" id="Kdi-RL-07I" userLabel="Free-Trace View" customClass="TraceView" customModule="VisualKite" customModuleProvider="target">
-                                <rect key="frame" x="240" y="132" width="240" height="240"/>
+                                <rect key="frame" x="243" y="135" width="232" height="232"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="Kdi-RL-07I" secondAttribute="height" id="0WO-e5-3ED"/>
                                 </constraints>
                             </customView>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Qnh-wT-YiZ">
-                                <rect key="frame" x="244" y="94" width="58" height="32"/>
+                                <rect key="frame" x="247" y="97" width="58" height="32"/>
                                 <buttonCell key="cell" type="push" title="XZ" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FQH-Sr-9no">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TVR-Mn-thd">
-                                <rect key="frame" x="332" y="94" width="57" height="32"/>
+                                <rect key="frame" x="330" y="97" width="57" height="32"/>
                                 <buttonCell key="cell" type="push" title="YZ" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="9Ml-cE-Wkw">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1cS-Pq-8Sl">
-                                <rect key="frame" x="404" y="94" width="72" height="32"/>
+                                <rect key="frame" x="399" y="97" width="72" height="32"/>
                                 <buttonCell key="cell" type="push" title="Wind" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eBd-Mh-bDx">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
+                            <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GvI-tA-rTc">
+                                <rect key="frame" x="3" y="102" width="237" height="19"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="7" tickMarkPosition="above" sliderType="linear" id="2GE-pv-cSi"/>
+                            </slider>
                         </subviews>
                         <constraints>
                             <constraint firstItem="Qnh-wT-YiZ" firstAttribute="leading" secondItem="Kdi-RL-07I" secondAttribute="leading" constant="10" id="B4A-Zs-crE"/>
-                            <constraint firstItem="Kdi-RL-07I" firstAttribute="top" secondItem="HpC-tx-v0A" secondAttribute="top" id="BDs-o4-yi9"/>
-                            <constraint firstItem="6qR-EE-Bzh" firstAttribute="leading" secondItem="HpC-tx-v0A" secondAttribute="leading" id="PqT-3o-WnT"/>
+                            <constraint firstItem="Kdi-RL-07I" firstAttribute="top" secondItem="HpC-tx-v0A" secondAttribute="top" constant="5" id="BDs-o4-yi9"/>
+                            <constraint firstItem="GvI-tA-rTc" firstAttribute="trailing" secondItem="6qR-EE-Bzh" secondAttribute="trailing" id="BZ5-Cu-haz"/>
+                            <constraint firstItem="GvI-tA-rTc" firstAttribute="top" secondItem="6qR-EE-Bzh" secondAttribute="bottom" constant="16" id="O0L-MZ-gbr"/>
+                            <constraint firstItem="6qR-EE-Bzh" firstAttribute="leading" secondItem="HpC-tx-v0A" secondAttribute="leading" constant="5" id="PqT-3o-WnT"/>
                             <constraint firstItem="TVR-Mn-thd" firstAttribute="centerX" secondItem="Kdi-RL-07I" secondAttribute="centerX" id="Sdx-ha-nbp"/>
                             <constraint firstItem="6qR-EE-Bzh" firstAttribute="width" secondItem="Kdi-RL-07I" secondAttribute="width" id="Tv2-LO-nan"/>
-                            <constraint firstItem="6qR-EE-Bzh" firstAttribute="top" secondItem="HpC-tx-v0A" secondAttribute="top" id="VDC-OR-yts"/>
+                            <constraint firstItem="6qR-EE-Bzh" firstAttribute="top" secondItem="HpC-tx-v0A" secondAttribute="top" constant="5" id="VDC-OR-yts"/>
                             <constraint firstItem="Kdi-RL-07I" firstAttribute="trailing" secondItem="1cS-Pq-8Sl" secondAttribute="trailing" constant="10" id="YNC-lR-Q7N"/>
                             <constraint firstItem="1cS-Pq-8Sl" firstAttribute="top" secondItem="Kdi-RL-07I" secondAttribute="bottom" constant="10" id="duh-Sv-pxD"/>
-                            <constraint firstItem="Kdi-RL-07I" firstAttribute="leading" secondItem="6qR-EE-Bzh" secondAttribute="trailing" id="k7J-XD-kmY"/>
+                            <constraint firstItem="Kdi-RL-07I" firstAttribute="leading" secondItem="6qR-EE-Bzh" secondAttribute="trailing" constant="5" id="k7J-XD-kmY"/>
                             <constraint firstItem="Qnh-wT-YiZ" firstAttribute="top" secondItem="Kdi-RL-07I" secondAttribute="bottom" constant="10" id="pNa-Ay-gKA"/>
-                            <constraint firstAttribute="trailing" secondItem="Kdi-RL-07I" secondAttribute="trailing" id="rfE-hB-2YN"/>
+                            <constraint firstItem="GvI-tA-rTc" firstAttribute="leading" secondItem="6qR-EE-Bzh" secondAttribute="leading" id="rD3-5a-lh1"/>
+                            <constraint firstAttribute="trailing" secondItem="Kdi-RL-07I" secondAttribute="trailing" constant="5" id="rfE-hB-2YN"/>
                             <constraint firstItem="TVR-Mn-thd" firstAttribute="top" secondItem="Kdi-RL-07I" secondAttribute="bottom" constant="10" id="wJb-3I-I9s"/>
                         </constraints>
                     </view>
+                    <touchBar key="touchBar" id="Geo-8u-5Ba">
+                        <touchBarItems>
+                            <sliderTouchBarItem id="euG-DM-b42">
+                                <sliderAccessory key="minimumValueAccessory" id="9co-aW-mWU">
+                                    <sliderAccessoryBehavior key="behavior" id="t3B-VG-3dp"/>
+                                </sliderAccessory>
+                                <sliderAccessory key="maximumValueAccessory" id="RMQ-01-6Gz">
+                                    <sliderAccessoryBehavior key="behavior" id="8hh-zL-MVD"/>
+                                </sliderAccessory>
+                                <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xcp-QC-xeY">
+                                    <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                    <sliderCell key="cell" state="on" alignment="left" maxValue="6.2800000000000002" tickMarkPosition="above" sliderType="linear" id="1nn-xB-q3e"/>
+                                </slider>
+                            </sliderTouchBarItem>
+                            <sliderTouchBarItem id="5FE-pu-HHZ">
+                                <sliderAccessory key="minimumValueAccessory" id="e16-ta-N8a">
+                                    <sliderAccessoryBehavior key="behavior" id="JYg-mi-nyt"/>
+                                </sliderAccessory>
+                                <sliderAccessory key="maximumValueAccessory" id="8P6-Yt-gQU">
+                                    <sliderAccessoryBehavior key="behavior" id="ioa-G1-j7o"/>
+                                </sliderAccessory>
+                                <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WNc-LE-tki">
+                                    <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
+                                    <sliderCell key="cell" state="on" alignment="left" minValue="20" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="brO-gR-3at"/>
+                                </slider>
+                            </sliderTouchBarItem>
+                        </touchBarItems>
+                    </touchBar>
                     <connections>
                         <outlet property="freeView" destination="Kdi-RL-07I" id="lHI-BS-sy9"/>
+                        <outlet property="scaleSlider" destination="WNc-LE-tki" id="X7z-nD-qgF"/>
+                        <outlet property="slider" destination="Xcp-QC-xeY" id="dnP-Jv-Lu6"/>
+                        <outlet property="sliderr" destination="GvI-tA-rTc" id="hcD-zX-GjZ"/>
                         <outlet property="xyView" destination="6qR-EE-Bzh" id="Zkd-ph-Egg"/>
                     </connections>
                 </viewController>

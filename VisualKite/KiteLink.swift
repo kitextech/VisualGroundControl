@@ -78,6 +78,9 @@ struct KiteQuaternion {
     }
 }
 
+public let systemId: UInt8 = 255
+public let compId: UInt8 = 0
+
 class KiteLink: NSObject {
     public let flightMode: Variable<FlightMode> = Variable(.offboard(subMode: .position(subMode: .normal)))
 
@@ -116,7 +119,7 @@ class KiteLink: NSObject {
 
     // MARK: Singleton
 
-    public static let shared = KiteLink()
+    public static let shared = KiteLink(targetSystemId: 0, targetComponentId: 255)
     
     // MARK: Serial Port Properties
 
@@ -135,17 +138,11 @@ class KiteLink: NSObject {
     
     // MARK: Local Mavlink Ids
 
-    internal let systemId: UInt8 = 255
-    internal let compId: UInt8 = 0
-    
     // MARK: Mavlink Ids
 
-    internal var targetSystemId: UInt8?
-    internal var autopilotId: UInt8?
-    
     // MARK: Mavlink Misc
 
-    internal var box: MessageBox!
+    internal let box: MessageBox
     private var timer: Timer?
     private var count: Int = 0
     
@@ -153,14 +150,17 @@ class KiteLink: NSObject {
 
     private let bag = DisposeBag()
 
-    private var unsentMessages = [String : MavlinkMessage]()
+    // private var unsentMessages = [String : MavlinkMessage]()
+
+    private var unsetParameterValues = [String : (value: Float, type: MAV_PARAM_TYPE)]()
+
+    private var confirmedParameterValues = [String : (value: Float, type: MAV_PARAM_TYPE)]()
 
     // MARK: Initializers
     
-    private override init() {
+    private init(targetSystemId: UInt8, targetComponentId: UInt8) {
+        box = MessageBox(sysId: systemId, compId: compId, tarSysId: targetSystemId, tarCompId: targetComponentId)
         super.init()
-        
-//        isOffboard.asObservable().bindNext(toggleOffBoard).disposed(by: bag)
 
         let center = NotificationCenter.default
         
@@ -237,8 +237,10 @@ class KiteLink: NSObject {
     }
     
     private func heartbeat(timer: Timer) {
-        unsentMessages.values.forEach(send)
-        unsentMessages.removeAll()
+   /*     unsentMessages.values.forEach(send)
+        unsentMessages.removeAll()*/
+
+
         
         switch flightMode.value {
         case .manual:
@@ -255,20 +257,39 @@ class KiteLink: NSObject {
             }
         }
     }
+
+    private func confirmParameter() {
+
+    }
     
     // MARK: - Helper Methods for Linking Rx and Mavlink Parameter Messages
     
-    private func bind<T: Equatable>(_ variable: Variable<T>, with function: @escaping (T) -> [(MavlinkMessage, String)]) {
+/*    private func bind<T: Equatable>(_ variable: Variable<T>, with function: @escaping (T) -> [(MavlinkMessage, String)]) {
+        variable.asObservable()
+            .distinctUntilChanged()
+            .map(function)
+            .bindNext(push)
+            .disposed(by: bag)
+    }*/
+
+    private func bind<T: Equatable>(_ variable: Variable<T>, with function: @escaping (T) -> [(id: String, value: Float, type: MAV_PARAM_TYPE)]) {
         variable.asObservable()
             .distinctUntilChanged()
             .map(function)
             .bindNext(push)
             .disposed(by: bag)
     }
-    
-    private func push(_ messages: [(MavlinkMessage, String)]) {
-        messages.forEach { (message, id) in
-            unsentMessages[id] = message
+
+
+//    private func push(_ messages: [(MavlinkMessage, String)]) {
+//        messages.forEach { (message, id) in
+//            unsentMessages[id] = message
+//        }
+//    }
+
+    private func push(_ parameters: [(id: String, value: Float, type: MAV_PARAM_TYPE)]) {
+        parameters.forEach { (id, value, type) in
+            unsetParameterValues[id] = (value, type)
         }
     }
 
@@ -278,6 +299,8 @@ class KiteLink: NSObject {
         guard let serialPort = serialPort else { return }
 
         serialPort.send(message.data)
+
+        // 1 second later, check if confirmed
     }
     
     // MARK: - Notifications
@@ -369,35 +392,30 @@ extension KiteLink: ORSSerialPortDelegate {
             var message = mavlink_message_t()
             var status = mavlink_status_t()
             let channel = UInt8(MAVLINK_COMM_1.rawValue)
-            if mavlink_parse_char(channel, byte, &message, &status) != 0 {
-                targetSystemId = message.sysid // Only handles one drone
-                autopilotId = message.compid
 
-                if let loc = message.location {
-                    location.onNext(loc)
-                }
+            guard mavlink_parse_char(channel, byte, &message, &status) != 0
+                && message.sysid == box.tarSysId && message.compid == box.tarCompId else { return }
 
-                if let att = message.attitude {
-                    attitude.onNext(att)
-                }
-                
-                if let q = message.quaternion {
-                    quaternion.onNext(q)
-                }
-                
-                mavlinkMessage.onNext(message)
+            if let loc = message.location {
+                location.onNext(loc)
+            }
 
-                if message.msgid == 22 {
-                    print(message)
-                }
+            if let att = message.attitude {
+                attitude.onNext(att)
+            }
+
+            if let q = message.quaternion {
+                quaternion.onNext(q)
+            }
+
+            mavlinkMessage.onNext(message)
+
+            if message.msgid == 22 {
+                print(message)
             }
         }
-        
-        if box == nil, let targetSystemId = targetSystemId, let autopilotId = autopilotId {
-            box = MessageBox(sysId: systemId, compId: compId, tarSysId: targetSystemId, tarCompId: autopilotId)
-        }
     }
-    
+
     func serialPort(_ serialPort: ORSSerialPort, didEncounterError error: Error) {
         print("SerialPort \(serialPort.name) encountered an error: \(error)")
     }

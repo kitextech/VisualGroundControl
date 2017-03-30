@@ -240,7 +240,7 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         let position = Variable<Vector>(.zero)
         location.asObservable().map(KiteLocation.getPosition).bindTo(position).disposed(by: bag)
         position.asObservable().bindTo(viewer.position).disposed(by: bag)
-        position.asObservable().bindTo(overlay.position).disposed(by: bag)
+        position.asObservable().bindTo(overlay.kitePosition).disposed(by: bag)
 
 //        kite.location.map(getPoint).subscribe(onNext: overlay.add).disposed(by: bag)
 
@@ -265,7 +265,7 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         quaternion.asObservable().bindTo(viewer.quaternion).disposed(by: bag)
 
         print("Binding kite quaternion to overlay")
-        quaternion.asObservable().bindTo(overlay.quaternion).disposed(by: bag)
+        quaternion.asObservable().bindTo(overlay.kiteOrientation).disposed(by: bag)
 
 //        quaternion.asObservable().subscribe(onNext: { print("Q: \($0)") }).disposed(by: bag)
 

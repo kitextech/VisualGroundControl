@@ -34,7 +34,7 @@ struct MessageBox {
                 + self.setRealParameter(id: ids.2, value: v.z)
         }
     }
-
+    
     public func setRealParameter(id: String, value: Scalar) -> [(MavlinkMessage, String)] {
         return [(setParameter(id: id, value: Float(value), type: MAV_PARAM_TYPE_REAL32), id)]
     }
@@ -207,6 +207,10 @@ extension String {
 
 public typealias ParamId = (Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8)
 
+public func ==(lhs: ParamId, rhs: ParamId) -> Bool {
+    return String(paramId: lhs) == String(paramId: rhs)
+}
+
 public typealias MavlinkMessage = mavlink_message_t
 
 extension MavlinkMessage: CustomStringConvertible {
@@ -260,6 +264,23 @@ extension MavlinkMessage: CustomStringConvertible {
 }
 
 extension MavlinkMessage {
+    var parameterValue: (id: String, value: Float, type: MAV_PARAM_TYPE)? {
+        guard msgid == 22 else {
+            return nil
+        }
+
+        var message = self
+
+        var param = mavlink_param_value_t()
+        mavlink_msg_param_value_decode(&message, &param)
+
+        let id = String(paramId: param.param_id)
+        let value = param.param_value
+        let type = MAV_PARAM_TYPE(UInt32(param.param_type))
+
+        return (id, value, type)
+    }
+
     var attitude: KiteAttitude? {
         guard msgid == 30 else {
             return nil

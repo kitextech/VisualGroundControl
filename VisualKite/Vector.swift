@@ -20,6 +20,16 @@ public struct Line {
     func scaled(_ scalar: Scalar) -> Line {
         return Line(start: scalar*start, end: scalar*end)
     }
+
+    func split(by p: Plane) -> (pos: Line, neg: Line) {
+        let rho = (p.center - start)•p.normal/((end - start)•p.normal)
+        Swift.print(rho)
+        let x = start + rho*(end - start)
+        let l1 = Line(start: start, end: x)
+        let l2 = Line(start: x, end: end)
+
+        return (start - p.center)•p.normal > 0 ? (l1, l2) : (l2, l1)
+    }
 }
 
 extension Line {
@@ -55,7 +65,9 @@ public struct Sphere {
             return radius*v.unit + center
         }
 
-        return v + sqrt(radius*radius - v.squaredNorm)*normal + center
+        let n = normal == -e_z ? normal : -normal
+
+        return v + sqrt(radius*radius - v.squaredNorm)*n + center
     }
 
     // MARK: - Higher order functions
@@ -75,10 +87,10 @@ public struct Plane {
 
     public var bases: (Vector, Vector) {
         if normal || e_z {
-            return (e_x, -e_y)
+            return (e_y, e_x)
         }
 
-        let x = (normal×e_z).unit
+        let x = (e_z×normal).unit
         let y = x×normal
 
         return (x, y)
@@ -122,6 +134,10 @@ extension Vector: CustomStringConvertible, Equatable {
     
     public static var ez: Vector {
         return Vector(x: 0, y: 0, z: 1)
+    }
+
+    public static func unitVector(phi: Scalar, theta: Scalar) -> Vector {
+        return Vector(phi: phi, theta: theta, r: 1)
     }
 
     public init(phi: Scalar, theta: Scalar, r: Scalar) {
