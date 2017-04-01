@@ -15,29 +15,25 @@ struct MessageBox {
     public let tarSysId: UInt8
     public let tarCompId: UInt8
 
-    public func setBool(id: String) -> (Bool) -> [(MavlinkMessage, String)] {
-        return { bool in
-            return self.setRealParameter(id: id, value: bool ? 1 : 0)
-        }
-    }
-
-    public func setScalar(id: String) -> (Scalar) -> [(MavlinkMessage, String)] {
-        return { value in
-            return self.setRealParameter(id: id, value: value)
-        }
-    }
-
-    public func setVector(ids: (String, String, String)) -> (Vector) -> [(MavlinkMessage, String)] {
-        return { v in
-            return self.setRealParameter(id: ids.0, value: v.x)
-                + self.setRealParameter(id: ids.1, value: v.y)
-                + self.setRealParameter(id: ids.2, value: v.z)
-        }
-    }
-    
-    public func setRealParameter(id: String, value: Scalar) -> [(MavlinkMessage, String)] {
-        return [(setParameter(id: id, value: Float(value), type: MAV_PARAM_TYPE_REAL32), id)]
-    }
+//    public func setBool(id: String) -> (Bool) -> [(MavlinkMessage, String)] {
+//        return { bool in
+//            return self.setRealParameter(id: id, value: bool ? 1 : 0)
+//        }
+//    }
+//
+//    public func setScalar(id: String) -> (Scalar) -> [(MavlinkMessage, String)] {
+//        return { value in
+//            return self.setRealParameter(id: id, value: value)
+//        }
+//    }
+//
+//    public func setVector(ids: (String, String, String)) -> (Vector) -> [(MavlinkMessage, String)] {
+//        return { v in
+//            return self.setRealParameter(id: ids.0, value: v.x)
+//                + self.setRealParameter(id: ids.1, value: v.y)
+//                + self.setRealParameter(id: ids.2, value: v.z)
+//        }
+//    }
 
     public func setOffboardEnabled(on: Bool) -> MavlinkMessage {
         var com = mavlink_command_long_t()
@@ -176,14 +172,14 @@ struct MessageBox {
         return msg
     }
     
-    public func setParameter(id: String, value: Float, type: MAV_PARAM_TYPE) -> MavlinkMessage {
+    public func setParameter(value parameterValue: ParameterValue) -> MavlinkMessage {
         var paramSet = mavlink_param_set_t()
         paramSet.target_component = tarCompId
         paramSet.target_system = tarSysId
         
-        paramSet.param_id = id.paramId
-        paramSet.param_value = value
-        paramSet.param_type = UInt8(type.rawValue)
+        paramSet.param_id = parameterValue.id.paramId
+        paramSet.param_value = Float(parameterValue.value)
+        paramSet.param_type = UInt8(parameterValue.type.rawValue)
         
         var msg = mavlink_message_t()
         
@@ -264,10 +260,10 @@ extension MavlinkMessage: CustomStringConvertible {
 }
 
 extension MavlinkMessage {
-    var parameterValue: (id: String, value: Float, type: MAV_PARAM_TYPE)? {
+    var parameterValue: ParameterValue? {
         guard msgid == 22 else {
             return nil
-        }
+        } 
 
         var message = self
 
@@ -278,7 +274,7 @@ extension MavlinkMessage {
         let value = param.param_value
         let type = MAV_PARAM_TYPE(UInt32(param.param_type))
 
-        return (id, value, type)
+        return ParameterValue(id: id, value: Scalar(value), type: type)
     }
 
     var attitude: KiteAttitude? {

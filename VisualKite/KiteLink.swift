@@ -81,6 +81,12 @@ struct KiteQuaternion {
 public let systemId: UInt8 = 255
 public let compId: UInt8 = 0
 
+struct ParameterValue {
+    let id: String
+    let value: Scalar
+    let type: MAV_PARAM_TYPE // MAV_PARAM_TYPE_REAL32
+}
+
 class KiteLink: NSObject {
     public let flightMode: Variable<FlightMode> = Variable(.offboard(subMode: .position(subMode: .normal)))
 
@@ -150,11 +156,11 @@ class KiteLink: NSObject {
 
     private let bag = DisposeBag()
 
-    // private var unsentMessages = [String : MavlinkMessage]()
+    internal var unsentParameterValues = [String : ParameterValue]()
+    internal var unconfirmedParameterValues = [String : (ParameterValue, Date, Int)]()
 
-    private var unsetParameterValues = [String : (value: Float, type: MAV_PARAM_TYPE)]()
-
-    private var confirmedParameterValues = [String : (value: Float, type: MAV_PARAM_TYPE)]()
+    private let parameterGracePeriod: TimeInterval = 1
+    private let parameterRetries = 10
 
     // MARK: Initializers
     
@@ -169,12 +175,11 @@ class KiteLink: NSObject {
         
         NSUserNotificationCenter.default.delegate = self
         
-        bind(positionB, with: box.setVector(ids: (MPC_X_POS_B, MPC_Y_POS_B, MPC_Z_POS_B)))
-        bind(tetherLength, with: box.setScalar(id: MPC_TETHER_LEN))
-        bind(hoverPitchAngle, with: box.setScalar(id: MPC_PITCH_HVR))
-        bind(tetheredHoverThrust, with: box.setScalar(id: MPC_THR_TETHER))
-        
-        bind(offboardPositionTethered, with: box.setBool(id: MPC_TET_POS_CTL))
+        bind(positionB, using: setVector(ids: (MPC_X_POS_B, MPC_Y_POS_B, MPC_Z_POS_B)))
+        bind(tetherLength, using: setScalar(id: MPC_TETHER_LEN))
+        bind(hoverPitchAngle, using: setScalar(id: MPC_PITCH_HVR))
+        bind(tetheredHoverThrust, using: setScalar(id: MPC_THR_TETHER))
+        bind(offboardPositionTethered, using: setBool(id: MPC_TET_POS_CTL))
 
         flightMode.asObservable().bindNext(changedFlightMode).disposed(by: bag)
 
@@ -182,20 +187,9 @@ class KiteLink: NSObject {
 //        bind(thetaC, with: setScalar(id: MPC_LOOP_THETA_C))
 //        bind(turningRadius, with: setScalar(id: MPC_LOOP_TURN_R))
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self)
-    }
-
-    private func changedFlightMode(mode: FlightMode) {
-        print("Changed to: \(mode)")
-
-        if case FlightMode.offboard = mode {
-            toggleOffBoard(on: true)
-        }
-        else {
-            toggleOffBoard(on: false)
-        }
     }
 
     // MARK: Public Methods
@@ -219,7 +213,99 @@ class KiteLink: NSObject {
     }
     
     // MARK: Private Methods
-    
+
+    private func heartbeat(timer: Timer) {
+        let now = Date()
+        unconfirmedParameterValues.values.forEach { value, sentDate, retries in
+            if now.timeIntervalSince(sentDate) > Double(retries)*parameterGracePeriod {
+                if retries < parameterRetries {
+                    send(box.setParameter(value: value))
+                    unconfirmedParameterValues[value.id] = (value, sentDate, retries + 1)
+                }
+                else {
+                    // complain
+                    fatalError("too many (\(retries)) retries for \(value.id)")
+                }
+            }
+        }
+
+        unsentParameterValues.forEach { key, value in
+            send(box.setParameter(value: value))
+            unconfirmedParameterValues[key] = (value, now, 0)
+        }
+
+        unsentParameterValues.removeAll()
+
+        switch flightMode.value {
+        case .manual:
+            break
+
+        case .offboard(subMode: let secondary):
+            switch secondary {
+            case .attitude:
+                send(box.setAttitudeTarget(quaternion: attitudeTarget.value, thrust: thrust.value))
+            case .position:
+                send(box.setPositionTarget(vector: positionTarget.value))
+            case .looping:
+                break
+            }
+        }
+    }
+
+    // MARK: - Helper Methods for Linking Rx and Mavlink Parameter Messages
+
+    private func bind<T: Equatable>(_ variable: Variable<T>, using function: @escaping (T) -> [ParameterValue]) {
+        variable.asObservable()
+            .distinctUntilChanged()
+            .map(function)
+            .bindNext(push)
+            .disposed(by: bag)
+    }
+
+    private func push(_ values: [ParameterValue]) {
+        values.forEach {
+            unsentParameterValues[$0.id] = $0
+            unconfirmedParameterValues[$0.id] = nil
+        }
+    }
+
+    private func setBool(id: String) -> (Bool) -> [ParameterValue] {
+        return { bool in
+            return [ParameterValue(id: id, value: bool ? 1 : 0, type: MAV_PARAM_TYPE_REAL32)]
+        }
+    }
+
+    private func setScalar(id: String) -> (Scalar) -> [ParameterValue] {
+        return { value in
+            return [ParameterValue(id: id, value: value, type: MAV_PARAM_TYPE_REAL32)]
+        }
+    }
+
+    private func setVector(ids: (String, String, String)) -> (Vector) -> [ParameterValue] {
+        return { v in
+            return [ParameterValue(id: ids.0, value: v.x, type: MAV_PARAM_TYPE_REAL32),
+                    ParameterValue(id: ids.1, value: v.y, type: MAV_PARAM_TYPE_REAL32),
+                    ParameterValue(id: ids.2, value: v.z, type: MAV_PARAM_TYPE_REAL32)]
+        }
+    }
+
+    internal func confirm(_ p: ParameterValue) {
+        if let unconfirmed = unconfirmedParameterValues[p.id]?.0, unconfirmed.value == p.value, unconfirmed.type == p.type {
+            unconfirmedParameterValues[p.id] = nil
+        }
+    }
+
+    private func changedFlightMode(mode: FlightMode) {
+        print("Changed to: \(mode)")
+
+        if case FlightMode.offboard = mode {
+            toggleOffBoard(on: true)
+        }
+        else {
+            toggleOffBoard(on: false)
+        }
+    }
+
     private func toggleOffBoard(on: Bool) {
         if on {
             // TODO: sendOffboardEnabled(on: true) Enable doesn't work before a value has been send
@@ -233,63 +319,6 @@ class KiteLink: NSObject {
             
 //            guard let message = box?.setOffboardEnabled(on: false) else { return }
 //            send(message)
-        }
-    }
-    
-    private func heartbeat(timer: Timer) {
-   /*     unsentMessages.values.forEach(send)
-        unsentMessages.removeAll()*/
-
-
-        
-        switch flightMode.value {
-        case .manual:
-            break
-        
-        case .offboard(subMode: let secondary):
-            switch secondary {
-            case .attitude:
-                send(box.setAttitudeTarget(quaternion: attitudeTarget.value, thrust: thrust.value))
-            case .position:
-                send(box.setPositionTarget(vector: positionTarget.value))
-            case .looping:
-                break
-            }
-        }
-    }
-
-    private func confirmParameter() {
-
-    }
-    
-    // MARK: - Helper Methods for Linking Rx and Mavlink Parameter Messages
-    
-/*    private func bind<T: Equatable>(_ variable: Variable<T>, with function: @escaping (T) -> [(MavlinkMessage, String)]) {
-        variable.asObservable()
-            .distinctUntilChanged()
-            .map(function)
-            .bindNext(push)
-            .disposed(by: bag)
-    }*/
-
-    private func bind<T: Equatable>(_ variable: Variable<T>, with function: @escaping (T) -> [(id: String, value: Float, type: MAV_PARAM_TYPE)]) {
-        variable.asObservable()
-            .distinctUntilChanged()
-            .map(function)
-            .bindNext(push)
-            .disposed(by: bag)
-    }
-
-
-//    private func push(_ messages: [(MavlinkMessage, String)]) {
-//        messages.forEach { (message, id) in
-//            unsentMessages[id] = message
-//        }
-//    }
-
-    private func push(_ parameters: [(id: String, value: Float, type: MAV_PARAM_TYPE)]) {
-        parameters.forEach { (id, value, type) in
-            unsetParameterValues[id] = (value, type)
         }
     }
 
@@ -406,6 +435,10 @@ extension KiteLink: ORSSerialPortDelegate {
 
             if let q = message.quaternion {
                 quaternion.onNext(q)
+            }
+
+            if let value = message.parameterValue {
+                confirm(value)
             }
 
             mavlinkMessage.onNext(message)

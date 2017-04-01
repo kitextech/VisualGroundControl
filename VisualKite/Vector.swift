@@ -23,7 +23,6 @@ public struct Line {
 
     func split(by p: Plane) -> (pos: Line, neg: Line) {
         let rho = (p.center - start)•p.normal/((end - start)•p.normal)
-        Swift.print(rho)
         let x = start + rho*(end - start)
         let l1 = Line(start: start, end: x)
         let l2 = Line(start: x, end: end)
