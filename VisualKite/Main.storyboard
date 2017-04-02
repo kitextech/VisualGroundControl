@@ -722,8 +722,8 @@
                                 </buttonCell>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1cS-Pq-8Sl">
-                                <rect key="frame" x="399" y="97" width="72" height="32"/>
-                                <buttonCell key="cell" type="push" title="Wind" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eBd-Mh-bDx">
+                                <rect key="frame" x="422" y="97" width="49" height="32"/>
+                                <buttonCell key="cell" type="push" title="π" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eBd-Mh-bDx">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -751,40 +751,13 @@
                             <constraint firstItem="TVR-Mn-thd" firstAttribute="top" secondItem="Kdi-RL-07I" secondAttribute="bottom" constant="10" id="wJb-3I-I9s"/>
                         </constraints>
                     </view>
-                    <touchBar key="touchBar" id="Geo-8u-5Ba">
-                        <touchBarItems>
-                            <sliderTouchBarItem id="euG-DM-b42">
-                                <sliderAccessory key="minimumValueAccessory" id="9co-aW-mWU">
-                                    <sliderAccessoryBehavior key="behavior" id="t3B-VG-3dp"/>
-                                </sliderAccessory>
-                                <sliderAccessory key="maximumValueAccessory" id="RMQ-01-6Gz">
-                                    <sliderAccessoryBehavior key="behavior" id="8hh-zL-MVD"/>
-                                </sliderAccessory>
-                                <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xcp-QC-xeY">
-                                    <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
-                                    <sliderCell key="cell" state="on" alignment="left" maxValue="6.2800000000000002" tickMarkPosition="above" sliderType="linear" id="1nn-xB-q3e"/>
-                                </slider>
-                            </sliderTouchBarItem>
-                            <sliderTouchBarItem id="5FE-pu-HHZ">
-                                <sliderAccessory key="minimumValueAccessory" id="e16-ta-N8a">
-                                    <sliderAccessoryBehavior key="behavior" id="JYg-mi-nyt"/>
-                                </sliderAccessory>
-                                <sliderAccessory key="maximumValueAccessory" id="8P6-Yt-gQU">
-                                    <sliderAccessoryBehavior key="behavior" id="ioa-G1-j7o"/>
-                                </sliderAccessory>
-                                <slider key="slider" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WNc-LE-tki">
-                                    <rect key="frame" x="0.0" y="0.0" width="96" height="30"/>
-                                    <sliderCell key="cell" state="on" alignment="left" minValue="20" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="brO-gR-3at"/>
-                                </slider>
-                            </sliderTouchBarItem>
-                        </touchBarItems>
-                    </touchBar>
                     <connections>
                         <outlet property="freeView" destination="Kdi-RL-07I" id="lHI-BS-sy9"/>
-                        <outlet property="scaleSlider" destination="WNc-LE-tki" id="X7z-nD-qgF"/>
-                        <outlet property="slider" destination="Xcp-QC-xeY" id="dnP-Jv-Lu6"/>
+                        <outlet property="piButton" destination="1cS-Pq-8Sl" id="FC8-NF-6DK"/>
                         <outlet property="sliderr" destination="GvI-tA-rTc" id="hcD-zX-GjZ"/>
                         <outlet property="xyView" destination="6qR-EE-Bzh" id="Zkd-ph-Egg"/>
+                        <outlet property="xzButton" destination="Qnh-wT-YiZ" id="hvP-JS-Ben"/>
+                        <outlet property="yzButton" destination="TVR-Mn-thd" id="da9-aZ-WTU"/>
                     </connections>
                 </viewController>
                 <customObject id="e3s-Si-erH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -982,7 +955,10 @@
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Kub-mf-Lzr">
-                                <rect key="frame" x="4" y="257" width="94" height="32"/>
+                                <rect key="frame" x="4" y="257" width="88" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="76" id="uqa-2M-30v"/>
+                                </constraints>
                                 <buttonCell key="cell" type="push" title="Use as B" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0d7-zy-OVb">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -1156,6 +1132,14 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DEZ-md-aA8">
+                                <rect key="frame" x="103" y="268" width="329" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="UoU-Lb-JgU">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="Luj-jT-PF5" firstAttribute="top" secondItem="K7i-kd-dPa" secondAttribute="top" id="0nV-H6-LZw"/>
@@ -1164,6 +1148,7 @@
                             <constraint firstItem="K6U-eq-HSX" firstAttribute="leading" secondItem="Jrc-Hy-uPs" secondAttribute="trailing" id="2hj-Rb-EOM"/>
                             <constraint firstAttribute="trailing" secondItem="DHv-Zr-zdP" secondAttribute="trailing" constant="8" id="3Zq-Jv-FTL"/>
                             <constraint firstItem="eQx-8t-FVf" firstAttribute="top" secondItem="gkp-rs-Ann" secondAttribute="top" constant="20" id="7PD-MI-6z6"/>
+                            <constraint firstItem="DEZ-md-aA8" firstAttribute="leading" secondItem="Kub-mf-Lzr" secondAttribute="trailing" constant="19" id="7bm-wj-57d"/>
                             <constraint firstItem="A7Q-Tm-WOD" firstAttribute="top" secondItem="fIg-Ij-7jQ" secondAttribute="top" id="7kf-mY-yPo"/>
                             <constraint firstAttribute="trailing" secondItem="xui-An-q8Q" secondAttribute="trailing" constant="8" id="8cC-KC-TBI"/>
                             <constraint firstItem="K6U-eq-HSX" firstAttribute="top" secondItem="Jrc-Hy-uPs" secondAttribute="top" id="AMw-65-Jdz"/>
@@ -1185,6 +1170,7 @@
                             <constraint firstItem="A7Q-Tm-WOD" firstAttribute="leading" secondItem="fIg-Ij-7jQ" secondAttribute="trailing" constant="8" id="Zi1-jS-Ch1"/>
                             <constraint firstItem="Kub-mf-Lzr" firstAttribute="top" secondItem="TvX-Na-Rfb" secondAttribute="bottom" constant="8" id="bvT-tX-qtc"/>
                             <constraint firstItem="Rpr-lv-vv9" firstAttribute="leading" secondItem="bxV-kI-9Rc" secondAttribute="trailing" constant="8" id="dqA-KN-ecJ"/>
+                            <constraint firstAttribute="trailing" secondItem="DEZ-md-aA8" secondAttribute="trailing" constant="20" id="eiT-8l-1Yy"/>
                             <constraint firstItem="DHv-Zr-zdP" firstAttribute="leading" secondItem="Luj-jT-PF5" secondAttribute="trailing" constant="8" id="g3e-oH-0Uh"/>
                             <constraint firstItem="bxV-kI-9Rc" firstAttribute="top" secondItem="eQx-8t-FVf" secondAttribute="top" id="gHZ-c0-z4R"/>
                             <constraint firstAttribute="trailing" secondItem="Rpr-lv-vv9" secondAttribute="trailing" constant="10" id="gIt-80-F4K"/>
@@ -1195,6 +1181,7 @@
                             <constraint firstItem="fIg-Ij-7jQ" firstAttribute="top" secondItem="b0x-WK-t5n" secondAttribute="top" id="q36-7H-ndC"/>
                             <constraint firstItem="yN8-8P-INd" firstAttribute="leading" secondItem="uBq-rF-ZhE" secondAttribute="trailing" id="qfl-ws-oQc"/>
                             <constraint firstItem="Kub-mf-Lzr" firstAttribute="leading" secondItem="gkp-rs-Ann" secondAttribute="leading" constant="10" id="qly-PN-0KB"/>
+                            <constraint firstItem="DEZ-md-aA8" firstAttribute="top" secondItem="Kub-mf-Lzr" secondAttribute="top" id="r2q-Q2-HlD"/>
                             <constraint firstItem="Rpr-lv-vv9" firstAttribute="top" secondItem="bxV-kI-9Rc" secondAttribute="top" id="vLo-lE-LPi"/>
                             <constraint firstItem="xui-An-q8Q" firstAttribute="top" secondItem="yN8-8P-INd" secondAttribute="top" id="zJE-nD-jrb"/>
                         </constraints>
@@ -1203,6 +1190,7 @@
                         <outlet property="deltaBxSlider" destination="Luj-jT-PF5" id="icG-a4-nB9"/>
                         <outlet property="deltaBySlider" destination="fIg-Ij-7jQ" id="O1z-5D-Igu"/>
                         <outlet property="deltaBzSlider" destination="K6U-eq-HSX" id="z57-l3-ayI"/>
+                        <outlet property="errorLabel" destination="DEZ-md-aA8" id="DqS-ex-nVk"/>
                         <outlet property="positionLabel" destination="TvX-Na-Rfb" id="rut-Z2-OmO"/>
                         <outlet property="tetherLengthLabel" destination="Rpr-lv-vv9" id="qs5-T4-9nd"/>
                         <outlet property="tetherLengthSlider" destination="bxV-kI-9Rc" id="THl-Zf-h9d"/>

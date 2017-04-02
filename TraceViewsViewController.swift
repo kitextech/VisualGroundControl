@@ -21,11 +21,9 @@ class TraceViewsViewController: NSViewController {
     @IBOutlet weak var xyView: TraceView!
     @IBOutlet weak var freeView: TraceView!
 
-    @IBOutlet weak var slider: NSSlider!
-
-    @IBOutlet weak var sliderr: NSSlider!
-
-    @IBOutlet weak var scaleSlider: NSSlider!
+    @IBOutlet weak var xzButton: NSButton!
+    @IBOutlet weak var yzButton: NSButton!
+    @IBOutlet weak var piButton: NSButton!
 
     // MARK: - Private
 
@@ -69,8 +67,11 @@ class TraceViewsViewController: NSViewController {
 
         //
 
-        scaleSlider.scalar.bindTo(freeView.scale).disposed(by: bag)
-        scaleSlider.scalar.bindTo(xyView.scale).disposed(by: bag)
+        xzButton.rx.tap.map { (0, π/2) }.bindTo(freeView.angles).disposed(by: bag)
+        yzButton.rx.tap.map { (π/2, π/2) }.bindTo(freeView.angles).disposed(by: bag)
+//        piButton.rx.tap.map {  }.map  { (π/2, π/2) }.bindTo(freeView.angles).disposed(by: bag)
+
+
     }
 }
 
@@ -85,6 +86,9 @@ class TraceView: NSView {
     public let targetPosition = Variable<Vector>(.origin)
 
     public let tetherLength = Variable<Scalar>(50)
+
+    public let cPosition = Variable<Vector>(.origin)
+    public let turningRadius = Variable<Scalar>(1)
 
     // MARK: - Output
 
@@ -138,9 +142,10 @@ class TraceView: NSView {
 
         // Transformers
 
-        axis.asObservable().subscribe(onNext: axisChanged).disposed(by: bag)
+        axis.asObservable().bindNext(axisChanged).disposed(by: bag)
         angles.asObservable().map(Vector.unitVector).bindTo(axis).disposed(by: bag)
         Observable.combineLatest(sphere.asObservable(), axis.asObservable(), resultSelector: noOp).bindNext(sphereOrAxisChanged).disposed(by: bag)
+        scale.asObservable().bindNext(scaleChanged).disposed(by: bag)
 
         // Positions
 
@@ -151,7 +156,11 @@ class TraceView: NSView {
         // Paths
 
         Observable.combineLatest(kitePosition.asObservable(), kiteOrientation.asObservable(), resultSelector: kiteLines).map(makePath).bindTo(kitePath).disposed(by: bag)
-        Observable.combineLatest(sphere.asObservable(), axis.asObservable(), resultSelector: sphereLines).map(makePath).bindTo(spherePath).disposed(by: bag)
+
+        let allSphereLines = sphere.asObservable().map(sphereLines)
+        let occlusionPlane = Observable.combineLatest(bPosition.asObservable(), axis.asObservable(), resultSelector: Plane.init)
+
+        Observable.combineLatest(allSphereLines, occlusionPlane, resultSelector: occluded).map(makePath).bindTo(spherePath).disposed(by: bag)
 
         // Drawing
 
@@ -166,29 +175,31 @@ class TraceView: NSView {
     // Transformers
 
     private func axisChanged(vector: Vector) {
-        Swift.print("Axis changed: \(vector)")
         projector = NSPoint.projector(along: vector)
         deProjector = NSPoint.deProjector(along: vector)
 
         targetPosition.value = targetPosition.value
+        kitePosition.value = kitePosition.value
+        bPosition.value = bPosition.value
         redraw()
     }
 
     private func sphereOrAxisChanged(sphere: Sphere, normal: Vector) {
-        Swift.print("Sphere of Axis changed: \(sphere) \(normal)")
         spherifier = Sphere.spherifier(along: normal, on: sphere)
         redraw()
     }
 
     private func scaleChanged(scale: Scalar) {
-        Swift.print("Scale changed: \(scale)")
         downScaler = NSPoint.scaler(by: 1/scale)
         upScaler = NSPoint.scaler(by: scale)
+        targetPosition.value = targetPosition.value
+        kitePosition.value = kitePosition.value
+        bPosition.value = bPosition.value
+
         redraw()
     }
 
-    private func boundsChanged(rect: NSRect) { // FIXME: Call this
-        Swift.print("Bounds changed: \(rect)")
+    private func boundsChanged(rect: NSRect) {
         absolutiser = NSPoint.absolutiser(in: rect)
         relativiser = NSPoint.relativiser(in: rect)
         redraw()
@@ -211,15 +222,13 @@ class TraceView: NSView {
     }
 
     override func magnify(with event: NSEvent) {
-        Swift.print(event.magnification)
+        scale.value /= 1 + 0.6*event.magnification
     }
 
     private func processMouseEvent(_ event: NSEvent) {
         let point = convert(event.locationInWindow, from: nil)
         let vector = vectorify(point)
-       // if vector.z < bPosition.value.z {
-            requestedTargetPosition.onNext(spherifier(vector))
-       // }
+        requestedTargetPosition.onNext(spherifier(vector))
     }
 
     override func viewDidEndLiveResize() {
@@ -295,7 +304,31 @@ class TraceView: NSView {
         return makePath(lines: [line])
     }
 
-    private func sphereLines(s: Sphere, axis: Vector) -> [Line] {
+    // Semi-pure functions
+
+    private func vectorify(_ point: NSPoint) -> Vector {
+        let relative = relativiser(point)
+        let fullScale = upScaler(relative)
+        return deProjector(fullScale)
+    }
+
+    private func pointify(_ v: Vector) -> NSPoint {
+        let projected = projector(v)
+        let scaledDown = downScaler(projected)
+        return absolutiser(scaledDown)
+    }
+
+    private func kiteLines(position: Vector, orientation: Quaternion) -> [Line] {
+        return kite.lines.map(orientation.apply).map(Line.translator(by: position))
+    }
+
+    private func occluded(lines: [Line], plane: Plane) -> [Line] {
+        return lines.flatMap(occlude(using: plane))
+    }
+
+    // Pure functions
+
+    private func sphereLines(s: Sphere) -> [Line] {
         let longitudes = 20
         let latitudes = 10
 
@@ -323,40 +356,22 @@ class TraceView: NSView {
                 lines.append(Line(start: start, end: end) + s.center)
             }
         }
+        
+        return lines
+    }
 
-        func occlude(line: Line) -> Line? {
-            let line2 = line - s.center
-            switch (line2.start•axis > 0, line2.end•axis > 0) {
+    private func occlude(using plane: Plane) -> (Line) -> Line? {
+        return { line in
+            let line2 = line - plane.center
+            switch (line2.start•plane.normal > 0, line2.end•plane.normal > 0) {
             case (true, true): return nil
             case (false, false): return line
-            case (true, false), (false, true): return line.split(by: Plane(center: s.center, normal: axis)).neg
+            case (true, false), (false, true): return line.split(by: plane).neg
             }
         }
-
-        return lines.flatMap(occlude)
     }
 
-    // Semi-pure functions
-
-    private func vectorify(_ point: NSPoint) -> Vector {
-        let relative = relativiser(point)
-        let fullScale = upScaler(relative)
-        return deProjector(fullScale)
-    }
-
-    private func pointify(_ v: Vector) -> NSPoint {
-        let projected = projector(v)
-        let scaledDown = downScaler(projected)
-        return absolutiser(scaledDown)
-    }
-
-    private func kiteLines(position: Vector, orientation: Quaternion) -> [Line] {
-        return kite.lines.map(orientation.apply).map(Line.translator(by: position))
-    }
-
-    // Pure functions
-
-    func ballPath(at point: NSPoint, radius r: Scalar) -> NSBezierPath {
+    private func ballPath(at point: NSPoint, radius r: Scalar) -> NSBezierPath {
         return NSBezierPath(ovalIn: NSRect(origin: NSPoint(x: -r, y: -r) + point, size: NSSize(width: 2*r, height: 2*r)))
     }
 }

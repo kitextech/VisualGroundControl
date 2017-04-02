@@ -15,26 +15,6 @@ struct MessageBox {
     public let tarSysId: UInt8
     public let tarCompId: UInt8
 
-//    public func setBool(id: String) -> (Bool) -> [(MavlinkMessage, String)] {
-//        return { bool in
-//            return self.setRealParameter(id: id, value: bool ? 1 : 0)
-//        }
-//    }
-//
-//    public func setScalar(id: String) -> (Scalar) -> [(MavlinkMessage, String)] {
-//        return { value in
-//            return self.setRealParameter(id: id, value: value)
-//        }
-//    }
-//
-//    public func setVector(ids: (String, String, String)) -> (Vector) -> [(MavlinkMessage, String)] {
-//        return { v in
-//            return self.setRealParameter(id: ids.0, value: v.x)
-//                + self.setRealParameter(id: ids.1, value: v.y)
-//                + self.setRealParameter(id: ids.2, value: v.z)
-//        }
-//    }
-
     public func setOffboardEnabled(on: Bool) -> MavlinkMessage {
         var com = mavlink_command_long_t()
         com.target_system = tarSysId
@@ -180,7 +160,7 @@ struct MessageBox {
         paramSet.param_id = parameterValue.id.paramId
         paramSet.param_value = Float(parameterValue.value)
         paramSet.param_type = UInt8(parameterValue.type.rawValue)
-        
+
         var msg = mavlink_message_t()
         
         mavlink_msg_param_set_encode(sysId, compId, &msg, &paramSet)
@@ -194,9 +174,9 @@ extension String {
         let a = unicodeScalars.filter { $0.isASCII }.map { Int8($0.value) } + Array(repeating: 0, count: 16)
         return (a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15])
     }
-    
+
     init(paramId p: ParamId) {
-        let array = [p.0, p.1, p.2, p.3, p.4, p.5, p.6, p.7, p.8, p.9, p.10, p.11, p.12, p.13, p.14, p.15]
+        let array = [p.0, p.1, p.2, p.3, p.4, p.5, p.6, p.7, p.8, p.9, p.10, p.11, p.12, p.13, p.14, p.15].filter { $0 != 0 }
         self = String(array.map { Character(UnicodeScalar(UInt8($0))) })
     }
 }
@@ -221,6 +201,8 @@ extension MavlinkMessage: CustomStringConvertible {
             var sys_status = mavlink_sys_status_t()
             mavlink_msg_sys_status_decode(&message, &sys_status)
             return "SYS_STATUS comms drop rate: \(sys_status.drop_rate_comm)%"
+        case 21:
+            return "REQUEST PARAM LIST :comp: \(message.compid) sys: \(message.sysid)"
         case 22:
             var p = mavlink_param_value_t()
             mavlink_msg_param_value_decode(&message, &p)
@@ -228,7 +210,7 @@ extension MavlinkMessage: CustomStringConvertible {
         case 23:
             var param_set = mavlink_param_set_t()
             mavlink_msg_param_set_decode(&message, &param_set)
-            return "PARAM_SET: \(String(paramId: param_set.param_id)) = \(param_set.param_value)"
+            return "PARAM_SET: \(String(paramId: param_set.param_id)) = \(param_set.param_value) type: \(param_set.param_type) cmp: \(param_set.target_component) sys: \(param_set.target_system)"
         case 30:
             var attitude = mavlink_attitude_t()
             mavlink_msg_attitude_decode(&message, &attitude)
@@ -254,7 +236,7 @@ extension MavlinkMessage: CustomStringConvertible {
             mavlink_msg_battery_status_decode(&message, &battery_status)
             return "BATTERY_STATUS current consumed: \(battery_status.current_consumed) mAh"
         default:
-            return "OTHER Message with id \(message.msgid)"
+            return "OTHER Message with id \(message.msgid) comp: \(message.compid) sys: \(message.sysid)"
         }
     }
 }

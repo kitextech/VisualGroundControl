@@ -13,6 +13,9 @@ class SettingsViewController: NSViewController {
     private let kite = KiteLink.shared
     
     // MARK: - Outlets
+
+    @IBOutlet weak var errorLabel: NSTextField!
+
     @IBOutlet weak var positionLabel: NSTextField!
     @IBOutlet weak var tetherLengthSlider: NSSlider!
     @IBOutlet weak var tetherLengthLabel: NSTextField!
@@ -52,6 +55,8 @@ class SettingsViewController: NSViewController {
         tweakedB.asObservable().map(getVectorString).bindTo(positionLabel.rx.text).disposed(by: bag)
 
         tetheredHoverThrustSlider.scalar.bindTo(kite.tetheredHoverThrust).disposed(by: bag)
+
+        kite.errorMessage.bindTo(errorLabel.rx.text).disposed(by: bag)
     }
 
     @IBAction func selectedOffboardMode(_ sender: NSButton) {

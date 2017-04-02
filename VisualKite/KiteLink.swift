@@ -84,7 +84,13 @@ public let compId: UInt8 = 0
 struct ParameterValue {
     let id: String
     let value: Scalar
-    let type: MAV_PARAM_TYPE // MAV_PARAM_TYPE_REAL32
+    let type: MAV_PARAM_TYPE
+
+    init(id: String, value: Scalar, type: MAV_PARAM_TYPE = MAV_PARAM_TYPE_REAL32) {
+        self.id = id
+        self.value = value
+        self.type = type
+    }
 }
 
 class KiteLink: NSObject {
@@ -121,11 +127,13 @@ class KiteLink: NSObject {
     public let quaternion = PublishSubject<KiteQuaternion>()
     public let attitude = PublishSubject<KiteAttitude>()
 
+    public let errorMessage = PublishSubject<String>()
+
     public var isSerialPortOpen: Bool { return serialPort?.isOpen ?? false }
 
     // MARK: Singleton
 
-    public static let shared = KiteLink(targetSystemId: 0, targetComponentId: 255)
+    public static let shared = KiteLink(targetSystemId: 1, targetComponentId: 1)
     
     // MARK: Serial Port Properties
 
@@ -211,20 +219,21 @@ class KiteLink: NSObject {
     public func requestParameterList() {
         send(box.requestParamList())
     }
-    
+
     // MARK: Private Methods
 
     private func heartbeat(timer: Timer) {
         let now = Date()
         unconfirmedParameterValues.values.forEach { value, sentDate, retries in
-            if now.timeIntervalSince(sentDate) > Double(retries)*parameterGracePeriod {
+            if now.timeIntervalSince(sentDate) > Double(retries + 1)*parameterGracePeriod {
                 if retries < parameterRetries {
+                    print("Retrying (\(retries + 1)) retries for \(value.id) value: \(value.value)")
                     send(box.setParameter(value: value))
                     unconfirmedParameterValues[value.id] = (value, sentDate, retries + 1)
                 }
                 else {
-                    // complain
-                    fatalError("too many (\(retries)) retries for \(value.id)")
+                    errorMessage.onNext("too many (\(retries)) retries for \(value.id)")
+                    unconfirmedParameterValues[value.id] = nil
                 }
             }
         }
@@ -271,27 +280,34 @@ class KiteLink: NSObject {
 
     private func setBool(id: String) -> (Bool) -> [ParameterValue] {
         return { bool in
-            return [ParameterValue(id: id, value: bool ? 1 : 0, type: MAV_PARAM_TYPE_REAL32)]
+            return [ParameterValue(id: id, value: bool ? 1 : 0)]
         }
     }
 
     private func setScalar(id: String) -> (Scalar) -> [ParameterValue] {
         return { value in
-            return [ParameterValue(id: id, value: value, type: MAV_PARAM_TYPE_REAL32)]
+            return [ParameterValue(id: id, value: value)]
         }
     }
 
     private func setVector(ids: (String, String, String)) -> (Vector) -> [ParameterValue] {
         return { v in
-            return [ParameterValue(id: ids.0, value: v.x, type: MAV_PARAM_TYPE_REAL32),
-                    ParameterValue(id: ids.1, value: v.y, type: MAV_PARAM_TYPE_REAL32),
-                    ParameterValue(id: ids.2, value: v.z, type: MAV_PARAM_TYPE_REAL32)]
+            return [ParameterValue(id: ids.0, value: v.x),
+                    ParameterValue(id: ids.1, value: v.y),
+                    ParameterValue(id: ids.2, value: v.z)]
         }
     }
 
     internal func confirm(_ p: ParameterValue) {
-        if let unconfirmed = unconfirmedParameterValues[p.id]?.0, unconfirmed.value == p.value, unconfirmed.type == p.type {
+        func isCloseEnough(actual: Scalar, received: Scalar) -> Bool {
+            let relativeError: Scalar = 1/10000
+            let absoluteError: Scalar = 1/100000
+            return abs(actual - received) < relativeError*abs(actual) + absoluteError
+        }
+
+        if let unconfirmed = unconfirmedParameterValues[p.id]?.0, unconfirmed.type == p.type, isCloseEnough(actual: unconfirmed.value, received: p.value) {
             unconfirmedParameterValues[p.id] = nil
+            print("Confirmed \(p.id) : \(p.value)")
         }
     }
 
@@ -329,7 +345,9 @@ class KiteLink: NSObject {
 
         serialPort.send(message.data)
 
-        // 1 second later, check if confirmed
+        if message.msgid != 84 {
+            print("SEND: \(message)")
+        }
     }
     
     // MARK: - Notifications
@@ -416,35 +434,35 @@ extension KiteLink: ORSSerialPortDelegate {
     func serialPort(_ serialPort: ORSSerialPort, didReceive data: Data) {
         var bytes = [UInt8](repeating: 0, count: data.count)
         (data as NSData).getBytes(&bytes, length: data.count)
-        
+
         for byte in bytes {
             var message = mavlink_message_t()
             var status = mavlink_status_t()
             let channel = UInt8(MAVLINK_COMM_1.rawValue)
 
-            guard mavlink_parse_char(channel, byte, &message, &status) != 0
-                && message.sysid == box.tarSysId && message.compid == box.tarCompId else { return }
+            let parse = mavlink_parse_char(channel, byte, &message, &status)
+            if parse != 0 {
+                guard message.sysid == box.tarSysId && message.compid == box.tarCompId else { return }
 
-            if let loc = message.location {
-                location.onNext(loc)
-            }
+                if let loc = message.location {
+                    location.onNext(loc)
+                }
 
-            if let att = message.attitude {
-                attitude.onNext(att)
-            }
+                if let att = message.attitude {
+                    attitude.onNext(att)
+                }
 
-            if let q = message.quaternion {
-                quaternion.onNext(q)
-            }
+                if let q = message.quaternion {
+                    quaternion.onNext(q)
+                }
 
-            if let value = message.parameterValue {
-                confirm(value)
-            }
+                if let value = message.parameterValue {
+                    print("Received Parameter: \(value.id) (\(value.id.characters.count)) = \(value.value)")
 
-            mavlinkMessage.onNext(message)
+                    confirm(value)
+                }
 
-            if message.msgid == 22 {
-                print(message)
+                mavlinkMessage.onNext(message)
             }
         }
     }
