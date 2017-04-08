@@ -20,9 +20,17 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var tetherLengthSlider: NSSlider!
     @IBOutlet weak var tetherLengthLabel: NSTextField!
 
-    @IBOutlet weak var deltaBxSlider: NSSlider!
-    @IBOutlet weak var deltaBySlider: NSSlider!
-    @IBOutlet weak var deltaBzSlider: NSSlider!
+    @IBOutlet weak var deltaBxStepper: NSStepper!
+    @IBOutlet weak var deltaByStepper: NSStepper!
+    @IBOutlet weak var deltaBzStepper: NSStepper!
+
+    @IBOutlet weak var phiCSlider: NSSlider!
+    @IBOutlet weak var thetaCSlider: NSSlider!
+    @IBOutlet weak var turningRadiousSlider: NSSlider!
+
+    @IBOutlet weak var phiCLabel: NSTextField!
+    @IBOutlet weak var thetaCLabel: NSTextField!
+    @IBOutlet weak var turningRLabel: NSTextField!
 
     @IBOutlet weak var tetheredHoverThrustSlider: NSSlider!
 
@@ -48,15 +56,25 @@ class SettingsViewController: NSViewController {
         
         kite.tetherLength.asObservable().map(getScalarString).bindTo(tetherLengthLabel.rx.text).disposed(by: bag)
 
-        let db = Observable.combineLatest(deltaBxSlider.scalar, deltaBySlider.scalar, deltaBzSlider.scalar, resultSelector: Vector.fromScalars)
+ //       let db = Observable.combineLatest(deltaBxStepper.scalar, deltaByStepper.scalar, deltaBzStepper.scalar, resultSelector: Vector.fromScalars)
 
-        Observable.combineLatest(kitePosition.asObservable(), db, resultSelector: +).bindTo(tweakedB).disposed(by: bag)
+   //     Observable.combineLatest(kitePosition.asObservable(), db, resultSelector: +).bindTo(tweakedB).disposed(by: bag)
+
+        kitePosition.asObservable().bindTo(tweakedB).disposed(by: bag)
 
         tweakedB.asObservable().map(getVectorString).bindTo(positionLabel.rx.text).disposed(by: bag)
 
         tetheredHoverThrustSlider.scalar.bindTo(kite.tetheredHoverThrust).disposed(by: bag)
 
         kite.errorMessage.bindTo(errorLabel.rx.text).disposed(by: bag)
+
+//        phiCSlider.scalar.map(getScalarString).bindTo(phiCLabel.rx.text).disposed(by: bag)
+//        thetaCSlider.scalar.map(getScalarString).bindTo(thetaCLabel.rx.text).disposed(by: bag)
+//        turningRadiousSlider.scalar.map(getScalarString).bindTo(turningRLabel.rx.text).disposed(by: bag)
+
+        phiCSlider.scalar.bindTo(kite.phiC).disposed(by: bag)
+        thetaCSlider.scalar.bindTo(kite.thetaC).disposed(by: bag)
+        turningRadiousSlider.scalar.bindTo(kite.turningRadius).disposed(by: bag)
     }
 
     @IBAction func selectedOffboardMode(_ sender: NSButton) {

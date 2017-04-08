@@ -27,13 +27,14 @@ class TraceViewsViewController: NSViewController {
 
     // MARK: - Private
 
-    private let kite = KiteLink.shared
     private let bag = DisposeBag()
 
     // MARK: - View Controller Lifecycle Methods
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        let kite = KiteLink.shared
 
         freeView.angles.value = (π/2 - 0.2, 0)
         freeView.scrolls = true
@@ -45,7 +46,6 @@ class TraceViewsViewController: NSViewController {
         position.asObservable().bindTo(freeView.kitePosition).disposed(by: bag)
 
         let quaternion = Variable<Quaternion>(.id)
-
         kite.quaternion.map(KiteQuaternion.getQuaternion).bindTo(quaternion).disposed(by: bag)
 
         quaternion.asObservable().bindTo(xyView.kiteOrientation).disposed(by: bag)
@@ -60,18 +60,44 @@ class TraceViewsViewController: NSViewController {
         kite.tetherLength.asObservable().bindTo(xyView.tetherLength).disposed(by: bag)
         kite.tetherLength.asObservable().bindTo(freeView.tetherLength).disposed(by: bag)
 
+        let d = Observable.combineLatest(kite.tetherLength.asObservable(), kite.turningRadius.asObservable(), resultSelector: getD)
+        let cRel = Observable.combineLatest(kite.phiC.asObservable(), kite.thetaC.asObservable(), d, resultSelector: getC)
+        let c = Observable.combineLatest(cRel, kite.positionB.asObservable(), resultSelector: +)
+
+        let pi = Observable.combineLatest(c, kite.positionB.asObservable(), resultSelector: getPiPlane)
+
+        pi.bindTo(xyView.piPlane).disposed(by: bag)
+        pi.bindTo(freeView.piPlane).disposed(by: bag)
+
+        kite.turningRadius.asObservable().bindTo(xyView.turningRadius).disposed(by: bag)
+        kite.turningRadius.asObservable().bindTo(freeView.turningRadius).disposed(by: bag)
+
         // Trace views as controls
 
         xyView.requestedTargetPosition.bindTo(KiteLink.shared.positionTarget).disposed(by: bag)
         freeView.requestedTargetPosition.bindTo(KiteLink.shared.positionTarget).disposed(by: bag)
 
-        //
-
         xzButton.rx.tap.map { (0, π/2) }.bindTo(freeView.angles).disposed(by: bag)
         yzButton.rx.tap.map { (π/2, π/2) }.bindTo(freeView.angles).disposed(by: bag)
-//        piButton.rx.tap.map {  }.map  { (π/2, π/2) }.bindTo(freeView.angles).disposed(by: bag)
+        piButton.rx.tap.map { (π + kite.phiC.value, π/2 - kite.thetaC.value) }.bindTo(freeView.angles).disposed(by: bag)
+    }
+
+    private func getD(tether: Scalar, r: Scalar) -> Scalar {
+        return sqrt(tether*tether - r*r)
+    }
+
+    private func getC(phi: Scalar, theta: Scalar, d: Scalar) -> Vector {
+        return Vector(phi: phi, theta: π/2 + theta, r: d)
+    }
 
 
+    private func getCKite(phi: Scalar, theta: Scalar, d: Scalar) -> Vector {
+        let xyFactor = d*cos(theta);
+        return Vector(xyFactor*cos(phi), xyFactor*sin(phi), -d*sin(theta))
+    }
+
+    private func getPiPlane(c: Vector, b: Vector) -> Plane {
+        return Plane(center: c, normal: (c - b).unit)
     }
 }
 
@@ -87,8 +113,8 @@ class TraceView: NSView {
 
     public let tetherLength = Variable<Scalar>(50)
 
-    public let cPosition = Variable<Vector>(.origin)
-    public let turningRadius = Variable<Scalar>(1)
+    public let piPlane = Variable<Plane>(.z)
+    public let turningRadius = Variable<Scalar>(0)
 
     // MARK: - Output
 
@@ -105,12 +131,14 @@ class TraceView: NSView {
 
     private let kitePoint = Variable<NSPoint>(.zero)
     private let bPoint = Variable<NSPoint>(.zero)
+    private let cPoint = Variable<NSPoint>(.zero)
     private let targetPoint = Variable<NSPoint>(.zero)
 
     private let sphere = Variable<Sphere>(.unit)
 
     // MARK: - Visual
 
+    private var circlePath = Variable<NSBezierPath?>(nil)
     private var spherePath = Variable<NSBezierPath?>(nil)
     private var kitePath = Variable<NSBezierPath?>(nil)
 
@@ -151,6 +179,7 @@ class TraceView: NSView {
 
         kitePosition.asObservable().map(pointify).bindTo(kitePoint).disposed(by: bag)
         bPosition.asObservable().map(pointify).bindTo(bPoint).disposed(by: bag)
+        piPlane.asObservable().map(Plane.getCenter).map(pointify).bindTo(cPoint).disposed(by: bag)
         targetPosition.asObservable().map(pointify).bindTo(targetPoint).disposed(by: bag)
 
         // Paths
@@ -162,12 +191,17 @@ class TraceView: NSView {
 
         Observable.combineLatest(allSphereLines, occlusionPlane, resultSelector: occluded).map(makePath).bindTo(spherePath).disposed(by: bag)
 
+        let allCircleLines = Observable.combineLatest(piPlane.asObservable(), turningRadius.asObservable(), resultSelector: circleLines)
+
+        Observable.combineLatest(allCircleLines, occlusionPlane, resultSelector: occluded).map(makePath).bindTo(circlePath).disposed(by: bag)
+
         // Drawing
 
         kitePath.asObservable().bindNext(redraw).addDisposableTo(bag)
         spherePath.asObservable().bindNext(redraw).addDisposableTo(bag)
 
         targetPosition.asObservable().bindNext(redraw).addDisposableTo(bag)
+        piPlane.asObservable().bindNext(redraw).addDisposableTo(bag)
 
         acceptsTouchEvents = true
     }
@@ -177,10 +211,7 @@ class TraceView: NSView {
     private func axisChanged(vector: Vector) {
         projector = NSPoint.projector(along: vector)
         deProjector = NSPoint.deProjector(along: vector)
-
-        targetPosition.value = targetPosition.value
-        kitePosition.value = kitePosition.value
-        bPosition.value = bPosition.value
+        recalculate()
         redraw()
     }
 
@@ -192,10 +223,7 @@ class TraceView: NSView {
     private func scaleChanged(scale: Scalar) {
         downScaler = NSPoint.scaler(by: 1/scale)
         upScaler = NSPoint.scaler(by: scale)
-        targetPosition.value = targetPosition.value
-        kitePosition.value = kitePosition.value
-        bPosition.value = bPosition.value
-
+        recalculate()
         redraw()
     }
 
@@ -218,7 +246,7 @@ class TraceView: NSView {
         guard scrolls else { return }
 
         angles.value.0 += event.deltaX/20
-        angles.value.1 += event.deltaY/20
+        angles.value.1 -= event.deltaY/20
     }
 
     override func magnify(with event: NSEvent) {
@@ -237,6 +265,13 @@ class TraceView: NSView {
     }
 
     // Drawing
+
+    private func recalculate() {
+        targetPosition.value = targetPosition.value
+        kitePosition.value = kitePosition.value
+        bPosition.value = bPosition.value
+        piPlane.value = piPlane.value
+    }
 
     private func redraw<T>(ignored: T) {
         redraw()
@@ -278,9 +313,24 @@ class TraceView: NSView {
         NSColor.purple.set()
         ballPath(at: targetPoint.value, radius: 5).fill()
 
+        NSColor.red.set()
+        ballPath(at: cPoint.value, radius: 5).fill()
+        circlePath.value?.stroke()
+
+//        let phi = KiteLink.shared.phiC.value
+//        let theta = KiteLink.shared.thetaC.value
+//
+//        let e_pi_x = Vector(sin(phi), -cos(phi), 0)
+//        let e_pi_y = Vector(-sin(phi)*sin(theta),-cos(phi)*sin(theta), -cos(theta))
+//
+//        ballPath(at: pointify(piPlane.value.center + turningRadius.value*e_pi_x), radius: 3).fill()
+//
+//        NSColor.green.set()
+//        ballPath(at: pointify(piPlane.value.center + turningRadius.value*e_pi_y), radius: 3).fill()
+
         NSColor.black.set()
-        kitePath.value?.stroke()
         ballPath(at: kitePoint.value, radius: 3).fill()
+        kitePath.value?.stroke()
 
         NSColor.green.set()
         // ballPath(at: leftWingPoint, radius: 3).fill()
@@ -320,6 +370,16 @@ class TraceView: NSView {
 
     private func kiteLines(position: Vector, orientation: Quaternion) -> [Line] {
         return kite.lines.map(orientation.apply).map(Line.translator(by: position))
+    }
+
+    private func circleLines(in plane: Plane, radius: Scalar) -> [Line] {
+        let points = 30
+
+        let vectors = (0...points).map { 2*π*Scalar($0)/Scalar(points) }.map { phi -> Vector in
+            plane.center + radius*(sin(phi)*plane.bases.0 + cos(phi)*plane.bases.1)
+        }
+
+        return zip(vectors.dropLast(), vectors.dropFirst()).map(Line.init) //.flatMap(occlude(using: occlusionPlane))
     }
 
     private func occluded(lines: [Line], plane: Plane) -> [Line] {
@@ -376,6 +436,158 @@ class TraceView: NSView {
     }
 }
 
+let n = 60
+let c = NSPoint(x: 700, y: 400)
+
+let speed: Scalar = 5
+
+class PursuitView: NSView {
+    var position = NSPoint.zero
+    var yaw: Scalar = π/4
+
+    let basePathPoints = (0..<n).map { Scalar($0)*2*π/Scalar(n) }.map { NSPoint(x: sin($0), y: cos($0)) }
+    var pathRadius: Scalar = 300
+
+    var pathPoints: [NSPoint] { return basePathPoints.map { c + pathRadius*$0} }
+
+    var index = 0
+    var target: NSPoint { return pathPoints[index] }
+
+    var arcCenter = NSPoint.zero
+    var arcRadius: Scalar = 1000000
+    var yawRate: Scalar = 0
+
+    var searchRadius: Scalar = 200
+
+    var trail = [NSPoint]()
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+
+        acceptsTouchEvents = true
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        processMouseEvent(event)
+    }
+
+    override func mouseDragged(with event: NSEvent) {
+        processMouseEvent(event)
+    }
+
+    private func processMouseEvent(_ event: NSEvent) {
+        position = convert(event.locationInWindow, from: nil)
+        next()
+        trail = []
+        setNeedsDisplay(bounds)
+    }
+
+    func radiusChanged(r: Scalar) {
+        pathRadius = r
+    }
+
+    func next() {
+        updateTarget()
+        updateArc()
+        updateYawRate()
+        updatePosition()
+        trail.append(position)
+    }
+
+    func updateTarget() {
+        var i = index
+
+        while (pathPoints[i] - position).norm < searchRadius {
+            i = (i + 1) % n
+        }
+        index = i
+    }
+
+    func updateArc() {
+        let attitude = NSPoint(phi: yaw, r: 1)
+        let phi = attitude.signedAngle(to: target - position)
+        arcRadius = (target - position).norm/sqrt(2*(1 - cos(2*phi)))
+        arcCenter = position + arcRadius*attitude.rotated(by: (phi.sign == .plus ? 1 : -1)*π/2)
+    }
+
+    func updateYawRate() {
+
+    }
+
+    func updatePosition() {
+
+    }
+
+    override func draw(_ dirtyRect: NSRect) {
+        // Draw search area
+        NSColor(calibratedRed: 0.8, green: 0.8, blue: 0.8, alpha: 1).set()
+        ballPath(at: position, radius: searchRadius).fill()
+
+        // Draw kite path
+        NSColor.lightGray.set()
+        ballPath(at: c, radius: pathRadius).stroke()
+
+        // Draw target
+        NSColor.blue.set()
+        ballPath(at: target, radius: 5).stroke()
+
+        // Draw trail
+        NSColor.gray.set()
+        makePath(points: trail)?.stroke()
+
+        // Draw position
+        NSColor.orange.set()
+        ballPath(at: position, radius: 5).fill()
+        makePath(lines: [(position, position + NSPoint(phi: yaw, r: 50))]).stroke()
+
+        // Draw arc
+        NSColor.purple.set()
+        let arc = NSBezierPath()
+        let startAngle = 180*(position - arcCenter).phi/π
+        let endAngle = 180*(target - arcCenter).phi/π
+
+        let clockWise = (target - position).signedAngle(to: NSPoint(phi: yaw, r: 1)) > 0
+        arc.appendArc(withCenter: arcCenter, radius: arcRadius, startAngle: startAngle, endAngle: endAngle, clockwise: clockWise)
+        arc.lineWidth = 2
+        arc.stroke()
+
+        ballPath(at: arcCenter, radius: 5).fill()
+
+        //        makePath(lines: [(position, position + 10*)]) // draw yawrate
+    }
+
+    private func ballPath(at point: NSPoint, radius r: Scalar) -> NSBezierPath {
+        return NSBezierPath(ovalIn: NSRect(origin: NSPoint(x: -r, y: -r) + point, size: NSSize(width: 2*r, height: 2*r)))
+    }
+
+    private func makePath(lines: [(start: NSPoint, end: NSPoint)]) -> NSBezierPath {
+        let p = NSBezierPath()
+        p.lineWidth = 2
+
+        for line in lines {
+            p.move(to: line.start)
+            p.line(to: line.end)
+        }
+        return p
+    }
+
+    private func makePath(points: [NSPoint]) -> NSBezierPath? {
+        guard let first = points.first else { return nil }
+
+        let p = NSBezierPath()
+        p.lineWidth = 2
+
+        p.move(to: first)
+
+        for point in points.dropFirst() {
+            p.line(to: point)
+        }
+
+        return p
+    }
+
+}
+
 class SphereView: NSView {
     public let sphere = Variable<Sphere>(.unit)
     public let axis = Variable<Vector>(e_z)
@@ -429,6 +641,18 @@ extension AffineTransform {
 }
 
 extension NSPoint {
+    init(phi: Scalar, r: Scalar) {
+        self = r*NSPoint(x: cos(phi), y: sin(phi))
+    }
+
+    static func *(left: Scalar, right: NSPoint) -> NSPoint {
+        return NSPoint(x: left*right.x, y: left*right.y)
+    }
+
+    static func •(left: NSPoint, right: NSPoint) -> Scalar {
+        return  left.x*right.x + left.y*right.y
+    }
+
     static func +(left: NSPoint, right: NSPoint) -> NSPoint {
         return NSPoint(x: left.x + right.x, y: left.y + right.y)
     }
@@ -439,6 +663,53 @@ extension NSPoint {
 
     static prefix func -(point: NSPoint) -> NSPoint {
         return NSPoint(x: -point.x, y: -point.y)
+    }
+
+    public var norm: Scalar {
+        return sqrt(x*x + y*y)
+    }
+
+    public var phi: Scalar {
+        return atan2(y, x)
+    }
+
+    public var r: Scalar {
+        return norm
+    }
+
+    public var normSquared: Scalar {
+        return x*x + y*y
+    }
+
+    public var unit: NSPoint {
+        return (1/norm)*self
+    }
+
+    public func angle(to point: NSPoint) -> Scalar {
+        return acos(unit•point.unit)
+    }
+
+    public func signedAngle(to point: NSPoint) -> Scalar {
+        let p = point.unit
+        let q = unit
+
+        let signed = asin(p.y*q.x - p.x*q.y)
+
+        if angle(to: point) > π/2 {
+            if signed > 0 {
+                return π - signed
+            }
+            else {
+                return -π - signed
+            }
+        }
+        else {
+            return signed
+        }
+    }
+
+    public func rotated(by angle: Scalar) -> NSPoint {
+        return self.applying(CGAffineTransform(rotationAngle: angle))
     }
 
     public func deProjected(on plane: (x: Vector, y: Vector)) -> Vector {
@@ -493,6 +764,10 @@ extension NSPoint {
 }
 
 extension NSRect {
+    init(center: NSPoint, size: NSSize) {
+        self = NSRect(origin: center - NSPoint(x: size.width/2, y: size.height/2), size: size)
+    }
+
     public static var unit: NSRect {
         return NSRect(x: 0, y: 0, width: 1, height: 1)
     }

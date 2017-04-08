@@ -331,7 +331,6 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         }
     }
 }
-
 extension NSSlider {
     func setup(min minVal: Scalar, max maxVal: Scalar, current: Scalar) {
         minValue = Double(minVal)

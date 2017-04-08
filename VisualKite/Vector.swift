@@ -84,6 +84,8 @@ public struct Plane {
     let center: Vector
     let normal: Vector
 
+    public static var z = Plane(center: .origin, normal: e_z)
+
     public var bases: (Vector, Vector) {
         if normal || e_z {
             return (e_y, e_x)
@@ -93,6 +95,10 @@ public struct Plane {
         let y = x×normal
 
         return (x, y)
+    }
+
+    public static func getCenter(plane: Plane) -> Vector {
+        return plane.center
     }
 }
 

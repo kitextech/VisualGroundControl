@@ -679,13 +679,26 @@
             <objects>
                 <viewController title="Leap" id="AV6-Qh-fxc" customClass="LeapViewController" customModule="VisualKite" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="yWd-jd-f6S">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="453"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <customView focusRingType="none" translatesAutoresizingMaskIntoConstraints="NO" id="19r-N5-rRm" customClass="PursuitView" customModule="VisualKite" customModuleProvider="target">
+                                <rect key="frame" x="-475" y="-173" width="1400" height="800"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="800" id="3Fh-Gy-4qC"/>
+                                    <constraint firstAttribute="width" constant="1400" id="aOK-uC-I6G"/>
+                                </constraints>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="19r-N5-rRm" firstAttribute="centerY" secondItem="yWd-jd-f6S" secondAttribute="centerY" id="FLe-wh-gC3"/>
+                            <constraint firstItem="19r-N5-rRm" firstAttribute="centerX" secondItem="yWd-jd-f6S" secondAttribute="centerX" id="uqr-Lr-x1C"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <customObject id="ql4-5J-0VC" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1064" y="706"/>
+            <point key="canvasLocation" x="-1123" y="749.5"/>
         </scene>
         <!--2d-->
         <scene sceneID="v6F-YT-PfL">
@@ -1019,14 +1032,14 @@
                             </button>
                             <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Luj-jT-PF5">
                                 <rect key="frame" x="72" y="221" width="331" height="24"/>
-                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="above" numberOfTickMarks="41" allowsTickMarkValuesOnly="YES" sliderType="linear" id="UZR-OH-mRf"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="6.2999999999999998" tickMarkPosition="above" numberOfTickMarks="41" sliderType="linear" id="UZR-OH-mRf"/>
                             </slider>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K7i-kd-dPa">
                                 <rect key="frame" x="8" y="228" width="68" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="64" id="EIL-LC-iLB"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="delta Bx" id="fro-ug-C6u">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Phi C" id="fro-ug-C6u">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1045,14 +1058,14 @@
                             </textField>
                             <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fIg-Ij-7jQ">
                                 <rect key="frame" x="72" y="192" width="331" height="24"/>
-                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="above" numberOfTickMarks="41" allowsTickMarkValuesOnly="YES" sliderType="linear" id="0x7-Xq-h1Y"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="1.3999999999999999" tickMarkPosition="above" numberOfTickMarks="41" sliderType="linear" id="0x7-Xq-h1Y"/>
                             </slider>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b0x-WK-t5n">
                                 <rect key="frame" x="8" y="199" width="68" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="64" id="vuj-rg-bhU"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="delta By" id="zlW-qc-sTY">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Theta C" id="zlW-qc-sTY">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1071,14 +1084,14 @@
                             </textField>
                             <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="K6U-eq-HSX">
                                 <rect key="frame" x="72" y="167" width="331" height="24"/>
-                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="above" numberOfTickMarks="41" allowsTickMarkValuesOnly="YES" sliderType="linear" id="Rdi-ba-7mT"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="10" maxValue="50" doubleValue="10" tickMarkPosition="above" numberOfTickMarks="41" allowsTickMarkValuesOnly="YES" sliderType="linear" id="Rdi-ba-7mT"/>
                             </slider>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jrc-Hy-uPs">
                                 <rect key="frame" x="8" y="174" width="68" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="64" id="r72-8G-D7B"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="delta Bz" id="iAc-ej-Qod">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Turning r" id="iAc-ej-Qod">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1140,6 +1153,21 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bIp-iW-aiu">
+                                <rect key="frame" x="138" y="288" width="19" height="27"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <stepperCell key="cell" continuous="YES" alignment="left" increment="0.5" minValue="-10" maxValue="10" id="yoV-GY-DAC"/>
+                            </stepper>
+                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9K4-ES-8Em">
+                                <rect key="frame" x="159" y="288" width="19" height="27"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <stepperCell key="cell" continuous="YES" alignment="left" increment="0.5" minValue="-10" maxValue="10" id="4U1-bU-mU4"/>
+                            </stepper>
+                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MFo-X4-PQ3">
+                                <rect key="frame" x="180" y="288" width="19" height="27"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <stepperCell key="cell" continuous="YES" alignment="left" increment="0.5" minValue="-10" maxValue="10" id="WvW-Xi-0M3"/>
+                            </stepper>
                         </subviews>
                         <constraints>
                             <constraint firstItem="Luj-jT-PF5" firstAttribute="top" secondItem="K7i-kd-dPa" secondAttribute="top" id="0nV-H6-LZw"/>
@@ -1187,14 +1215,20 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="deltaBxSlider" destination="Luj-jT-PF5" id="icG-a4-nB9"/>
-                        <outlet property="deltaBySlider" destination="fIg-Ij-7jQ" id="O1z-5D-Igu"/>
-                        <outlet property="deltaBzSlider" destination="K6U-eq-HSX" id="z57-l3-ayI"/>
+                        <outlet property="deltaBxStepper" destination="bIp-iW-aiu" id="dG6-Y0-rpW"/>
+                        <outlet property="deltaByStepper" destination="9K4-ES-8Em" id="js2-d6-STj"/>
+                        <outlet property="deltaBzStepper" destination="MFo-X4-PQ3" id="E2i-fX-br9"/>
                         <outlet property="errorLabel" destination="DEZ-md-aA8" id="DqS-ex-nVk"/>
+                        <outlet property="phiCLabel" destination="DHv-Zr-zdP" id="qp0-GN-FZ7"/>
+                        <outlet property="phiCSlider" destination="Luj-jT-PF5" id="8KU-eH-3kH"/>
                         <outlet property="positionLabel" destination="TvX-Na-Rfb" id="rut-Z2-OmO"/>
                         <outlet property="tetherLengthLabel" destination="Rpr-lv-vv9" id="qs5-T4-9nd"/>
                         <outlet property="tetherLengthSlider" destination="bxV-kI-9Rc" id="THl-Zf-h9d"/>
                         <outlet property="tetheredHoverThrustSlider" destination="yN8-8P-INd" id="O6h-Q8-gSP"/>
+                        <outlet property="thetaCLabel" destination="A7Q-Tm-WOD" id="WRQ-1H-KwE"/>
+                        <outlet property="thetaCSlider" destination="fIg-Ij-7jQ" id="oco-3u-Tm9"/>
+                        <outlet property="turningRLabel" destination="IBc-f8-WMw" id="lFY-Dj-gU1"/>
+                        <outlet property="turningRadiousSlider" destination="K6U-eq-HSX" id="xzy-jJ-9qQ"/>
                     </connections>
                 </viewController>
                 <customObject id="Vgv-Xi-3wv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

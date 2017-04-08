@@ -191,9 +191,9 @@ class KiteLink: NSObject {
 
         flightMode.asObservable().bindNext(changedFlightMode).disposed(by: bag)
 
-//        bind(phiC, with: setScalar(id: MPC_LOOP_PHI_C))
-//        bind(thetaC, with: setScalar(id: MPC_LOOP_THETA_C))
-//        bind(turningRadius, with: setScalar(id: MPC_LOOP_TURN_R))
+        bind(phiC, using: setScalar(id: MPC_LOOP_PHI_C))
+        bind(thetaC, using: setScalar(id: MPC_LOOP_THETA_C))
+        bind(turningRadius, using: setScalar(id: MPC_LOOP_TURN_R))
     }
 
     deinit {
