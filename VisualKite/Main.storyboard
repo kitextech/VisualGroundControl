@@ -674,10 +674,10 @@
             </objects>
             <point key="canvasLocation" x="-565" y="172"/>
         </scene>
-        <!--Leap-->
+        <!--Pursuit-->
         <scene sceneID="gem-Rb-9uz">
             <objects>
-                <viewController title="Leap" id="AV6-Qh-fxc" customClass="LeapViewController" customModule="VisualKite" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Pursuit" id="AV6-Qh-fxc" customClass="PursuitViewController" customModule="VisualKite" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="yWd-jd-f6S">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="453"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -689,12 +689,47 @@
                                     <constraint firstAttribute="width" constant="1400" id="aOK-uC-I6G"/>
                                 </constraints>
                             </customView>
+                            <slider horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bDG-RG-MsZ">
+                                <rect key="frame" x="423" y="11" width="19" height="431"/>
+                                <sliderCell key="cell" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="right" sliderType="linear" id="Fkr-dh-Cq7"/>
+                            </slider>
+                            <slider horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zuR-OK-mc9">
+                                <rect key="frame" x="398" y="11" width="19" height="431"/>
+                                <sliderCell key="cell" continuous="YES" alignment="left" minValue="100" maxValue="500" doubleValue="200" tickMarkPosition="right" sliderType="linear" id="O5o-0T-mPT"/>
+                            </slider>
+                            <slider horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pLd-wb-Ntr">
+                                <rect key="frame" x="8" y="11" width="19" height="431"/>
+                                <sliderCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="20" doubleValue="5" tickMarkPosition="right" sliderType="linear" id="EoV-Q5-Ul5"/>
+                            </slider>
+                            <slider horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ALT-mV-Gsk">
+                                <rect key="frame" x="33" y="11" width="19" height="431"/>
+                                <sliderCell key="cell" continuous="YES" alignment="left" minValue="100" maxValue="400" doubleValue="300" tickMarkPosition="right" sliderType="linear" id="HCN-GM-xC8"/>
+                            </slider>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="pLd-wb-Ntr" firstAttribute="leading" secondItem="yWd-jd-f6S" secondAttribute="leading" constant="10" id="4Du-sE-Y1E"/>
+                            <constraint firstItem="ALT-mV-Gsk" firstAttribute="leading" secondItem="pLd-wb-Ntr" secondAttribute="trailing" constant="10" id="5aq-e8-Lud"/>
+                            <constraint firstItem="zuR-OK-mc9" firstAttribute="bottom" secondItem="bDG-RG-MsZ" secondAttribute="bottom" id="AiS-oJ-WDE"/>
                             <constraint firstItem="19r-N5-rRm" firstAttribute="centerY" secondItem="yWd-jd-f6S" secondAttribute="centerY" id="FLe-wh-gC3"/>
+                            <constraint firstItem="bDG-RG-MsZ" firstAttribute="top" secondItem="yWd-jd-f6S" secondAttribute="top" constant="13" id="YZR-6I-lXQ"/>
+                            <constraint firstItem="ALT-mV-Gsk" firstAttribute="bottom" secondItem="pLd-wb-Ntr" secondAttribute="bottom" id="bd2-PN-yoS"/>
+                            <constraint firstItem="bDG-RG-MsZ" firstAttribute="leading" secondItem="zuR-OK-mc9" secondAttribute="trailing" constant="10" id="fQO-hb-Tef"/>
+                            <constraint firstItem="pLd-wb-Ntr" firstAttribute="top" secondItem="yWd-jd-f6S" secondAttribute="top" constant="13" id="gDP-Cf-ZdV"/>
+                            <constraint firstAttribute="bottom" secondItem="pLd-wb-Ntr" secondAttribute="bottom" constant="14" id="mvD-Nj-fHQ"/>
+                            <constraint firstAttribute="bottom" secondItem="bDG-RG-MsZ" secondAttribute="bottom" constant="14" id="oYW-po-HzA"/>
+                            <constraint firstItem="zuR-OK-mc9" firstAttribute="top" secondItem="bDG-RG-MsZ" secondAttribute="top" id="pSB-8b-YNr"/>
+                            <constraint firstItem="ALT-mV-Gsk" firstAttribute="top" secondItem="pLd-wb-Ntr" secondAttribute="top" id="sU6-Rp-yTc"/>
                             <constraint firstItem="19r-N5-rRm" firstAttribute="centerX" secondItem="yWd-jd-f6S" secondAttribute="centerX" id="uqr-Lr-x1C"/>
+                            <constraint firstAttribute="trailing" secondItem="bDG-RG-MsZ" secondAttribute="trailing" constant="10" id="yU4-LN-Lsu"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="pursuitView" destination="19r-N5-rRm" id="Ish-2v-SHt"/>
+                        <outlet property="slidar0" destination="pLd-wb-Ntr" id="IPV-QV-Qxa"/>
+                        <outlet property="slider1" destination="ALT-mV-Gsk" id="qwu-Xl-xme"/>
+                        <outlet property="slider2" destination="zuR-OK-mc9" id="kfY-ym-MTa"/>
+                        <outlet property="slider3" destination="bDG-RG-MsZ" id="x7K-5f-eyu"/>
+                    </connections>
                 </viewController>
                 <customObject id="ql4-5J-0VC" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

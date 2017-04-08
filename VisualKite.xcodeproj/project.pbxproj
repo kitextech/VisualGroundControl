@@ -11,6 +11,7 @@
 		22389A101E658CFD00E596EA /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223899E81E658CB500E596EA /* RxSwift.framework */; };
 		22389A121E6602DE00E596EA /* KiteViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22389A111E6602DE00E596EA /* KiteViewer.swift */; };
 		22389A141E66034400E596EA /* KiteEmulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22389A131E66034400E596EA /* KiteEmulator.swift */; };
+		224B2BA91E9984730090C7B9 /* Pursuit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224B2BA81E9984730090C7B9 /* Pursuit.swift */; };
 		22BFFA201E6DF6E8006BE86D /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA1F1E6DF6E8006BE86D /* WindowController.swift */; };
 		22BFFA221E6DFC4A006BE86D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22BFFA211E6DFC4A006BE86D /* Main.storyboard */; };
 		22BFFA441E72B90A006BE86D /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA421E72B909006BE86D /* Realm.framework */; };
@@ -234,6 +235,7 @@
 		223899CD1E658CB400E596EA /* Rx.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Rx.xcodeproj; path = RxSwift/Rx.xcodeproj; sourceTree = "<group>"; };
 		22389A111E6602DE00E596EA /* KiteViewer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteViewer.swift; sourceTree = "<group>"; };
 		22389A131E66034400E596EA /* KiteEmulator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteEmulator.swift; sourceTree = "<group>"; };
+		224B2BA81E9984730090C7B9 /* Pursuit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pursuit.swift; sourceTree = "<group>"; };
 		22BFFA1F1E6DF6E8006BE86D /* WindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
 		22BFFA211E6DFC4A006BE86D /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		22BFFA421E72B909006BE86D /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
@@ -359,6 +361,7 @@
 		22EC26861E61DD7E00370170 /* VisualKite */ = {
 			isa = PBXGroup;
 			children = (
+				224B2BA81E9984730090C7B9 /* Pursuit.swift */,
 				22BFFA1F1E6DF6E8006BE86D /* WindowController.swift */,
 				22EC268B1E61DD7E00370170 /* SceneViewController.swift */,
 				22BFFA891E798A01006BE86D /* SettingsViewController.swift */,
@@ -643,6 +646,7 @@
 				22EC26A21E62219B00370170 /* Matrix.swift in Sources */,
 				22EC26A31E62219B00370170 /* Nodes.swift in Sources */,
 				22BFFA8A1E798A01006BE86D /* SettingsViewController.swift in Sources */,
+				224B2BA91E9984730090C7B9 /* Pursuit.swift in Sources */,
 				22EC26A71E62219B00370170 /* Quaternion.swift in Sources */,
 				22EC268A1E61DD7E00370170 /* GameView.swift in Sources */,
 				22BFFA7B1E7841E6006BE86D /* MavlinkMessage.swift in Sources */,
