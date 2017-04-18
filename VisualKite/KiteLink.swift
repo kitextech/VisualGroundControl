@@ -93,6 +93,11 @@ struct ParameterValue {
     }
 }
 
+class KiteController {
+    public let kite0 = KiteLink()
+    
+}
+
 class KiteLink: NSObject {
     public let flightMode: Variable<FlightMode> = Variable(.offboard(subMode: .position(subMode: .normal)))
 

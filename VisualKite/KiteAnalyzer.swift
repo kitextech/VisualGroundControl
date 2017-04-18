@@ -40,9 +40,9 @@ class KiteAnalyzer {
     private let bag = DisposeBag()
     
     private let realm = try! Realm()
-    
+
     private var data: KiteData?
-    
+
     private var locations = [KiteLocation]()
     
     init() {
