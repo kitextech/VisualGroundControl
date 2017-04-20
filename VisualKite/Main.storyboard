@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="KvJ-u7-H6y">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="KvJ-u7-H6y">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaDFRPlugin" version="7104"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
-        <plugIn identifier="com.apple.SceneKitIBPlugin" version="11762"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaDFRPlugin" version="12062"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.SceneKitIBPlugin" version="12118"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="the Touch Bar" message="Use a version of macOS with Touch Bar support." minToolsVersion="8.1" minSystemVersion="10.12.1" requiredIntegratedClassName="NSTouchBar"/>
@@ -55,7 +55,7 @@
                 <tabViewController selectedTabViewItemIndex="1" id="UMu-RG-tWc" sceneMemberID="viewController">
                     <tabViewItems>
                         <tabViewItem id="Bo4-W3-SWB"/>
-                        <tabViewItem id="1TC-Yi-t4a"/>
+                        <tabViewItem label="Settings0" id="1TC-Yi-t4a"/>
                     </tabViewItems>
                     <tabView key="tabView" type="noTabsNoBorder" id="MRW-tB-TTj">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
@@ -197,7 +197,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Speed" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="t9C-3V-g0B">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -223,7 +223,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Angle" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="L4G-pY-PoS">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -255,7 +255,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Elevation" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="1p6-Fc-CB8">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -281,7 +281,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Glide" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="zuj-AV-M2T">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -313,7 +313,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Phi" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="nqg-gc-4QE">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -339,7 +339,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Roll" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="W97-cU-tbP">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -365,7 +365,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Pitch" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="1Vj-F2-4Pb">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -411,7 +411,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Kite axes" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="tZn-cc-nCZ">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -424,7 +424,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="∏ axes" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SpI-Rz-fwh">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -437,7 +437,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="∏ plane" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="e7o-QL-J9H">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -450,7 +450,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Velocity" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nlT-BF-X1y">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -463,7 +463,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Wind" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cwN-eF-xxM">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -476,7 +476,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Tether" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZVe-o9-PhH">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -489,7 +489,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Kite" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oFr-fP-IWd">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -508,7 +508,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Tether" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="bzy-8X-hcN">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -534,7 +534,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Radius" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="zVp-aV-hbE">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -560,7 +560,7 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="bevel" title="Phase" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="vPJ-w8-Ncw">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
+                                                                    <font key="font" usesAppearanceFont="YES"/>
                                                                 </buttonCell>
                                                             </button>
                                                         </viewController>
@@ -820,7 +820,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="418" height="509"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Wg-Nj-owa">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Wg-Nj-owa">
                                 <rect key="frame" x="74" y="444" width="68" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Serial Port" id="LSo-cl-VxT">
                                     <font key="font" metaFont="system"/>
@@ -828,7 +828,7 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="y2s-HH-kpo">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y2s-HH-kpo">
                                 <rect key="frame" x="88" y="410" width="54" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Pixhawk" id="lB1-1w-1xf">
                                     <font key="font" metaFont="system"/>
@@ -949,7 +949,7 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="push" title="Offboard" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qgP-YG-dWC">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" usesAppearanceFont="YES"/>
                                         </buttonCell>
                                     </button>
                                 </viewController>
@@ -971,7 +971,7 @@
         <!--Settings-->
         <scene sceneID="Wkm-DZ-0Pg">
             <objects>
-                <viewController title="Settings" id="hAS-Qs-S5Y" customClass="SettingsViewController" customModule="VisualKite" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Settings" storyboardIdentifier="SettingsVC" id="hAS-Qs-S5Y" customClass="SettingsViewController" customModule="VisualKite" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="gkp-rs-Ann">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="358"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -1188,21 +1188,6 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bIp-iW-aiu">
-                                <rect key="frame" x="138" y="288" width="19" height="27"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <stepperCell key="cell" continuous="YES" alignment="left" increment="0.5" minValue="-10" maxValue="10" id="yoV-GY-DAC"/>
-                            </stepper>
-                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9K4-ES-8Em">
-                                <rect key="frame" x="159" y="288" width="19" height="27"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <stepperCell key="cell" continuous="YES" alignment="left" increment="0.5" minValue="-10" maxValue="10" id="4U1-bU-mU4"/>
-                            </stepper>
-                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MFo-X4-PQ3">
-                                <rect key="frame" x="180" y="288" width="19" height="27"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <stepperCell key="cell" continuous="YES" alignment="left" increment="0.5" minValue="-10" maxValue="10" id="WvW-Xi-0M3"/>
-                            </stepper>
                         </subviews>
                         <constraints>
                             <constraint firstItem="Luj-jT-PF5" firstAttribute="top" secondItem="K7i-kd-dPa" secondAttribute="top" id="0nV-H6-LZw"/>
@@ -1250,9 +1235,6 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="deltaBxStepper" destination="bIp-iW-aiu" id="dG6-Y0-rpW"/>
-                        <outlet property="deltaByStepper" destination="9K4-ES-8Em" id="js2-d6-STj"/>
-                        <outlet property="deltaBzStepper" destination="MFo-X4-PQ3" id="E2i-fX-br9"/>
                         <outlet property="errorLabel" destination="DEZ-md-aA8" id="DqS-ex-nVk"/>
                         <outlet property="phiCLabel" destination="DHv-Zr-zdP" id="qp0-GN-FZ7"/>
                         <outlet property="phiCSlider" destination="Luj-jT-PF5" id="8KU-eH-3kH"/>
@@ -1269,7 +1251,7 @@
                 <customObject id="Vgv-Xi-3wv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController id="DOF-Md-dtC"/>
             </objects>
-            <point key="canvasLocation" x="42" y="172"/>
+            <point key="canvasLocation" x="42" y="195"/>
         </scene>
     </scenes>
 </document>

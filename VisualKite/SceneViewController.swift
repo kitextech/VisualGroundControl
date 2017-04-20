@@ -41,8 +41,7 @@ func makeQuaternion(euler: Vector) -> Quaternion {
     return Quaternion(x, y, z, w)
 }
 
-
-let π = Scalar(M_PI)
+let π = Scalar(Double.pi)
 
 public let e_x = Vector.ex
 public let e_y = Vector.ey

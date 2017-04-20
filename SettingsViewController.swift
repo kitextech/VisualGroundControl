@@ -9,9 +9,37 @@
 import AppKit
 import RxSwift
 
+class SettingsModel {
+    public let kite: KiteLink
+
+    private let kiteLocalPosition = Variable<Vector>(.zero)
+
+    private var currentLocalPosition: Vector = .zero
+    private var currentGlobalPosition: GPSVector = .zero
+
+    private let bag = DisposeBag()
+
+    init(kite: KiteLink) {
+        self.kite = kite
+
+        kite.location.map(KiteLocation.getPosition).bindTo(kiteLocalPosition).disposed(by: bag)
+        kite.globalPosition.map(KiteGpsPosition.getPosition).subscribe(onNext: updatePositions).disposed(by: bag)
+    }
+
+    public func saveB() {
+        kite.globalPositionB.value = currentGlobalPosition
+        kite.localPositionB.value = currentLocalPosition
+    }
+
+    private func updatePositions(global: GPSVector) {
+        currentGlobalPosition = global
+        currentLocalPosition = kiteLocalPosition.value
+    }
+}
+
 class SettingsViewController: NSViewController {
-    private let kite = KiteLink.shared
-    
+    private var model: SettingsModel!
+
     // MARK: - Outlets
 
     @IBOutlet weak var errorLabel: NSTextField!
@@ -19,10 +47,6 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var positionLabel: NSTextField!
     @IBOutlet weak var tetherLengthSlider: NSSlider!
     @IBOutlet weak var tetherLengthLabel: NSTextField!
-
-    @IBOutlet weak var deltaBxStepper: NSStepper!
-    @IBOutlet weak var deltaByStepper: NSStepper!
-    @IBOutlet weak var deltaBzStepper: NSStepper!
 
     @IBOutlet weak var phiCSlider: NSSlider!
     @IBOutlet weak var thetaCSlider: NSSlider!
@@ -36,62 +60,51 @@ class SettingsViewController: NSViewController {
 
     // MARK: Private
 
-    private let kitePosition = Variable<Vector>(.zero)
-
-    private let tweakedB = Variable<Vector>(.zero)
-
     // MARK: BAG
     private let bag = DisposeBag()
     
     @IBAction func pressedUseAsB(_ sender: NSButton) {
-        kite.positionB.value = tweakedB.value
+        model.saveB()
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        kite.location.map(KiteLocation.getPosition).bindTo(kitePosition).disposed(by: bag)
+        model = SettingsModel(kite: KiteController.kite(kiteIndex))
 
-        tetherLengthSlider.scalar.bindTo(kite.tetherLength).disposed(by: bag)
-        
-        kite.tetherLength.asObservable().map(getScalarString).bindTo(tetherLengthLabel.rx.text).disposed(by: bag)
+        // Controls
+        tetherLengthSlider.scalar.bindTo(model.kite.tetherLength).disposed(by: bag)
 
- //       let db = Observable.combineLatest(deltaBxStepper.scalar, deltaByStepper.scalar, deltaBzStepper.scalar, resultSelector: Vector.fromScalars)
+        tetheredHoverThrustSlider.scalar.bindTo(model.kite.tetheredHoverThrust).disposed(by: bag)
 
-   //     Observable.combineLatest(kitePosition.asObservable(), db, resultSelector: +).bindTo(tweakedB).disposed(by: bag)
+        phiCSlider.scalar.bindTo(model.kite.phiC).disposed(by: bag)
+        thetaCSlider.scalar.bindTo(model.kite.thetaC).disposed(by: bag)
+        turningRadiousSlider.scalar.bindTo(model.kite.turningRadius).disposed(by: bag)
 
-        kitePosition.asObservable().bindTo(tweakedB).disposed(by: bag)
+        // UI
 
-        tweakedB.asObservable().map(getVectorString).bindTo(positionLabel.rx.text).disposed(by: bag)
+        model.kite.tetherLength.asObservable().map(getScalarString).bindTo(tetherLengthLabel.rx.text).disposed(by: bag)
 
-        tetheredHoverThrustSlider.scalar.bindTo(kite.tetheredHoverThrust).disposed(by: bag)
+        model.kite.globalPosition.asObservable().map { "GPS: \($0.pos.lat), \($0.pos.lon). \($0.pos.alt/1000)" }.bindTo(positionLabel.rx.text).disposed(by: bag)
 
-        kite.errorMessage.bindTo(errorLabel.rx.text).disposed(by: bag)
+        phiCSlider.scalar.map(getScalarString).bindTo(phiCLabel.rx.text).disposed(by: bag)
+        thetaCSlider.scalar.map(getScalarString).bindTo(thetaCLabel.rx.text).disposed(by: bag)
+        turningRadiousSlider.scalar.map(getScalarString).bindTo(turningRLabel.rx.text).disposed(by: bag)
 
-//        phiCSlider.scalar.map(getScalarString).bindTo(phiCLabel.rx.text).disposed(by: bag)
-//        thetaCSlider.scalar.map(getScalarString).bindTo(thetaCLabel.rx.text).disposed(by: bag)
-//        turningRadiousSlider.scalar.map(getScalarString).bindTo(turningRLabel.rx.text).disposed(by: bag)
-
-        phiCSlider.scalar.bindTo(kite.phiC).disposed(by: bag)
-        thetaCSlider.scalar.bindTo(kite.thetaC).disposed(by: bag)
-        turningRadiousSlider.scalar.bindTo(kite.turningRadius).disposed(by: bag)
+        model.kite.errorMessage.bindTo(errorLabel.rx.text).disposed(by: bag)
     }
 
     @IBAction func selectedOffboardMode(_ sender: NSButton) {
         let submode = OffboardFlightMode(sender.tag, subNumber: 0)
-        kite.flightMode.value = .offboard(subMode: submode)
+        model.kite.flightMode.value = .offboard(subMode: submode)
     }
 
     @IBAction func togglePosCtr(_ sender: NSButton) {
-        kite.offboardPositionTethered.value = !kite.offboardPositionTethered.value
+        model.kite.offboardPositionTethered.value = !model.kite.offboardPositionTethered.value
     }
 
     private func getScalarString(scalar: Scalar) -> String {
         return String(format: "%.2f", scalar)
-    }
-
-    private func getVectorString(vector: Vector) -> String {
-        return String(format: "(%.2f, %.2f, %.2f", vector.x, vector.y, vector.z)
     }
 }
 

@@ -220,7 +220,8 @@ extension MavlinkMessage: CustomStringConvertible {
             mavlink_msg_local_position_ned_decode(&message, &local_position_ned)
             return "LOCAL POSITION NED x: \(local_position_ned.x) y: \(local_position_ned.y) z: \(local_position_ned.z)"
         case 33:
-            return "GLOBAL_POSITION_INT"
+            let pos = gpsPosition!.pos
+            return "GLOBAL_POSITION_INT lat:\(pos.lat), lon:\(pos.lon), alt: \(pos.alt)"
         case 74:
             var vfr_hud = mavlink_vfr_hud_t()
             mavlink_msg_vfr_hud_decode(&message, &vfr_hud)
@@ -248,7 +249,6 @@ extension MavlinkMessage {
         } 
 
         var message = self
-
         var param = mavlink_param_value_t()
         mavlink_msg_param_value_decode(&message, &param)
 
@@ -265,7 +265,6 @@ extension MavlinkMessage {
         }
         
         var message = self
-        
         var att = mavlink_attitude_t()
         mavlink_msg_attitude_decode(&message, &att)
         
@@ -282,7 +281,6 @@ extension MavlinkMessage {
         }
 
         var message = self
-        
         var q = mavlink_attitude_quaternion_t()
         mavlink_msg_attitude_quaternion_decode(&message, &q)
         
@@ -299,7 +297,6 @@ extension MavlinkMessage {
         }
         
         var message = self
-        
         var local_position_ned = mavlink_local_position_ned_t()
         mavlink_msg_local_position_ned_decode(&message, &local_position_ned)
         
@@ -310,18 +307,43 @@ extension MavlinkMessage {
         return KiteLocation(time: time, pos: pos, vel: vel)
     }
 
+    var gpsPosition: KiteGpsPosition? {
+        guard msgid == 33 else {
+            return nil
+        }
+
+        var message = self
+        var global_position = mavlink_global_position_int_t()
+        mavlink_msg_global_position_int_decode(&message, &global_position)
+
+        let time = Double(global_position.time_boot_ms)
+        let gpsPos = GPSVector(lat: global_position.lat, lon: global_position.lon, alt: global_position.alt)
+
+        return KiteGpsPosition(time: time, pos: gpsPos)
+    }
+
+    var gpsOrigin: GPSVector? {
+        guard msgid == 49 else {
+            return nil
+        }
+
+        var message = self
+        var global_origin = mavlink_gps_global_origin_t()
+        mavlink_msg_gps_global_origin_decode(&message, &global_origin)
+
+        return GPSVector(lat: global_origin.latitude, lon: global_origin.longitude, alt: global_origin.altitude)
+    }
+
     var positionTarget: Vector? {
         guard msgid == 85 else {
             return nil
         }
 
         var message = self
-
         var local_position_ned = mavlink_position_target_local_ned_t()
         mavlink_msg_position_target_local_ned_decode(&message, &local_position_ned)
-        let pos = Vector(local_position_ned.x, local_position_ned.y, local_position_ned.z)
 
-        return pos
+        return Vector(local_position_ned.x, local_position_ned.y, local_position_ned.z)
     }
 
     var data: Data {
