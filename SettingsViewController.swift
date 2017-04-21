@@ -9,31 +9,70 @@
 import AppKit
 import RxSwift
 
+/*
+tetherLengthSlider.scalar.bindTo(model.kite.tetherLength).disposed(by: bag)
+
+tetheredHoverThrustSlider.scalar.bindTo(model.kite.tetheredHoverThrust).disposed(by: bag)
+
+phiCSlider.scalar.bindTo(model.kite.phiC).disposed(by: bag)
+thetaCSlider.scalar.bindTo(model.kite.thetaC).disposed(by: bag)
+turningRadiousSlider.scalar.bindTo(model.kite.turningRadius).disposed(by: bag)
+*/
+
 class SettingsModel {
-    public let kite: KiteLink
+    private let kiteLocalPosition0 = Variable<Vector>(.zero)
+    private var currentLocalPosition0: Vector = .zero
+    private var currentGlobalPosition0: GPSVector = .zero
 
-    private let kiteLocalPosition = Variable<Vector>(.zero)
-
-    private var currentLocalPosition: Vector = .zero
-    private var currentGlobalPosition: GPSVector = .zero
+    private let kiteLocalPosition1 = Variable<Vector>(.zero)
+    private var currentLocalPosition1: Vector = .zero
+    private var currentGlobalPosition1: GPSVector = .zero
 
     private let bag = DisposeBag()
 
-    init(kite: KiteLink) {
-        self.kite = kite
+    init(_ tetherLength: Observable<Scalar>, _ hoverThrust: Observable<Scalar>, _ phiC: Observable<Scalar>, _ thetaC: Observable<Scalar>, _ turningRadius: Observable<Scalar>) {
 
-        kite.location.map(KiteLocation.getPosition).bindTo(kiteLocalPosition).disposed(by: bag)
-        kite.globalPosition.map(KiteGpsPosition.getPosition).subscribe(onNext: updatePositions).disposed(by: bag)
+        [KiteController.kite0, KiteController.kite1].forEach { kite in
+            tetherLength.bindTo(kite.tetheredHoverThrust).addDisposableTo(bag)
+
+            phiC.bindTo(kite.phiC).disposed(by: bag)
+            thetaC.bindTo(kite.thetaC).disposed(by: bag)
+            turningRadius.bindTo(kite.turningRadius).disposed(by: bag)
+        }
+
+        KiteController.kite0.location.map(KiteLocation.getPosition).bindTo(kiteLocalPosition0).disposed(by: bag)
+        KiteController.kite0.globalPosition.map(KiteGpsPosition.getPosition).subscribe(onNext: updatePositions0).disposed(by: bag)
+
+        KiteController.kite1.location.map(KiteLocation.getPosition).bindTo(kiteLocalPosition1).disposed(by: bag)
+        KiteController.kite1.globalPosition.map(KiteGpsPosition.getPosition).subscribe(onNext: updatePositions1).disposed(by: bag)
     }
 
-    public func saveB() {
-        kite.globalPositionB.value = currentGlobalPosition
-        kite.localPositionB.value = currentLocalPosition
+    public func saveB(kiteIndex: Int) {
+        if kiteIndex == 0 {
+            KiteController.kite0.globalPositionB.value = currentGlobalPosition0
+            KiteController.kite0.localPositionB.value = currentLocalPosition0
+        }
+        else {
+            KiteController.kite1.globalPositionB.value = currentGlobalPosition1
+            KiteController.kite1.localPositionB.value = currentLocalPosition1
+        }
     }
 
-    private func updatePositions(global: GPSVector) {
-        currentGlobalPosition = global
-        currentLocalPosition = kiteLocalPosition.value
+    private func updatePositions0(global: GPSVector) {
+        currentGlobalPosition0 = global
+        currentLocalPosition0 = kiteLocalPosition0.value
+    }
+
+    private func updatePositions1(global: GPSVector) {
+        currentGlobalPosition1 = global
+        currentLocalPosition1 = kiteLocalPosition1.value
+    }
+
+    private func updatePositions(kiteIndex: Int) -> (GPSVector) -> Void {
+        return { [unowned self] global in
+            self.currentGlobalPosition1 = global
+            self.currentLocalPosition1 = self.kiteLocalPosition1.value
+        }
     }
 }
 
@@ -70,20 +109,13 @@ class SettingsViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        model = SettingsModel(kite: KiteController.kite(kiteIndex))
+        model = SettingsModel(tetherLengthSlider.scalar, tetheredHoverThrustSlider.scalar, phiCSlider.scalar, thetaCSlider.scalar, turningRadiousSlider.scalar)
 
         // Controls
-        tetherLengthSlider.scalar.bindTo(model.kite.tetherLength).disposed(by: bag)
-
-        tetheredHoverThrustSlider.scalar.bindTo(model.kite.tetheredHoverThrust).disposed(by: bag)
-
-        phiCSlider.scalar.bindTo(model.kite.phiC).disposed(by: bag)
-        thetaCSlider.scalar.bindTo(model.kite.thetaC).disposed(by: bag)
-        turningRadiousSlider.scalar.bindTo(model.kite.turningRadius).disposed(by: bag)
 
         // UI
 
-        model.kite.tetherLength.asObservable().map(getScalarString).bindTo(tetherLengthLabel.rx.text).disposed(by: bag)
+        tetherLengthSlider.scalar.map(getScalarString).bindTo(tetherLengthLabel.rx.text).disposed(by: bag)
 
         model.kite.globalPosition.asObservable().map { "GPS: \($0.pos.lat), \($0.pos.lon). \($0.pos.alt/1000)" }.bindTo(positionLabel.rx.text).disposed(by: bag)
 

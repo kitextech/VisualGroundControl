@@ -121,8 +121,8 @@ extension GPSVector: Equatable {
 }
 
 class KiteController {
-    private static let kite0 = KiteLink(targetSystemId: 1, targetComponentId: 1)
-    private static let kite1 = KiteLink(targetSystemId: 2, targetComponentId: 1)
+    public static let kite0 = KiteLink(targetSystemId: 1, targetComponentId: 1)
+    public static let kite1 = KiteLink(targetSystemId: 2, targetComponentId: 1)
 
     public static func kite(_ index: Int) -> KiteLink {
         guard (0...1).contains(index) else { fatalError() }
