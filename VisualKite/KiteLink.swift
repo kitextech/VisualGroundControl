@@ -173,10 +173,6 @@ class KiteLink: NSObject {
 
     public var isSerialPortOpen: Bool { return serialPort?.isOpen ?? false }
 
-    // MARK: Singleton
-
-    public static let shared = KiteLink(targetSystemId: 1, targetComponentId: 1)
-
     // MARK: Serial Port Properties
 
     public let serialPortManager = ORSSerialPortManager.shared()
@@ -234,7 +230,7 @@ class KiteLink: NSObject {
         bind(tetheredHoverThrust, using: setScalar(id: MPC_THR_TETHER))
         bind(offboardPositionTethered, using: setBool(id: MPC_TET_POS_CTL))
 
-        flightMode.asObservable().bindNext(changedFlightMode).disposed(by: bag)
+        flightMode.asObservable().bind(onNext: changedFlightMode).disposed(by: bag)
 
         bind(phiC, using: setScalar(id: MPC_LOOP_PHI_C))
         bind(thetaC, using: setScalar(id: MPC_LOOP_THETA_C))
@@ -327,7 +323,7 @@ class KiteLink: NSObject {
         variable.asObservable()
             .distinctUntilChanged()
             .map(function)
-            .bindNext(push)
+            .bind(onNext: push)
             .disposed(by: bag)
     }
 

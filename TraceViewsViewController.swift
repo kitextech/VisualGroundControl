@@ -35,31 +35,31 @@ class TraceViewsViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let kite = KiteLink.shared
+        let kite = KiteController.kite0
 
         freeView.angles.value = (π/2 - 0.2, 0)
         freeView.scrolls = true
 
         let position = Variable<Vector>(.zero)
-        kite.location.map(KiteLocation.getPosition).bindTo(position).disposed(by: bag)
+        kite.location.map(KiteLocation.getPosition).bind(to: position).disposed(by: bag)
 
-        position.asObservable().bindTo(xyView.kitePosition).disposed(by: bag)
-        position.asObservable().bindTo(freeView.kitePosition).disposed(by: bag)
+        position.asObservable().bind(to: xyView.kitePosition).disposed(by: bag)
+        position.asObservable().bind(to: freeView.kitePosition).disposed(by: bag)
 
         let quaternion = Variable<Quaternion>(.id)
-        kite.quaternion.map(KiteQuaternion.getQuaternion).bindTo(quaternion).disposed(by: bag)
+        kite.quaternion.map(KiteQuaternion.getQuaternion).bind(to: quaternion).disposed(by: bag)
 
-        quaternion.asObservable().bindTo(xyView.kiteOrientation).disposed(by: bag)
-        quaternion.asObservable().bindTo(freeView.kiteOrientation).disposed(by: bag)
+        quaternion.asObservable().bind(to: xyView.kiteOrientation).disposed(by: bag)
+        quaternion.asObservable().bind(to: freeView.kiteOrientation).disposed(by: bag)
 
         kite.positionB.asObservable().bindTo(xyView.bPosition).disposed(by: bag)
         kite.positionB.asObservable().bindTo(freeView.bPosition).disposed(by: bag)
 
-        kite.positionTarget.asObservable().bindTo(xyView.targetPosition).disposed(by: bag)
-        kite.positionTarget.asObservable().bindTo(freeView.targetPosition).disposed(by: bag)
+        kite.positionTarget.asObservable().bind(to: xyView.targetPosition).disposed(by: bag)
+        kite.positionTarget.asObservable().bind(to: freeView.targetPosition).disposed(by: bag)
 
-        kite.tetherLength.asObservable().bindTo(xyView.tetherLength).disposed(by: bag)
-        kite.tetherLength.asObservable().bindTo(freeView.tetherLength).disposed(by: bag)
+        kite.tetherLength.asObservable().bind(to: xyView.tetherLength).disposed(by: bag)
+        kite.tetherLength.asObservable().bind(to: freeView.tetherLength).disposed(by: bag)
 
         let d = Observable.combineLatest(kite.tetherLength.asObservable(), kite.turningRadius.asObservable(), resultSelector: getD)
         let cRel = Observable.combineLatest(kite.phiC.asObservable(), kite.thetaC.asObservable(), d, resultSelector: getC)
@@ -70,17 +70,17 @@ class TraceViewsViewController: NSViewController {
         pi.bindTo(xyView.piPlane).disposed(by: bag)
         pi.bindTo(freeView.piPlane).disposed(by: bag)
 
-        kite.turningRadius.asObservable().bindTo(xyView.turningRadius).disposed(by: bag)
-        kite.turningRadius.asObservable().bindTo(freeView.turningRadius).disposed(by: bag)
+        kite.turningRadius.asObservable().bind(to: xyView.turningRadius).disposed(by: bag)
+        kite.turningRadius.asObservable().bind(to: freeView.turningRadius).disposed(by: bag)
 
         // Trace views as controls
 
-        xyView.requestedTargetPosition.bindTo(KiteLink.shared.positionTarget).disposed(by: bag)
-        freeView.requestedTargetPosition.bindTo(KiteLink.shared.positionTarget).disposed(by: bag)
+        xyView.requestedTargetPosition.bind(to: kite.positionTarget).disposed(by: bag)
+        freeView.requestedTargetPosition.bind(to: kite.positionTarget).disposed(by: bag)
 
-        xzButton.rx.tap.map { (0, π/2) }.bindTo(freeView.angles).disposed(by: bag)
-        yzButton.rx.tap.map { (π/2, π/2) }.bindTo(freeView.angles).disposed(by: bag)
-        piButton.rx.tap.map { (π + kite.phiC.value, π/2 - kite.thetaC.value) }.bindTo(freeView.angles).disposed(by: bag)
+        xzButton.rx.tap.map { (0, π/2) }.bind(to: freeView.angles).disposed(by: bag)
+        yzButton.rx.tap.map { (π/2, π/2) }.bind(to: freeView.angles).disposed(by: bag)
+        piButton.rx.tap.map { (π + kite.phiC.value, π/2 - kite.thetaC.value) }.bind(to: freeView.angles).disposed(by: bag)
     }
 
     private func getD(tether: Scalar, r: Scalar) -> Scalar {
@@ -90,7 +90,6 @@ class TraceViewsViewController: NSViewController {
     private func getC(phi: Scalar, theta: Scalar, d: Scalar) -> Vector {
         return Vector(phi: phi, theta: π/2 + theta, r: d)
     }
-
 
     private func getCKite(phi: Scalar, theta: Scalar, d: Scalar) -> Vector {
         let xyFactor = d*cos(theta);
@@ -167,42 +166,42 @@ class TraceView: NSView {
 
         // Sphere
 
-        Observable.combineLatest(bPosition.asObservable(), tetherLength.asObservable(), resultSelector: Sphere.init).bindTo(sphere).disposed(by: bag)
+        Observable.combineLatest(bPosition.asObservable(), tetherLength.asObservable(), resultSelector: Sphere.init).bind(to: sphere).disposed(by: bag)
 
         // Transformers
 
-        axis.asObservable().bindNext(axisChanged).disposed(by: bag)
-        angles.asObservable().map(Vector.unitVector).bindTo(axis).disposed(by: bag)
-        Observable.combineLatest(sphere.asObservable(), axis.asObservable(), resultSelector: noOp).bindNext(sphereOrAxisChanged).disposed(by: bag)
-        scale.asObservable().bindNext(scaleChanged).disposed(by: bag)
+        axis.asObservable().bind(onNext: axisChanged).disposed(by: bag)
+        angles.asObservable().map(Vector.unitVector).bind(to: axis).disposed(by: bag)
+        Observable.combineLatest(sphere.asObservable(), axis.asObservable(), resultSelector: noOp).bind(onNext: sphereOrAxisChanged).disposed(by: bag)
+        scale.asObservable().bind(onNext: scaleChanged).disposed(by: bag)
 
         // Positions
 
-        kitePosition.asObservable().map(pointify).bindTo(kitePoint).disposed(by: bag)
-        bPosition.asObservable().map(pointify).bindTo(bPoint).disposed(by: bag)
-        piPlane.asObservable().map(Plane.getCenter).map(pointify).bindTo(cPoint).disposed(by: bag)
-        targetPosition.asObservable().map(pointify).bindTo(targetPoint).disposed(by: bag)
+        kitePosition.asObservable().map(pointify).bind(to: kitePoint).disposed(by: bag)
+        bPosition.asObservable().map(pointify).bind(to: bPoint).disposed(by: bag)
+        piPlane.asObservable().map(Plane.getCenter).map(pointify).bind(to: cPoint).disposed(by: bag)
+        targetPosition.asObservable().map(pointify).bind(to: targetPoint).disposed(by: bag)
 
         // Paths
 
-        Observable.combineLatest(kitePosition.asObservable(), kiteOrientation.asObservable(), resultSelector: kiteLines).map(makePath).bindTo(kitePath).disposed(by: bag)
+        Observable.combineLatest(kitePosition.asObservable(), kiteOrientation.asObservable(), resultSelector: kiteLines).map(makePath).bind(to: kitePath).disposed(by: bag)
 
         let allSphereLines = sphere.asObservable().map(sphereLines)
         let occlusionPlane = Observable.combineLatest(bPosition.asObservable(), axis.asObservable(), resultSelector: Plane.init)
 
-        Observable.combineLatest(allSphereLines, occlusionPlane, resultSelector: occluded).map(makePath).bindTo(spherePath).disposed(by: bag)
+        Observable.combineLatest(allSphereLines, occlusionPlane, resultSelector: occluded).map(makePath).bind(to: spherePath).disposed(by: bag)
 
         let allCircleLines = Observable.combineLatest(piPlane.asObservable(), turningRadius.asObservable(), resultSelector: circleLines)
 
-        Observable.combineLatest(allCircleLines, occlusionPlane, resultSelector: occluded).map(makePath).bindTo(circlePath).disposed(by: bag)
+        Observable.combineLatest(allCircleLines, occlusionPlane, resultSelector: occluded).map(makePath).bind(to: circlePath).disposed(by: bag)
 
         // Drawing
 
-        kitePath.asObservable().bindNext(redraw).addDisposableTo(bag)
-        spherePath.asObservable().bindNext(redraw).addDisposableTo(bag)
+        kitePath.asObservable().bind(onNext: redraw).addDisposableTo(bag)
+        spherePath.asObservable().bind(onNext: redraw).addDisposableTo(bag)
 
-        targetPosition.asObservable().bindNext(redraw).addDisposableTo(bag)
-        piPlane.asObservable().bindNext(redraw).addDisposableTo(bag)
+        targetPosition.asObservable().bind(onNext: redraw).addDisposableTo(bag)
+        piPlane.asObservable().bind(onNext: redraw).addDisposableTo(bag)
 
         acceptsTouchEvents = true
     }
