@@ -11,120 +11,40 @@ import Mavlink
 import ORSSerial
 import RxSwift
 
-let MPC_PITCH_HVR = "MPC_PITCH_HVR"
-let MPC_TET_POS_CTL = "MPC_TET_POS_CTL"
-let MPC_THR_TETHER = "MPC_THR_TETHER"
-
-let MPC_TETHER_LEN = "MPC_TETHER_LEN"
-
-let MPC_X_POS_B = "MPC_X_POS_B"
-let MPC_Y_POS_B = "MPC_Y_POS_B"
-let MPC_Z_POS_B = "MPC_Z_POS_B"
-
-// TODO: Add in C++
-let MPC_LOOP_PHI_C = "MPC_LOOP_PHI_C"
-let MPC_LOOP_THETA_C = "MPC_LOOP_THETA_C"
-let MPC_LOOP_TURN_R = "MPC_LOOP_TURN_R"
-
-struct KiteGpsPosition {
-    let time: TimeInterval
-    let pos: GPSVector
-
-    static func getPosition(gpsPosition: KiteGpsPosition) -> GPSVector {
-        return gpsPosition.pos
-    }
-}
-
-struct KiteLocation {
-    let time: TimeInterval
-    let pos: Vector
-    let vel: Vector
-    
-    init(time: TimeInterval = 0, pos: Vector = .zero, vel: Vector = .zero) {
-        self.time = time
-        self.pos = pos
-        self.vel = vel
-    }
-
-    static func getPosition(kiteLocation: KiteLocation) -> Vector {
-        return kiteLocation.pos
-    }
-
-    static func getVelocity(kiteLocation: KiteLocation) -> Vector {
-        return kiteLocation.vel
-    }
-}
-
-struct KiteAttitude {
-    let time: TimeInterval
-    let att: Vector
-    let rate: Vector
-    
-    init(time: TimeInterval = 0, att: Vector = .zero, rate: Vector = .zero) {
-        self.time = time
-        self.att = att
-        self.rate = rate
-    }
-
-    static func getAttitude(kiteAttitude: KiteAttitude) -> Vector {
-        return kiteAttitude.att
-    }
-}
-
-struct KiteQuaternion {
-    let time: TimeInterval
-    let quaternion: Quaternion
-    let rate: Vector
-
-    init(time: TimeInterval = 0, quaternion: Quaternion = .id, rate: Vector = .zero) {
-        self.time = time
-        self.quaternion = quaternion
-        self.rate = rate
-    }
-
-    static func getQuaternion(kiteQuaternion: KiteQuaternion) -> Quaternion {
-        return kiteQuaternion.quaternion
-    }
-}
-
-public let systemId: UInt8 = 255
-public let compId: UInt8 = 0
-
-struct ParameterValue {
-    let id: String
-    let value: Scalar
-    let type: MAV_PARAM_TYPE
-
-    init(id: String, value: Scalar, type: MAV_PARAM_TYPE = MAV_PARAM_TYPE_REAL32) {
-        self.id = id
-        self.value = value
-        self.type = type
-    }
-}
-
-struct GPSVector {
-    let lat: Int32
-    let lon: Int32
-    let alt: Int32
-
-    public static let zero = GPSVector(lat: 0, lon: 0, alt: 0)
-
-    public func local(_ origin: GPSVector) -> Vector {
-        fatalError() // FIXME: Implement
-    }
-}
-
-extension GPSVector: Equatable {
-    public static func ==(lhs: GPSVector, rhs: GPSVector) -> Bool {
-        return (lhs.lat, lhs.lon, lhs.alt) ==  (rhs.lat, rhs.lon, rhs.alt)
-    }
-}
-
 class KiteController {
-    public static let kite0 = KiteLink(targetSystemId: 1, targetComponentId: 1)
-    public static let kite1 = KiteLink(targetSystemId: 2, targetComponentId: 1)
+    public let kite0 = KiteLink(targetSystemId: 1, targetComponentId: 1)
+    public let kite1 = KiteLink(targetSystemId: 2, targetComponentId: 1)
 
-    public static func kite(_ index: Int) -> KiteLink {
+    public static let shared = KiteController()
+
+    public var settings: SettingsModel!
+
+    private let bag = DisposeBag()
+
+    private init() {
+    }
+
+    public func setModel(_ settings: SettingsModel) {
+        self.settings = settings
+        [kite0, kite1].enumerated().forEach { index, kite in
+            // Common
+            Swift.print("setModel \(index)")
+
+            settings.tetherLength.bind(to: kite.tetherLength).addDisposableTo(bag)
+            settings.tetheredHoverThrust.bind(to: kite.tetheredHoverThrust).addDisposableTo(bag)
+
+            settings.phiC.bind(to: kite.phiC).disposed(by: bag)
+            settings.thetaC.bind(to: kite.thetaC).disposed(by: bag)
+//            settings.turningRadius.bind(to: kite.turningRadius).disposed(by: bag)
+        }
+    }
+
+    public func saveB(kite index: Int) {
+        kite(index).globalPositionB.value = kite(index).latestGlobalPosition
+        kite(index).positionB.value = kite(index).latestLocalPosition
+    }
+
+    public func kite(_ index: Int) -> KiteLink {
         guard (0...1).contains(index) else { fatalError() }
         return index == 0 ? kite0 : kite1
     }
@@ -138,19 +58,20 @@ class KiteLink: NSObject {
     // MARK: Parameters
     
     public let globalPositionB = Variable<GPSVector>(.zero) // Offboard
-    public let localPositionB = Variable<Vector>(.zero) // Offboard
+    public let positionB = Variable<Vector>(.zero) // Offboard
 
     public let tetherLength = Variable<Scalar>(50) // Offboard
-    
-    public let offboardPositionTethered = Variable<Bool>(true) // Offboard>Position
 
-    public let hoverPitchAngle = Variable<Scalar>(0.174) // Manual>Tethered
-    public let tetheredHoverThrust = Variable<Scalar>(0.174) // Offboard>Position>Tethered
-    
     public let phiC = Variable<Scalar>(0) // Offboard>Looping
     public let thetaC = Variable<Scalar>(0) // Offboard>Looping
     public let turningRadius = Variable<Scalar>(0) // Offboard>Looping
-    
+
+    public let tetheredHoverThrust = Variable<Scalar>(0.174) // Offboard>Position>Tethered
+
+    public let hoverPitchAngle = Variable<Scalar>(0.174) // Manual>Tethered
+
+    public let offboardPositionTethered = Variable<Bool>(true) // Offboard>Position
+
     // MARK: - Continuous Parameters
     
     public let positionTarget = Variable<Vector>(.zero) // Offboard>Position
@@ -162,12 +83,12 @@ class KiteLink: NSObject {
 
     public let mavlinkMessage = PublishSubject<MavlinkMessage>()
     
-    public let location = PublishSubject<KiteLocation>()
-    public let quaternion = PublishSubject<KiteQuaternion>()
-    public let attitude = PublishSubject<KiteAttitude>()
+    public let location = PublishSubject<TimedLocation>()
+    public let quaternion = PublishSubject<TimedQuaternion>()
+    public let attitude = PublishSubject<TimedAttitude>()
 
-    public let globalPosition = PublishSubject<KiteGpsPosition>()
-    public let gpsOrigin = PublishSubject<GPSVector>()
+    public let globalPosition = PublishSubject<TimedGPSVector>()
+//    public let gpsOrigin = PublishSubject<GPSVector>()
 
     public let errorMessage = PublishSubject<String>()
 
@@ -208,8 +129,8 @@ class KiteLink: NSObject {
     private let parameterGracePeriod: TimeInterval = 1
     private let parameterRetries = 10
 
-    private var latestGlobalKitePosition: GPSVector = .zero
-    private var latestLocalKitePosition: Vector = .zero
+//    public var latestGlobalPosition: GPSVector = .zero
+//    public var latestLocalPosition: Vector = .zero
 
     // MARK: Initializers
     
@@ -224,7 +145,7 @@ class KiteLink: NSObject {
         
         NSUserNotificationCenter.default.delegate = self
 
-        bind(globalPositionB, using: setGpsVector(ids: (MPC_X_POS_B, MPC_Y_POS_B, MPC_Z_POS_B)))
+//        bind(globalPositionB, using: setGpsVector(ids: (MPC_X_POS_B, MPC_Y_POS_B, MPC_Z_POS_B)))
         bind(tetherLength, using: setScalar(id: MPC_TETHER_LEN))
         bind(hoverPitchAngle, using: setScalar(id: MPC_PITCH_HVR))
         bind(tetheredHoverThrust, using: setScalar(id: MPC_THR_TETHER))
@@ -236,7 +157,19 @@ class KiteLink: NSObject {
         bind(thetaC, using: setScalar(id: MPC_LOOP_THETA_C))
         bind(turningRadius, using: setScalar(id: MPC_LOOP_TURN_R))
 
-        globalPosition.map(KiteGpsPosition.getPosition).subscribe(onNext: { self.latestGlobalKitePosition = $0 }).disposed(by: bag)
+//        func savePositions(global: GPSVector, local: Vector) {
+//            latestLocalPosition = local
+//            latestGlobalPosition = global
+//        }
+
+//        globalPosition
+//            .map(TimedGPSVector.getPosition)
+//            .withLatestFrom(location.map(TimedLocation.getPosition), resultSelector: noOp)
+//            .bind(onNext: savePositions)
+//            .disposed(by: bag)
+
+//        let i = targetSystemId - 1
+//        turningRadius.asObservable().bind(onNext: { Swift.print("Kite \(i): Turning radius changed: \($0)") }).disposed(by: bag)
     }
 
     deinit {
@@ -245,14 +178,10 @@ class KiteLink: NSObject {
 
     // MARK: Public Methods
 
-    public func saveCurrentPositionAsB() {
-        globalPositionB.value = latestGlobalKitePosition
-    }
-
-    public func nudgeB(deltaLat: Int32, deltaLon: Int32, deltaAlt: Int32) {
-        let b = globalPositionB.value
-        globalPositionB.value = GPSVector(lat: b.lat + deltaLat, lon: b.lon + deltaLat, alt: b.alt + deltaAlt)
-    }
+//    public func nudgeB(deltaLat: Int32, deltaLon: Int32, deltaAlt: Int32) {
+//        let b = globalPositionB.value
+//        globalPositionB.value = GPSVector(lat: b.lat + deltaLat, lon: b.lon + deltaLat, alt: b.alt + deltaAlt)
+//    }
 
     public func togglePort() {
         guard let serialPort = serialPort else {
@@ -283,7 +212,7 @@ class KiteLink: NSObject {
         unconfirmedParameterValues.values.forEach { value, sentDate, retries in
             if now.timeIntervalSince(sentDate) > Double(retries + 1)*parameterGracePeriod {
                 if retries < parameterRetries {
-                    print("Retrying (\(retries + 1)) retries for \(value.id) value: \(value.value)")
+//                    print("Retrying (\(retries + 1)) retries for \(value.id) value: \(value.value)")
                     send(box.setParameter(value: value))
                     unconfirmedParameterValues[value.id] = (value, sentDate, retries + 1)
                 }
@@ -507,8 +436,8 @@ extension KiteLink: ORSSerialPortDelegate {
                 else if let q = message.quaternion {
                     quaternion.onNext(q)
                 }
-                else if let g = message.gpsPosition {
-                    gpsPosition.onNext(g)
+                else if let g = message.globalPosition {
+                    globalPosition.onNext(g)
                 }
                 else if let o = message.gpsOrigin {
                     gpsOrigin.onNext(o)
@@ -605,6 +534,115 @@ enum OffboardFlightMode: CustomStringConvertible {
             case .tethered: return result + "tethered"
             }
         }
+    }
+}
+
+let MPC_PITCH_HVR = "MPC_PITCH_HVR"
+let MPC_TET_POS_CTL = "MPC_TET_POS_CTL"
+let MPC_THR_TETHER = "MPC_THR_TETHER"
+
+let MPC_TETHER_LEN = "MPC_TETHER_LEN"
+
+let MPC_X_POS_B = "MPC_X_POS_B"
+let MPC_Y_POS_B = "MPC_Y_POS_B"
+let MPC_Z_POS_B = "MPC_Z_POS_B"
+
+// TODO: Add in FC
+let MPC_LOOP_PHI_C = "MPC_LOOP_PHI_C"
+let MPC_LOOP_THETA_C = "MPC_LOOP_THETA_C"
+let MPC_LOOP_TURN_R = "MPC_LOOP_TURN_R"
+
+struct TimedGPSVector{
+    let time: TimeInterval
+    let pos: GPSVector
+
+    static func getPosition(gpsPosition: TimedGPSVector) -> GPSVector {
+        return gpsPosition.pos
+    }
+}
+
+struct TimedLocation {
+    let time: TimeInterval
+    let pos: Vector
+    let vel: Vector
+
+    init(time: TimeInterval = 0, pos: Vector = .zero, vel: Vector = .zero) {
+        self.time = time
+        self.pos = pos
+        self.vel = vel
+    }
+
+    static func getPosition(timedLocation: TimedLocation) -> Vector {
+        return timedLocation.pos
+    }
+
+    static func getVelocity(timedLocation: TimedLocation) -> Vector {
+        return timedLocation.vel
+    }
+}
+
+struct TimedAttitude {
+    let time: TimeInterval
+    let att: Vector
+    let rate: Vector
+
+    init(time: TimeInterval = 0, att: Vector = .zero, rate: Vector = .zero) {
+        self.time = time
+        self.att = att
+        self.rate = rate
+    }
+
+    static func getAttitude(timedAttitude: TimedAttitude) -> Vector {
+        return timedAttitude.att
+    }
+}
+
+struct TimedQuaternion {
+    let time: TimeInterval
+    let quaternion: Quaternion
+    let rate: Vector
+
+    init(time: TimeInterval = 0, quaternion: Quaternion = .id, rate: Vector = .zero) {
+        self.time = time
+        self.quaternion = quaternion
+        self.rate = rate
+    }
+
+    static func getQuaternion(timedQuaternion: TimedQuaternion) -> Quaternion {
+        return timedQuaternion.quaternion
+    }
+}
+
+public let systemId: UInt8 = 255
+public let compId: UInt8 = 0
+
+struct ParameterValue {
+    let id: String
+    let value: Scalar
+    let type: MAV_PARAM_TYPE
+
+    init(id: String, value: Scalar, type: MAV_PARAM_TYPE = MAV_PARAM_TYPE_REAL32) {
+        self.id = id
+        self.value = value
+        self.type = type
+    }
+}
+
+struct GPSVector {
+    let lat: Int32
+    let lon: Int32
+    let alt: Int32
+
+    public static let zero = GPSVector(lat: 0, lon: 0, alt: 0)
+
+    public func local(_ origin: GPSVector) -> Vector {
+        fatalError() // FIXME: Implement
+    }
+}
+
+extension GPSVector: Equatable {
+    public static func ==(lhs: GPSVector, rhs: GPSVector) -> Bool {
+        return (lhs.lat, lhs.lon, lhs.alt) ==  (rhs.lat, rhs.lon, rhs.alt)
     }
 }
 

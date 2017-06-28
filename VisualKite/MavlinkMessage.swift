@@ -151,7 +151,22 @@ struct MessageBox {
         
         return msg
     }
-    
+
+    public func setGlobalOrigin(gps: GPSVector) -> MavlinkMessage {
+        var setOrigin = mavlink_set_gps_global_origin_t()
+
+        setOrigin.altitude = gps.alt
+        setOrigin.latitude = gps.lat
+        setOrigin.longitude = gps.lon
+
+        setOrigin.target_system = tarSysId
+
+        var msg = mavlink_message_t()
+        mavlink_msg_set_gps_global_origin_encode(sysId, compId, &msg, &setOrigin)
+
+        return msg
+    }
+
     public func setParameter(value parameterValue: ParameterValue) -> MavlinkMessage {
         var paramSet = mavlink_param_set_t()
         paramSet.target_component = tarCompId
@@ -220,7 +235,7 @@ extension MavlinkMessage: CustomStringConvertible {
             mavlink_msg_local_position_ned_decode(&message, &local_position_ned)
             return "LOCAL POSITION NED x: \(local_position_ned.x) y: \(local_position_ned.y) z: \(local_position_ned.z)"
         case 33:
-            let pos = gpsPosition!.pos
+            let pos = globalPosition!.pos
             return "GLOBAL_POSITION_INT lat:\(pos.lat), lon:\(pos.lon), alt: \(pos.alt)"
         case 74:
             var vfr_hud = mavlink_vfr_hud_t()
@@ -259,7 +274,7 @@ extension MavlinkMessage {
         return ParameterValue(id: id, value: Scalar(value), type: type)
     }
 
-    var attitude: KiteAttitude? {
+    var attitude: TimedAttitude? {
         guard msgid == 30 else {
             return nil
         }
@@ -272,10 +287,10 @@ extension MavlinkMessage {
         let euler = Vector(att.yaw, att.pitch, att.roll)
         let rate = Vector(att.yawspeed, att.pitchspeed, att.rollspeed)
         
-        return KiteAttitude(time: time, att: euler, rate: rate)
+        return TimedAttitude(time: time, att: euler, rate: rate)
     }
 
-    var quaternion: KiteQuaternion? {
+    var quaternion: TimedQuaternion? {
         guard msgid == 31 else {
             return nil
         }
@@ -288,10 +303,10 @@ extension MavlinkMessage {
         let quat = Quaternion(q.q2, q.q3, q.q4, q.q1)
         let rate = Vector(q.yawspeed, q.pitchspeed, q.rollspeed)
 
-        return KiteQuaternion(time: time, quaternion: quat, rate: rate)
+        return TimedQuaternion(time: time, quaternion: quat, rate: rate)
     }
     
-    var location: KiteLocation? {
+    var location: TimedLocation? {
         guard msgid == 32 else {
             return nil
         }
@@ -304,10 +319,10 @@ extension MavlinkMessage {
         let pos = Vector(local_position_ned.x, local_position_ned.y, local_position_ned.z)
         let vel = Vector(local_position_ned.vx, local_position_ned.vy, local_position_ned.vz)
         
-        return KiteLocation(time: time, pos: pos, vel: vel)
+        return TimedLocation(time: time, pos: pos, vel: vel)
     }
 
-    var gpsPosition: KiteGpsPosition? {
+    var globalPosition: TimedGPSVector? {
         guard msgid == 33 else {
             return nil
         }
@@ -319,7 +334,7 @@ extension MavlinkMessage {
         let time = Double(global_position.time_boot_ms)
         let gpsPos = GPSVector(lat: global_position.lat, lon: global_position.lon, alt: global_position.alt)
 
-        return KiteGpsPosition(time: time, pos: gpsPos)
+        return TimedGPSVector(time: time, pos: gpsPos)
     }
 
     var gpsOrigin: GPSVector? {

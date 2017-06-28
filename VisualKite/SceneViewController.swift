@@ -53,20 +53,6 @@ protocol KiteType {
     var velocity: PublishSubject<Vector> { get }
 }
 
-//protocol AnalyserType {
-//    // Input
-//    var position: Variable<Vector> { get }
-//    var attitude: Variable<Matrix> { get }
-//    var velocity: Variable<Vector> { get }
-//    
-//    // Output
-//    var estimatedWind: PublishSubject<Vector?> { get }
-//    var tetherPoint: PublishSubject<Vector?> { get }
-//    var turningPoint: PublishSubject<Vector?> { get }
-//    var turningRadius: PublishSubject<Scalar?> { get }
-//    var isTethered: PublishSubject<Scalar> { get }
-//}
-
 final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
     @IBOutlet weak var sceneView: SCNView!
     @IBOutlet weak var overlay: TraceView!
@@ -75,7 +61,7 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
     private let emulator = KiteEmulator()
     
     private let leap = LeapListener.shared
-    private let kite = KiteLink.shared
+    private let kite = KiteController.shared.kite0
     
     private let viewer = KiteViewer()
     
@@ -151,35 +137,35 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         windSpeedSlider.setup(min: 0, max: 20, current: 10)
         windDirectionSlider.setup(min: -π, max: π, current: π/4)
         
-        Observable.combineLatest(windSpeedSlider.scalar, windDirectionSlider.scalar, resultSelector: getWind).bindTo(wind).disposed(by: bag)
-        wind.asObservable().bindTo(emulator.wind).disposed(by: bag)
+        Observable.combineLatest(windSpeedSlider.scalar, windDirectionSlider.scalar, resultSelector: getWind).bind(to: wind).disposed(by: bag)
+        wind.asObservable().bind(to: emulator.wind).disposed(by: bag)
         
         // Kite
         elevationSlider.setup(min: 0, max: π/2, current: 0)
-        elevationSlider.scalar.bindTo(emulator.elevation).disposed(by: bag)
+        elevationSlider.scalar.bind(to: emulator.elevation).disposed(by: bag)
         
         glideSlider.setup(min: 2, max: 4, current: 3)
-        glideSlider.scalar.bindTo(emulator.speedFactor).disposed(by: bag)
+        glideSlider.scalar.bind(to: emulator.speedFactor).disposed(by: bag)
         
         // General
         tetherLengthSlider.setupExp(min: 30, max: 250, current: 100)
-        tetherLengthSlider.expScalar(min: 30, max: 250).bindTo(kite.tetherLength).disposed(by: bag)
+        tetherLengthSlider.expScalar(min: 30, max: 250).bind(to: kite.tetherLength).disposed(by: bag)
         
         turningRadiusSlider.setupExp(min: 10, max: 100, current: 20)
-        turningRadiusSlider.expScalar(min: 10, max: 100).bindTo(kite.turningRadius).disposed(by: bag)
+        turningRadiusSlider.expScalar(min: 10, max: 100).bind(to: kite.turningRadius).disposed(by: bag)
         
         phaseDeltaSlider.setup(min: -π, max: π, current: 0)
-        phaseDeltaSlider.scalar.bindTo(emulator.phaseDelta).disposed(by: bag)
+        phaseDeltaSlider.scalar.bind(to: emulator.phaseDelta).disposed(by: bag)
         
         // Tweaks
         phiDeltaSlider.setup(min: -π/8, max: π/8, current: 0)
-        phiDeltaSlider.scalar.bindTo(emulator.phiDelta).disposed(by: bag)
+        phiDeltaSlider.scalar.bind(to: emulator.phiDelta).disposed(by: bag)
         
         rollDeltaSlider.setup(min: -π/8, max: π/8, current: 0)
-        rollDeltaSlider.scalar.bindTo(emulator.rollDelta).disposed(by: bag)
+        rollDeltaSlider.scalar.bind(to: emulator.rollDelta).disposed(by: bag)
         
         pitchDeltaSlider.setup(min: -π/8, max: π/8, current: 0)
-        pitchDeltaSlider.scalar.bindTo(emulator.pitchDelta).disposed(by: bag)
+        pitchDeltaSlider.scalar.bind(to: emulator.pitchDelta).disposed(by: bag)
 
         // Real Kite Position Target
 
@@ -188,10 +174,10 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         zSlider.setup(min: 2, max: 12, current: 2)
 
         let positionTarget = Variable<Vector>(.zero)
-        Observable.combineLatest(xSlider.scalar, ySlider.scalar, zSlider.scalar.map(-), resultSelector: Vector.fromScalars).bindTo(positionTarget).disposed(by: bag)
+        Observable.combineLatest(xSlider.scalar, ySlider.scalar, zSlider.scalar.map(-), resultSelector: Vector.fromScalars).bind(to: positionTarget).disposed(by: bag)
 
-        positionTarget.asObservable().bindTo(viewer.positionTarget).disposed(by: bag)
-        positionTarget.asObservable().bindTo(kite.positionTarget).disposed(by: bag)
+        positionTarget.asObservable().bind(to: viewer.positionTarget).disposed(by: bag)
+        positionTarget.asObservable().bind(to: kite.positionTarget).disposed(by: bag)
 
         // Kite Attitude Target
 
@@ -205,71 +191,71 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         let euler = Variable<Vector>(.zero)
 
         Observable.combineLatest(pitchSlider.scalar, rollSlider.scalar, thrustSlider.scalar, resultSelector: makeEuler)
-            .bindTo(euler)
+            .bind(to: euler)
             .disposed(by: bag)
 
         euler.asObservable()
             .map(makeQuaternion)
-            .bindTo(kite.attitudeTarget)
+            .bind(to: kite.attitudeTarget)
             .disposed(by: bag)
 
 //        euler.asObservable()
 //            .map(makeMatrix)
-//            .bindTo(viewer.attitude)
+//            .bind(to: viewer.attitude)
 //            .disposed(by: bag)
 
         thrustSlider.setup(min: 0, max: 1*π, current: 0)
-//        thrustSlider.scalar.bindTo(kite.thrust).disposed(by: bag)
+//        thrustSlider.scalar.bind(to: kite.thrust).disposed(by: bag)
 
         // Kite Position
 
-        func getPoint(loc: KiteLocation) -> NSPoint {
+        func getPoint(loc: TimedLocation) -> NSPoint {
             return NSPoint(x: loc.pos.x/30 + 0.5, y: loc.pos.y/30 + 0.5)
         }
 
-        let location = Variable<KiteLocation>(KiteLocation())
+        let location = Variable<TimedLocation>(TimedLocation())
 
-        kite.location.bindTo(location).disposed(by: bag)
+        kite.location.bind(to: location).disposed(by: bag)
 
         let velocity = Variable<Vector>(.zero)
-        location.asObservable().map(KiteLocation.getVelocity).bindTo(velocity).disposed(by: bag)
-        velocity.asObservable().bindTo(viewer.velocity).disposed(by: bag)
-//        velocity.asObservable().bindTo(overlay.velocity).disposed(by: bag)
+        location.asObservable().map(TimedLocation.getVelocity).bind(to: velocity).disposed(by: bag)
+        velocity.asObservable().bind(to: viewer.velocity).disposed(by: bag)
+//        velocity.asObservable().bind(to: overlay.velocity).disposed(by: bag)
 
         let position = Variable<Vector>(.zero)
-        location.asObservable().map(KiteLocation.getPosition).bindTo(position).disposed(by: bag)
-        position.asObservable().bindTo(viewer.position).disposed(by: bag)
-        position.asObservable().bindTo(overlay.kitePosition).disposed(by: bag)
+        location.asObservable().map(TimedLocation.getPosition).bind(to: position).disposed(by: bag)
+        position.asObservable().bind(to: viewer.position).disposed(by: bag)
+        position.asObservable().bind(to: overlay.kitePosition).disposed(by: bag)
 
 //        kite.location.map(getPoint).subscribe(onNext: overlay.add).disposed(by: bag)
 
         // Kite Attitude
 
         // Emulator Output
-//        emulator.position.bindTo(viewer.position).disposed(by: bag)
-//        emulator.velocity.bindTo(viewer.velocity).disposed(by: bag)
-//        emulator.attitude.bindTo(viewer.attitude).disposed(by: bag)
+//        emulator.position.bind(to: viewer.position).disposed(by: bag)
+//        emulator.velocity.bind(to: viewer.velocity).disposed(by: bag)
+//        emulator.attitude.bind(to: viewer.attitude).disposed(by: bag)
 //
-//        kite.turningPoint.bindTo(viewer.turningPoint).disposed(by: bag)
+//        kite.turningPoint.bind(to: viewer.turningPoint).disposed(by: bag)
 
-//        tetherPoint.asObservable().bindTo(viewer.tetherPoint).disposed(by: bag)
+//        tetherPoint.asObservable().bind(to: viewer.tetherPoint).disposed(by: bag)
 
-//        kite.attitude.map(KiteAttitude.getAttitude).map(Matrix.init).bindTo(viewer.attitude).disposed(by: bag)
+//        kite.attitude.map(KiteAttitude.getAttitude).map(Matrix.init).bind(to: viewer.attitude).disposed(by: bag)
 
 
         let quaternion = Variable<Quaternion>(.id)
-        kite.quaternion.map(KiteQuaternion.getQuaternion).bindTo(quaternion).disposed(by: bag)
+        kite.quaternion.map(TimedQuaternion.getQuaternion).bind(to: quaternion).disposed(by: bag)
 
         print("Binding kite quaternion to scene")
-        quaternion.asObservable().bindTo(viewer.quaternion).disposed(by: bag)
+        quaternion.asObservable().bind(to: viewer.quaternion).disposed(by: bag)
 
         print("Binding kite quaternion to overlay")
-        quaternion.asObservable().bindTo(overlay.kiteOrientation).disposed(by: bag)
+        quaternion.asObservable().bind(to: overlay.kiteOrientation).disposed(by: bag)
 
 //        quaternion.asObservable().subscribe(onNext: { print("Q: \($0)") }).disposed(by: bag)
 
         // Kite viewer parameters
-        wind.asObservable().bindTo(viewer.wind).disposed(by: bag)
+        wind.asObservable().bind(to: viewer.wind).disposed(by: bag)
         
         // Kite viewer settings
         bind(button: kiteAxesButton, to: .kiteAxes)
@@ -316,7 +302,7 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         button.rx.state
             .map(isOn)
             .map(combine(with: element))
-            .bindNext(viewer.changeVisibility)
+            .bind(onNext: viewer.changeVisibility)
             .disposed(by: bag)
     }
     

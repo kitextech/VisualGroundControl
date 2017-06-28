@@ -23,9 +23,9 @@ class PursuitViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        slidar0.scalar.bindNext { self.pursuitView.speed = $0 }.disposed(by: bag)
-        slider1.scalar.bindNext { self.pursuitView.pathRadius = $0 }.disposed(by: bag)
-        slider2.scalar.bindNext { self.pursuitView.searchRadius = $0 }.disposed(by: bag)
+        slidar0.scalar.bind { self.pursuitView.speed = $0 }.disposed(by: bag)
+        slider1.scalar.bind { self.pursuitView.pathRadius = $0 }.disposed(by: bag)
+        slider2.scalar.bind { self.pursuitView.searchRadius = $0 }.disposed(by: bag)
     }
 }
 

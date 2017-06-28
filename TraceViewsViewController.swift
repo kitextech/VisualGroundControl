@@ -35,25 +35,25 @@ class TraceViewsViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let kite = KiteController.kite0
+        let kite = KiteController.shared.kite0
 
         freeView.angles.value = (π/2 - 0.2, 0)
         freeView.scrolls = true
 
         let position = Variable<Vector>(.zero)
-        kite.location.map(KiteLocation.getPosition).bind(to: position).disposed(by: bag)
+        kite.location.map(TimedLocation.getPosition).bind(to: position).disposed(by: bag)
 
         position.asObservable().bind(to: xyView.kitePosition).disposed(by: bag)
         position.asObservable().bind(to: freeView.kitePosition).disposed(by: bag)
 
         let quaternion = Variable<Quaternion>(.id)
-        kite.quaternion.map(KiteQuaternion.getQuaternion).bind(to: quaternion).disposed(by: bag)
+        kite.quaternion.map(TimedQuaternion.getQuaternion).bind(to: quaternion).disposed(by: bag)
 
         quaternion.asObservable().bind(to: xyView.kiteOrientation).disposed(by: bag)
         quaternion.asObservable().bind(to: freeView.kiteOrientation).disposed(by: bag)
 
-        kite.positionB.asObservable().bindTo(xyView.bPosition).disposed(by: bag)
-        kite.positionB.asObservable().bindTo(freeView.bPosition).disposed(by: bag)
+        kite.positionB.asObservable().bind(to: xyView.bPosition).disposed(by: bag)
+        kite.positionB.asObservable().bind(to: freeView.bPosition).disposed(by: bag)
 
         kite.positionTarget.asObservable().bind(to: xyView.targetPosition).disposed(by: bag)
         kite.positionTarget.asObservable().bind(to: freeView.targetPosition).disposed(by: bag)
@@ -67,8 +67,8 @@ class TraceViewsViewController: NSViewController {
 
         let pi = Observable.combineLatest(c, kite.positionB.asObservable(), resultSelector: getPiPlane)
 
-        pi.bindTo(xyView.piPlane).disposed(by: bag)
-        pi.bindTo(freeView.piPlane).disposed(by: bag)
+        pi.bind(to: xyView.piPlane).disposed(by: bag)
+        pi.bind(to: freeView.piPlane).disposed(by: bag)
 
         kite.turningRadius.asObservable().bind(to: xyView.turningRadius).disposed(by: bag)
         kite.turningRadius.asObservable().bind(to: freeView.turningRadius).disposed(by: bag)

@@ -23,7 +23,7 @@ class SerialViewController: NSViewController {
     
     // MARK: - Private Properties
 
-    internal let kite = KiteLink.shared
+    internal let kite = KiteController.shared.kite0
     private let bag = DisposeBag()
     
     private var messages = [String]()
@@ -31,10 +31,10 @@ class SerialViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        clearButton.rx.tap.bindNext(clearText).disposed(by: bag)
-        toggleOpenPortButton.rx.tap.bindNext(kite.togglePort).disposed(by: bag)
+        clearButton.rx.tap.bind(onNext: clearText).disposed(by: bag)
+        toggleOpenPortButton.rx.tap.bind(onNext: kite.togglePort).disposed(by: bag)
 
-        offboardButton.bool.bindTo(kite.isOffboard).disposed(by: bag)
+        offboardButton.bool.bind(to: kite.isOffboard).disposed(by: bag)
 
         kite.mavlinkMessage.subscribe(onNext: addMessage).disposed(by: bag)
     }

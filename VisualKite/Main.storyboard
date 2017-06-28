@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="KvJ-u7-H6y">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="KvJ-u7-H6y">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaDFRPlugin" version="12062"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
-        <plugIn identifier="com.apple.SceneKitIBPlugin" version="12120"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
+        <plugIn identifier="com.apple.SceneKitIBPlugin" version="12121"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -803,7 +803,6 @@
                     <connections>
                         <outlet property="freeView" destination="Kdi-RL-07I" id="lHI-BS-sy9"/>
                         <outlet property="piButton" destination="1cS-Pq-8Sl" id="FC8-NF-6DK"/>
-                        <outlet property="sliderr" destination="GvI-tA-rTc" id="hcD-zX-GjZ"/>
                         <outlet property="xyView" destination="6qR-EE-Bzh" id="Zkd-ph-Egg"/>
                         <outlet property="xzButton" destination="Qnh-wT-YiZ" id="hvP-JS-Ben"/>
                         <outlet property="yzButton" destination="TVR-Mn-thd" id="da9-aZ-WTU"/>
@@ -1326,11 +1325,12 @@
                         <outlet property="position1Label" destination="FmR-Sk-6bg" id="eZB-bN-dQL"/>
                         <outlet property="tetherLengthLabel" destination="Rpr-lv-vv9" id="qs5-T4-9nd"/>
                         <outlet property="tetherLengthSlider" destination="bxV-kI-9Rc" id="THl-Zf-h9d"/>
+                        <outlet property="tetheredHoverThrustLabel" destination="xui-An-q8Q" id="Q8t-dx-kvR"/>
                         <outlet property="tetheredHoverThrustSlider" destination="yN8-8P-INd" id="O6h-Q8-gSP"/>
                         <outlet property="thetaCLabel" destination="A7Q-Tm-WOD" id="WRQ-1H-KwE"/>
                         <outlet property="thetaCSlider" destination="fIg-Ij-7jQ" id="oco-3u-Tm9"/>
                         <outlet property="turningRLabel" destination="IBc-f8-WMw" id="lFY-Dj-gU1"/>
-                        <outlet property="turningRadiousSlider" destination="K6U-eq-HSX" id="xzy-jJ-9qQ"/>
+                        <outlet property="turningRadiusSlider" destination="K6U-eq-HSX" id="BAy-8v-5rk"/>
                     </connections>
                 </viewController>
                 <customObject id="Vgv-Xi-3wv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
