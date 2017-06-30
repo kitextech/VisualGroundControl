@@ -17,6 +17,10 @@ public struct Line {
         return Line(start: start + vector, end: end + vector)
     }
 
+//    func rotated(_ q: Quaternion) -> Line {
+//        return Line(start: start.rotated(q), end: end.rotated(q))
+//    }
+
     func scaled(_ scalar: Scalar) -> Line {
         return Line(start: scalar*start, end: scalar*end)
     }
@@ -225,14 +229,27 @@ extension Vector: CustomStringConvertible, Equatable {
         return (self•b/pow(normB, 2))*b
     }
 
-    public func projected(on bases: (x: Vector, y: Vector)) -> NSPoint {
-        return NSPoint(x: component(along: bases.x), y: component(along: bases.y))
-    }
-
-
     public func projected(on plane: Plane) -> Vector {
         return self - projected(on: plane.normal)
     }
+
+    // Collapsed to point
+
+    public func collapsed(on bases: (x: Vector, y: Vector)) -> CGPoint {
+        return CGPoint(x: component(along: bases.x), y: component(along: bases.y))
+    }
+
+    public func collapsed(along axis: Vector) -> CGPoint {
+        if axis || e_z {
+            return CGPoint(x: y, y: x)
+        }
+
+        let bases = Plane(center: .origin, normal: axis).bases
+
+        return collapsed(on: bases)
+    }
+
+    // Angles and norms
 
     public func angle(to b: Vector) -> Scalar {
         let m = norm*b.norm
@@ -334,6 +351,12 @@ extension Vector: CustomStringConvertible, Equatable {
 //        return Scalar(int)*vector
 //    }
 
+    // Scalar division
+
+    public static func /(lhs: Vector, rhs: Scalar) -> Vector {
+        return Vector(x: lhs.x/rhs, y: lhs.y/rhs, z: lhs.z/rhs)
+    }
+
     // Vector addition
     
     public static func +(left: Vector, right: Vector) -> Vector {
@@ -372,9 +395,9 @@ extension Vector: CustomStringConvertible, Equatable {
         return Vector(x: x, y: y, z: z)
     }
 
-    // MARK: - Higher order functions
-
-    public static func translator(by vector: Vector) -> (Vector) -> Vector {
-        return { $0 + vector }
-    }
+//    // MARK: - Higher order functions
+//
+//    public static func translator(by vector: Vector) -> (Vector) -> Vector {
+//        return { $0 + vector }
+//    }
 }

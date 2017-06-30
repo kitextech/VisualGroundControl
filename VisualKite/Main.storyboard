@@ -212,7 +212,7 @@
                                                             <sliderAccessoryBehavior key="behavior" id="bSs-uM-HAb"/>
                                                         </sliderAccessory>
                                                         <slider key="slider" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Mo-hg-9X8">
-                                                            <rect key="frame" x="0.0" y="0.0" width="259" height="19"/>
+                                                            <rect key="frame" x="-6" y="0.0" width="259" height="19"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="jDh-Jw-Nte"/>
                                                         </slider>
@@ -238,7 +238,7 @@
                                                             <sliderAccessoryBehavior key="behavior" id="6Sy-cl-EUu"/>
                                                         </sliderAccessory>
                                                         <slider key="slider" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aV6-0v-12A">
-                                                            <rect key="frame" x="0.0" y="0.0" width="259" height="19"/>
+                                                            <rect key="frame" x="-6" y="0.0" width="259" height="19"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                             <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="O8g-fa-ho0"/>
                                                         </slider>
@@ -408,7 +408,7 @@
                                                     <touchBarItem id="ety-gD-P7Z">
                                                         <viewController key="viewController" id="tza-Xk-htL">
                                                             <button key="view" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HR8-p5-b86">
-                                                                <rect key="frame" x="0.0" y="0.0" width="90" height="41"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="102" height="41"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Kite axes" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="tZn-cc-nCZ">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -421,7 +421,7 @@
                                                     <touchBarItem id="57M-Fe-apL">
                                                         <viewController key="viewController" id="1hM-zA-uyp">
                                                             <button key="view" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="re0-yx-cde">
-                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="41"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="84" height="41"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="∏ axes" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SpI-Rz-fwh">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -460,7 +460,7 @@
                                                     <touchBarItem id="8ne-p8-PO7">
                                                         <viewController key="viewController" id="X6V-yp-6UY">
                                                             <button key="view" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rtB-69-iiv">
-                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="41"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="84" height="41"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Wind" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cwN-eF-xxM">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -472,7 +472,7 @@
                                                     </touchBarItem>
                                                     <touchBarItem id="fDo-Eg-JaG">
                                                         <viewController key="viewController" id="PgM-QO-q49">
-                                                            <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Pq-rL-gqE">
+                                                            <button key="view" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Pq-rL-gqE">
                                                                 <rect key="frame" x="0.0" y="0.0" width="84" height="41"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Tether" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZVe-o9-PhH">
@@ -486,7 +486,7 @@
                                                     <touchBarItem id="HRt-gg-EHN">
                                                         <viewController key="viewController" id="Uwf-1e-t0y">
                                                             <button key="view" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="trg-3q-aSj">
-                                                                <rect key="frame" x="0.0" y="0.0" width="72" height="41"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="84" height="41"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <buttonCell key="cell" type="push" title="Kite" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oFr-fP-IWd">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>

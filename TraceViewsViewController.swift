@@ -52,8 +52,8 @@ class TraceViewsViewController: NSViewController {
         quaternion.asObservable().bind(to: xyView.kiteOrientation).disposed(by: bag)
         quaternion.asObservable().bind(to: freeView.kiteOrientation).disposed(by: bag)
 
-        kite.positionB.asObservable().bind(to: xyView.bPosition).disposed(by: bag)
-        kite.positionB.asObservable().bind(to: freeView.bPosition).disposed(by: bag)
+//        kite.positionB.asObservable().bind(to: xyView.bPosition).disposed(by: bag)
+//        kite.positionB.asObservable().bind(to: freeView.bPosition).disposed(by: bag)
 
         kite.positionTarget.asObservable().bind(to: xyView.targetPosition).disposed(by: bag)
         kite.positionTarget.asObservable().bind(to: freeView.targetPosition).disposed(by: bag)
@@ -62,10 +62,9 @@ class TraceViewsViewController: NSViewController {
         kite.tetherLength.asObservable().bind(to: freeView.tetherLength).disposed(by: bag)
 
         let d = Observable.combineLatest(kite.tetherLength.asObservable(), kite.turningRadius.asObservable(), resultSelector: getD)
-        let cRel = Observable.combineLatest(kite.phiC.asObservable(), kite.thetaC.asObservable(), d, resultSelector: getC)
-        let c = Observable.combineLatest(cRel, kite.positionB.asObservable(), resultSelector: +)
+        let c = Observable.combineLatest(kite.phiC.asObservable(), kite.thetaC.asObservable(), d, resultSelector: getC)
 
-        let pi = Observable.combineLatest(c, kite.positionB.asObservable(), resultSelector: getPiPlane)
+        let pi = c.map(getPiPlane)
 
         pi.bind(to: xyView.piPlane).disposed(by: bag)
         pi.bind(to: freeView.piPlane).disposed(by: bag)
@@ -96,12 +95,14 @@ class TraceViewsViewController: NSViewController {
         return Vector(xyFactor*cos(phi), xyFactor*sin(phi), -d*sin(theta))
     }
 
-    private func getPiPlane(c: Vector, b: Vector) -> Plane {
-        return Plane(center: c, normal: (c - b).unit)
+    private func getPiPlane(c: Vector) -> Plane {
+        return Plane(center: c, normal: c.unit)
     }
 }
 
 class TraceView: NSView {
+//    private var tracer = Tracer()
+
     public var scrolls = false
 
     // MARK: - Inputs
@@ -317,17 +318,6 @@ class TraceView: NSView {
         ballPath(at: cPoint.value, radius: 5).fill()
         circlePath.value?.stroke()
 
-//        let phi = KiteLink.shared.phiC.value
-//        let theta = KiteLink.shared.thetaC.value
-//
-//        let e_pi_x = Vector(sin(phi), -cos(phi), 0)
-//        let e_pi_y = Vector(-sin(phi)*sin(theta),-cos(phi)*sin(theta), -cos(theta))
-//
-//        ballPath(at: pointify(piPlane.value.center + turningRadius.value*e_pi_x), radius: 3).fill()
-//
-//        NSColor.green.set()
-//        ballPath(at: pointify(piPlane.value.center + turningRadius.value*e_pi_y), radius: 3).fill()
-
         NSColor.black.set()
         ballPath(at: kitePoint.value, radius: 3).fill()
         kitePath.value?.stroke()
@@ -433,6 +423,26 @@ class TraceView: NSView {
 
     private func ballPath(at point: NSPoint, radius r: Scalar) -> NSBezierPath {
         return NSBezierPath(ovalIn: NSRect(origin: NSPoint(x: -r, y: -r) + point, size: NSSize(width: 2*r, height: 2*r)))
+    }
+}
+
+public class Tracer {
+    public var projectionAxis = -e_z
+    public var scaleFactor: Scalar = 70
+    public var bounds: CGRect = .unit
+
+    public func pointify(_ vector: Vector) -> CGPoint {
+        return vector
+            .collapsed(along: projectionAxis)
+            .scaled(by: 1/scaleFactor)
+            .absolute(in: bounds)
+    }
+
+    public func vectorify(_ point: CGPoint) -> Vector {
+        return point
+            .relative(in: bounds)
+            .scaled(by: scaleFactor)
+            .deCollapsed(along: projectionAxis)
     }
 }
 

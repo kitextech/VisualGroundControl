@@ -9,34 +9,27 @@
 import AppKit
 import RxSwift
 
-class SettingsModel {
-    private let localPositions: [Variable<Vector>] = [Variable(.zero), Variable(.zero)]
-    private var currentLocalPositions: [Vector] = [.zero, .zero]
-    private var currentGlobalPositions: [GPSVector] = [.zero, .zero]
+struct SettingsModel {
+    public let tetherLength: Variable<Scalar> = Variable(0)
+    public let phiC: Variable<Scalar> = Variable(0)
+    public let thetaC: Variable<Scalar> = Variable(0)
+    public let turningRadius: Variable<Scalar> = Variable(0)
+    public let tetheredHoverThrust: Variable<Scalar> = Variable(0)
 
-    public let tetherLength: Observable<Scalar>
-    public let phiC: Observable<Scalar>
-    public let thetaC: Observable<Scalar>
-    public let turningRadius: Observable<Scalar>
-    public let tetheredHoverThrust: Observable<Scalar>
-
+    // MARK: BAG
     private let bag = DisposeBag()
 
     init(_ tetherLength: Observable<Scalar>, _ tetheredHoverThrust: Observable<Scalar>, _ phiC: Observable<Scalar>, _ thetaC: Observable<Scalar>, _ turningRadius: Observable<Scalar>) {
 
-        self.tetherLength = tetherLength
-        self.tetheredHoverThrust = tetheredHoverThrust
-        self.phiC = phiC
-        self.thetaC = thetaC
-        self.turningRadius = turningRadius
-
-        self.turningRadius.bind(onNext: { Swift.print("Settings: Turning radius changed: \($0)") }).disposed(by: bag)
+        tetherLength.bind(to: self.tetherLength).disposed(by: bag)
+        tetheredHoverThrust.bind(to: self.tetheredHoverThrust).disposed(by: bag)
+        phiC.bind(to: self.phiC).disposed(by: bag)
+        thetaC.bind(to: self.thetaC).disposed(by: bag)
+        turningRadius.bind(to: self.turningRadius).disposed(by: bag)
     }
 }
 
 class SettingsViewController: NSViewController {
-    private var model: SettingsModel!
-
     // MARK: - Outlets
 
     @IBOutlet weak var tetherLengthSlider: NSSlider!
@@ -67,45 +60,35 @@ class SettingsViewController: NSViewController {
     private let bag = DisposeBag()
     
     @IBAction func pressedUse0AsB(_ sender: NSButton) {
-        KiteController.shared.saveB(kite: 0)
+        KiteController.shared.saveB(from: 0)
     }
 
     @IBAction func pressedUse1AsB(_ sender: NSButton) {
-        KiteController.shared.saveB(kite: 1)
+        KiteController.shared.saveB(from: 1)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-//        model = SettingsModel(tetherLengthSlider.scalar, tetheredHoverThrustSlider.scalar, phiCSlider.scalar, thetaCSlider.scalar, turningRadiusSlider.scalar)
+        let tetherLength = tetherLengthSlider.scalar.shareReplayLatestWhileConnected()
+        let tetheredHoverThrust = tetheredHoverThrustSlider.scalar.shareReplayLatestWhileConnected()
+        let phiC = phiCSlider.scalar.shareReplayLatestWhileConnected()
+        let thetaC = thetaCSlider.scalar.shareReplayLatestWhileConnected()
+        let turningRadius = turningRadiusSlider.scalar.shareReplayLatestWhileConnected()
 
-//        KiteController.shared.setModel(model)
+        let settings = SettingsModel(tetherLength, tetheredHoverThrust, phiC, thetaC, turningRadius)
+
+        KiteController.shared.setModel(settings: settings)
 
         // Parameters
-        tetherLengthSlider.scalar.map(getScalarString).bind(to: tetherLengthLabel.rx.text).disposed(by: bag)
 
         let positionString = { (p: TimedGPSVector) in "GPS: \(p.pos.lat), \(p.pos.lon). \(p.pos.alt/1000)" }
 
-        phiCSlider.scalar.map(getScalarString).bind(to: phiCLabel.rx.text).disposed(by: bag)
-        thetaCSlider.scalar.map(getScalarString).bind(to: thetaCLabel.rx.text).disposed(by: bag)
-//        turningRadiusSlider.scalar.map(getScalarString).bind(to: turningRLabel.rx.text).disposed(by: bag)
-
-        func printme1(scalar: Scalar) {
-            Swift.print("1: \(scalar)")
-        }
-
-        func printme2(scalar: Scalar) {
-            Swift.print("2: \(scalar)")
-        }
-
-        func printme3(scalar: Scalar) {
-            Swift.print("3: \(scalar)")
-        }
-
-        turningRadiusSlider.scalar.share(scope: .forever).subscribe(onNext: printme1).disposed(by: bag)
-        turningRadiusSlider.scalar.share(scope: .forever).subscribe(onNext: printme2).disposed(by: bag)
-
-        tetheredHoverThrustSlider.scalar.map(getScalarString).bind(to: tetheredHoverThrustLabel.rx.text).disposed(by: bag)
+        tetherLength.map(getScalarString).bind(to: tetherLengthLabel.rx.text).disposed(by: bag)
+        phiC.map(getScalarString).bind(to: phiCLabel.rx.text).disposed(by: bag)
+        thetaC.map(getScalarString).bind(to: thetaCLabel.rx.text).disposed(by: bag)
+        turningRadius.map(getScalarString).bind(to: turningRLabel.rx.text).disposed(by: bag)
+        tetheredHoverThrust.map(getScalarString).bind(to: tetheredHoverThrustLabel.rx.text).disposed(by: bag)
 
         // Positions
         KiteController.shared.kite0.globalPosition.asObservable().map(positionString).bind(to: position0Label.rx.text).disposed(by: bag)

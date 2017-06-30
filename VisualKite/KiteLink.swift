@@ -12,41 +12,31 @@ import ORSSerial
 import RxSwift
 
 class KiteController {
+    public var settings: SettingsModel!
+
     public let kite0 = KiteLink(targetSystemId: 1, targetComponentId: 1)
     public let kite1 = KiteLink(targetSystemId: 2, targetComponentId: 1)
 
-    public static let shared = KiteController()
+    public var kites: [KiteLink] { return [kite0, kite1] }
 
-    public var settings: SettingsModel!
+    public static let shared = KiteController()
 
     private let bag = DisposeBag()
 
-    private init() {
-    }
-
-    public func setModel(_ settings: SettingsModel) {
+    func setModel(settings: SettingsModel) {
         self.settings = settings
-        [kite0, kite1].enumerated().forEach { index, kite in
-            // Common
-            Swift.print("setModel \(index)")
-
-            settings.tetherLength.bind(to: kite.tetherLength).addDisposableTo(bag)
-            settings.tetheredHoverThrust.bind(to: kite.tetheredHoverThrust).addDisposableTo(bag)
-
-            settings.phiC.bind(to: kite.phiC).disposed(by: bag)
-            settings.thetaC.bind(to: kite.thetaC).disposed(by: bag)
-//            settings.turningRadius.bind(to: kite.turningRadius).disposed(by: bag)
+        kites.forEach { kite in
+            settings.tetherLength.asObservable().bind(to: kite.tetherLength).addDisposableTo(bag)
+            settings.tetheredHoverThrust.asObservable().bind(to: kite.tetheredHoverThrust).addDisposableTo(bag)
+            settings.phiC.asObservable().bind(to: kite.phiC).disposed(by: bag)
+            settings.thetaC.asObservable().bind(to: kite.thetaC).disposed(by: bag)
+            settings.turningRadius.asObservable().bind(to: kite.turningRadius).disposed(by: bag)
         }
     }
 
-    public func saveB(kite index: Int) {
-        kite(index).globalPositionB.value = kite(index).latestGlobalPosition
-        kite(index).positionB.value = kite(index).latestLocalPosition
-    }
-
-    public func kite(_ index: Int) -> KiteLink {
-        guard (0...1).contains(index) else { fatalError() }
-        return index == 0 ? kite0 : kite1
+    public func saveB(from index: Int) {
+        let b = kites[index].latestGlobalPosition
+        kites.forEach { $0.saveAsB(b: b) }
     }
 }
 
@@ -56,9 +46,6 @@ class KiteLink: NSObject {
     public let isOffboard = Variable<Bool>(true)
 
     // MARK: Parameters
-    
-    public let globalPositionB = Variable<GPSVector>(.zero) // Offboard
-    public let positionB = Variable<Vector>(.zero) // Offboard
 
     public let tetherLength = Variable<Scalar>(50) // Offboard
 
@@ -88,7 +75,6 @@ class KiteLink: NSObject {
     public let attitude = PublishSubject<TimedAttitude>()
 
     public let globalPosition = PublishSubject<TimedGPSVector>()
-//    public let gpsOrigin = PublishSubject<GPSVector>()
 
     public let errorMessage = PublishSubject<String>()
 
@@ -129,8 +115,7 @@ class KiteLink: NSObject {
     private let parameterGracePeriod: TimeInterval = 1
     private let parameterRetries = 10
 
-//    public var latestGlobalPosition: GPSVector = .zero
-//    public var latestLocalPosition: Vector = .zero
+    public var latestGlobalPosition: GPSVector = .zero
 
     // MARK: Initializers
     
@@ -145,7 +130,6 @@ class KiteLink: NSObject {
         
         NSUserNotificationCenter.default.delegate = self
 
-//        bind(globalPositionB, using: setGpsVector(ids: (MPC_X_POS_B, MPC_Y_POS_B, MPC_Z_POS_B)))
         bind(tetherLength, using: setScalar(id: MPC_TETHER_LEN))
         bind(hoverPitchAngle, using: setScalar(id: MPC_PITCH_HVR))
         bind(tetheredHoverThrust, using: setScalar(id: MPC_THR_TETHER))
@@ -157,16 +141,7 @@ class KiteLink: NSObject {
         bind(thetaC, using: setScalar(id: MPC_LOOP_THETA_C))
         bind(turningRadius, using: setScalar(id: MPC_LOOP_TURN_R))
 
-//        func savePositions(global: GPSVector, local: Vector) {
-//            latestLocalPosition = local
-//            latestGlobalPosition = global
-//        }
-
-//        globalPosition
-//            .map(TimedGPSVector.getPosition)
-//            .withLatestFrom(location.map(TimedLocation.getPosition), resultSelector: noOp)
-//            .bind(onNext: savePositions)
-//            .disposed(by: bag)
+        globalPosition.map(TimedGPSVector.getPosition).subscribe(onNext: { self.latestGlobalPosition = $0 }).disposed(by: bag)
 
 //        let i = targetSystemId - 1
 //        turningRadius.asObservable().bind(onNext: { Swift.print("Kite \(i): Turning radius changed: \($0)") }).disposed(by: bag)
@@ -178,10 +153,9 @@ class KiteLink: NSObject {
 
     // MARK: Public Methods
 
-//    public func nudgeB(deltaLat: Int32, deltaLon: Int32, deltaAlt: Int32) {
-//        let b = globalPositionB.value
-//        globalPositionB.value = GPSVector(lat: b.lat + deltaLat, lon: b.lon + deltaLat, alt: b.alt + deltaAlt)
-//    }
+    public func saveAsB(b: GPSVector) {
+        send(box.setGlobalOrigin(gps: b))
+    }
 
     public func togglePort() {
         guard let serialPort = serialPort else {
@@ -202,10 +176,6 @@ class KiteLink: NSObject {
     }
 
     // MARK: Private Methods
-
-    private func savePositions() {
-
-    }
 
     private func heartbeat(timer: Timer) {
         let now = Date()
@@ -439,12 +409,8 @@ extension KiteLink: ORSSerialPortDelegate {
                 else if let g = message.globalPosition {
                     globalPosition.onNext(g)
                 }
-                else if let o = message.gpsOrigin {
-                    gpsOrigin.onNext(o)
-                }
                 else if let value = message.parameterValue {
                     print("Received Parameter: \(value.id) (\(value.id.characters.count)) = \(value.value)")
-
                     confirm(value)
                 }
 
@@ -552,7 +518,7 @@ let MPC_LOOP_PHI_C = "MPC_LOOP_PHI_C"
 let MPC_LOOP_THETA_C = "MPC_LOOP_THETA_C"
 let MPC_LOOP_TURN_R = "MPC_LOOP_TURN_R"
 
-struct TimedGPSVector{
+struct TimedGPSVector {
     let time: TimeInterval
     let pos: GPSVector
 
@@ -634,10 +600,6 @@ struct GPSVector {
     let alt: Int32
 
     public static let zero = GPSVector(lat: 0, lon: 0, alt: 0)
-
-    public func local(_ origin: GPSVector) -> Vector {
-        fatalError() // FIXME: Implement
-    }
 }
 
 extension GPSVector: Equatable {
