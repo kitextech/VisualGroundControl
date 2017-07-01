@@ -35,13 +35,19 @@ class TraceView: NSView {
     public let requestedPosition0 = Variable(Vector.origin)
     public let requestedPosition1 = Variable(Vector.origin)
 
-    // Constants
+    // Initialiser
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
 
         acceptsTouchEvents = true
         add(domeDrawable)
+    }
+
+    // Public Methods
+
+    public func redraw() {
+        setNeedsDisplay(bounds)
     }
 
     public func add(_ drawable: Drawable) {
@@ -77,17 +83,16 @@ class TraceView: NSView {
             return (tracer.pointify(v.value) - touchPoint(event: event)).norm
         }
 
-        func onBackWall(_ v: Variable<Vector>) -> Bool {
-            return v.value•tracer.projectionAxis <= 0
+        func grabbable(_ v: Variable<Vector>) -> Bool {
+            return dist(v) < 10 && (tracer.projectionAxis == -e_z ? v.value.z <= 0 : v.value•tracer.projectionAxis <= 0.01)
         }
 
-        requestedPositionCurrent = [requestedPosition0, requestedPosition1].sorted { dist($0) < dist($1) }.first { dist($0) < 10 && onBackWall($0)}
+        requestedPositionCurrent = [requestedPosition0, requestedPosition1].sorted { dist($0) < dist($1) }.first(where: grabbable)
         redraw()
     }
 
     override func mouseDragged(with event: NSEvent) {
         requestedPositionCurrent?.value = domeVector(point: touchPoint(event: event))
-
         redraw()
     }
 
@@ -102,7 +107,7 @@ class TraceView: NSView {
     override func scrollWheel(with event: NSEvent) {
         guard scrolls else { return }
 
-        rotate(event.deltaX/20, -event.deltaY/20)
+        rotate(event.deltaX/20, event.deltaY/20)
         redraw()
     }
 
@@ -117,10 +122,6 @@ class TraceView: NSView {
     }
 
     // Drawing
-
-    private func redraw() {
-        setNeedsDisplay(bounds)
-    }
 
     override func draw(_ dirtyRect: CGRect) {
 //        ballPath(at: bPoint.value, radius: 5).fill()
