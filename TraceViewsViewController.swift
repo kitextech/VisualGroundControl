@@ -55,7 +55,7 @@ class TraceViewsViewController: NSViewController {
 
         // Coordinate axes
 
-        let axes = [(e_x, NSColor.red), (e_y, .green), (e_z, .blue)].map { ArrowDrawable(vector: 5*$0, color: $1) }
+        let axes = [(e_x, NSColor.red), (e_y, .green), (e_z, .blue)].map { ArrowDrawable(vector: 10*$0, color: $1) }
         axes.forEach(add)
 
         // C and the path
@@ -89,13 +89,14 @@ class TraceViewsViewController: NSViewController {
 
         // Trace views as controls
 
-        let rps = [KiteController.kite0.positionTarget, KiteController.kite1.positionTarget]
-        views.forEach { $0.requestedPositions = rps }
+        let requestedPositions = [KiteController.kite0.positionTarget, KiteController.kite1.positionTarget]
+        views.forEach { $0.requestedPositions = requestedPositions }
 
         // Redrawing
 
-        rps.map { $0.asObservable() }.forEach(useAsRedrawTrigger)
+        requestedPositions.map { $0.asObservable() }.forEach(useAsRedrawTrigger)
         useAsRedrawTrigger(cPoint)
+        redrawViews()
 
 //        xzButton.rx.tap.map { (0, π/2) }.bind(to: freeView.angles).disposed(by: bag)
 //        yzButton.rx.tap.map { (π/2, π/2) }.bind(to: freeView.angles).disposed(by: bag)
@@ -105,8 +106,11 @@ class TraceViewsViewController: NSViewController {
     // Helper methods
 
     private func useAsRedrawTrigger<T>(_ observable: Observable<T>) {
-        let redrawViews = { self.views.forEach { $0.redraw() } }
-        observable.bind { _ in redrawViews() }.disposed(by: bag)
+        observable.bind { _ in self.redrawViews() }.disposed(by: bag)
+    }
+
+    private func redrawViews() {
+        views.forEach { $0.redraw() }
     }
 
     private func add(_ drawable: Drawable) {
@@ -135,6 +139,9 @@ class TraceViewsViewController: NSViewController {
         kite.positionTarget.asObservable()
             .bind { pos in targetDrawable.position = pos }
             .disposed(by: bag)
+
+        useAsRedrawTrigger(kite.location)
+        useAsRedrawTrigger(kite.quaternion)
     }
 
     private func getD(tether: Scalar, r: Scalar) -> Scalar {

@@ -87,13 +87,11 @@ extension CGPoint {
     }
 
     public func deCollapsed(along axis: Vector) -> Vector {
-        if axis || e_z {
-            return Vector(y, x, 0)
+        if axis == e_z {
+            return Vector(x, y, 0)
         }
 
-        let bases = Plane(center: .origin, normal: axis).bases
-
-        return deCollapsed(on: bases)
+        return deCollapsed(on: Plane(center: .origin, normal: axis).bases)
     }
 
     public func scaled(by factor: Scalar) -> CGPoint {
@@ -101,11 +99,11 @@ extension CGPoint {
     }
 
     public func absolute(in rect: CGRect) -> CGPoint {
-        return CGPoint(x: rect.minX + rect.width*(0.5 + x), y: rect.minY + rect.height*(0.5 + y))
+        return CGPoint(x: rect.maxX - rect.width*(0.5 + x), y: rect.minY + rect.height*(0.5 + y))
     }
 
     public func relative(in rect: CGRect) -> CGPoint {
-        return CGPoint(x: (x - rect.minX)/rect.width - 0.5, y: (y - rect.minY)/rect.height - 0.5)
+        return CGPoint(x: (rect.maxX - x)/rect.width - 0.5, y: (y - rect.minY)/rect.height - 0.5)
     }
 
     public var size: CGSize {

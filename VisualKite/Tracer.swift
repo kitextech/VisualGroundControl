@@ -10,7 +10,7 @@ import AppKit
 import Foundation
 
 public class Tracer {
-    public var projectionAxis = -e_z
+    public var projectionAxis = e_z
     public var scaleFactor: Scalar = 70
     public var bounds: CGRect = .unit
 
@@ -43,6 +43,7 @@ public protocol Drawable {
     var id: UUID { get }
     var occluded: Bool { get }
     var color: NSColor { get }
+    var lineWidth: Scalar { get }
     var lines: [Line] { get }
     var spheres: [Sphere] { get }
 
@@ -69,6 +70,7 @@ public class VectorDrawable: Drawable {
 
     public let occluded = false
     public let color: NSColor
+    public let lineWidth: Scalar = 3
 
     public var lines: [Line] {
         return [Line(start: start, end: end)]
@@ -100,6 +102,8 @@ public class KiteDrawable: Drawable {
     public let occluded = false
 
     public var color: NSColor
+
+    public let lineWidth: Scalar = 4
 
     public var lines: [Line] {
         let halfSpan = span/2
@@ -145,6 +149,8 @@ public class SphereDrawable: Drawable {
     public var occluded = true
 
     public let color = NSColor.darkGray
+
+    public let lineWidth: Scalar = 3
 
     public var lines: [Line] {
         let longitudes = 20
@@ -192,6 +198,8 @@ public class BallDrawable: Drawable {
 
     public let color: NSColor
 
+    public let lineWidth: Scalar = 0
+
     public var lines: [Line] = []
 
     public let spheres: [Sphere] = [Sphere(center: .zero, radius: 20)]
@@ -215,6 +223,8 @@ public class ArrowDrawable: Drawable {
 
     public let lines: [Line]
 
+    public let lineWidth: Scalar = 5
+
     public let spheres: [Sphere]
 
     public var orientation: Quaternion = .id
@@ -235,6 +245,8 @@ public class BoxDrawable: Drawable {
     public let occluded = false
 
     public let color: NSColor
+
+    public let lineWidth: Scalar = 3
 
     public let lines: [Line]
 
@@ -271,6 +283,8 @@ public class CircleDrawable: Drawable {
     public let occluded = true
 
     public let color: NSColor
+
+    public let lineWidth: Scalar = 3
 
     public var lines: [Line] {
         let plane = Plane(center: position, normal: normal)

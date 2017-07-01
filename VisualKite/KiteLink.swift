@@ -149,8 +149,7 @@ class KiteLink: NSObject {
 
         globalPosition.map(TimedGPSVector.getPosition).subscribe(onNext: { self.latestGlobalPosition = $0 }).disposed(by: bag)
 
-//        let i = targetSystemId - 1
-//        turningRadius.asObservable().bind(onNext: { Swift.print("Kite \(i): Turning radius changed: \($0)") }).disposed(by: bag)
+        positionTarget.asObservable().map { TimedLocation(time: 0, pos: 2*$0, vel: .zero) }.bind(to: location).disposed(by: bag)
     }
 
     deinit {

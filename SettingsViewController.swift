@@ -78,6 +78,8 @@ class SettingsViewController: NSViewController {
 
         KiteController.shared.settings.setup(tetherLength, tetheredHoverThrust, phiC, thetaC, turningRadius)
 
+//        phiC.map { Vector(0, 0, -20*$0) }.bind(to: KiteController.kite0.lo)
+
         // Parameters
 
         let positionString = { (p: TimedGPSVector) in "GPS: \(p.pos.lat), \(p.pos.lon). \(p.pos.alt/1000)" }

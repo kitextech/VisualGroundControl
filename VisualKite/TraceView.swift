@@ -106,7 +106,7 @@ class TraceView: NSView {
     override func scrollWheel(with event: NSEvent) {
         guard scrolls else { return }
 
-        rotate(event.deltaX/20, event.deltaY/20)
+        rotate(-event.deltaX/20, event.deltaY/20)
         redraw()
     }
 
@@ -140,7 +140,7 @@ class TraceView: NSView {
 
         let occlusionPlane = Plane(center: .origin, normal: tracer.projectionAxis)
 
-        linesPath(lines: drawable.occluded ? lines.flatMap(occlusionPlane.occlude) : lines).stroke()
+        linesPath(lines: drawable.occluded ? lines.flatMap(occlusionPlane.occlude) : lines, width: drawable.lineWidth).stroke()
 
         drawable.spheres
             .map { $0.translated(drawable.position) }
@@ -148,9 +148,9 @@ class TraceView: NSView {
             .forEach { $0.fill() }
     }
 
-    private func linesPath(lines: [Line]) -> NSBezierPath {
+    private func linesPath(lines: [Line], width: Scalar) -> NSBezierPath {
         let p = NSBezierPath()
-        p.lineWidth = 2
+        p.lineWidth = width
 
         for line in lines {
             p.move(to: tracer.pointify(line.start))

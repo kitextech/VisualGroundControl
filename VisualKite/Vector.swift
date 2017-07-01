@@ -243,19 +243,49 @@ extension Vector: CustomStringConvertible, Equatable {
     // Collapsed to point
 
     public func collapsed(along axis: Vector) -> CGPoint {
-        if axis || e_z {
-            return CGPoint(x: y, y: x)
+        if axis == e_z {
+            return CGPoint(x: x, y: y)
         }
 
-        let bases = Plane(center: .origin, normal: axis).bases
-
-        return collapsed(on: bases)
+        return collapsed(on: Plane(center: .origin, normal: axis).bases)
     }
 
     public func collapsed(on bases: (x: Vector, y: Vector)) -> CGPoint {
         return CGPoint(x: component(along: bases.x), y: component(along: bases.y))
     }
 
+/*
+     public func absolute(in rect: NSRect) -> NSPoint {
+     return NSPoint(x: rect.minX + rect.width*(0.5 + x), y: rect.minY + rect.height*(0.5 + y))
+     }
+
+     public func relative(in rect: NSRect) -> NSPoint {
+     return NSPoint(x: (x - rect.minX)/rect.width - 0.5, y: (y - rect.minY)/rect.height - 0.5)
+     }
+
+     // MARK: - Higher order functions
+
+     public static func projector(along vector: Vector) -> (Vector) -> NSPoint {
+     if vector || e_z {
+     return { NSPoint(x: $0.y, y: $0.x) }
+     }
+
+     let bases = Plane(center: .origin, normal: vector).bases
+
+     return { $0.projected(on: bases) }
+     }
+
+     public static func deProjector(along vector: Vector) -> (NSPoint) -> Vector {
+     if vector || e_z {
+     return { Vector($0.y, $0.x, 0) }
+     }
+
+     let bases = Plane(center: .origin, normal: vector).bases
+
+     return { $0.deProjected(on: bases) }
+     }
+
+*/
     // Angles and norms
 
     public func angle(to b: Vector) -> Scalar {
