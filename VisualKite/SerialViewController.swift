@@ -23,7 +23,7 @@ class SerialViewController: NSViewController {
     
     // MARK: - Private Properties
 
-    internal let kite = KiteController.shared.kite0
+    internal let kite = KiteController.kite0
     private let bag = DisposeBag()
     
     private var messages = [String]()
@@ -51,8 +51,6 @@ class SerialViewController: NSViewController {
     private func clearText() {
         messages = []
         updateUI()
-
-        kite.requestParameterList() // REMOVEME
     }
     
     private func updateUI() {

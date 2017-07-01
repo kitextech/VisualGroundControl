@@ -41,8 +41,6 @@ func makeQuaternion(euler: Vector) -> Quaternion {
     return Quaternion(x, y, z, w)
 }
 
-let π = Scalar(Double.pi)
-
 public let e_x = Vector.ex
 public let e_y = Vector.ey
 public let e_z = Vector.ez
@@ -61,7 +59,7 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
     private let emulator = KiteEmulator()
     
     private let leap = LeapListener.shared
-    private let kite = KiteController.shared.kite0
+    private let kite = KiteController.kite0
     
     private let viewer = KiteViewer()
     
@@ -209,8 +207,8 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
 
         // Kite Position
 
-        func getPoint(loc: TimedLocation) -> NSPoint {
-            return NSPoint(x: loc.pos.x/30 + 0.5, y: loc.pos.y/30 + 0.5)
+        func getPoint(loc: TimedLocation) -> CGPoint {
+            return CGPoint(x: loc.pos.x/30 + 0.5, y: loc.pos.y/30 + 0.5)
         }
 
         let location = Variable<TimedLocation>(TimedLocation())
@@ -225,7 +223,7 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         let position = Variable<Vector>(.zero)
         location.asObservable().map(TimedLocation.getPosition).bind(to: position).disposed(by: bag)
         position.asObservable().bind(to: viewer.position).disposed(by: bag)
-        position.asObservable().bind(to: overlay.kitePosition).disposed(by: bag)
+//        position.asObservable().bind(to: overlay.kitePosition).disposed(by: bag)
 
 //        kite.location.map(getPoint).subscribe(onNext: overlay.add).disposed(by: bag)
 
@@ -246,12 +244,9 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         let quaternion = Variable<Quaternion>(.id)
         kite.quaternion.map(TimedQuaternion.getQuaternion).bind(to: quaternion).disposed(by: bag)
 
-        print("Binding kite quaternion to scene")
         quaternion.asObservable().bind(to: viewer.quaternion).disposed(by: bag)
 
-        print("Binding kite quaternion to overlay")
-        quaternion.asObservable().bind(to: overlay.kiteOrientation).disposed(by: bag)
-
+//        quaternion.asObservable().bind(to: overlay.kiteOrientation).disposed(by: bag)
 //        quaternion.asObservable().subscribe(onNext: { print("Q: \($0)") }).disposed(by: bag)
 
         // Kite viewer parameters

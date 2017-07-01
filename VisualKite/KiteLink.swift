@@ -12,19 +12,25 @@ import ORSSerial
 import RxSwift
 
 class KiteController {
-    public var settings: SettingsModel!
-
-    public let kite0 = KiteLink(targetSystemId: 1, targetComponentId: 1)
-    public let kite1 = KiteLink(targetSystemId: 2, targetComponentId: 1)
-
-    public var kites: [KiteLink] { return [kite0, kite1] }
+    // Public
 
     public static let shared = KiteController()
 
+    public let settings = SettingsModel()
+
+    public static var kite0: KiteLink { return KiteController.shared.kite0 }
+    public static var kite1: KiteLink { return KiteController.shared.kite1 }
+
+    public var kites: [KiteLink] { return [kite0, kite1] }
+
+    // Private
+
+    private let kite0 = KiteLink(targetSystemId: 1, targetComponentId: 1)
+    private let kite1 = KiteLink(targetSystemId: 2, targetComponentId: 1)
+
     private let bag = DisposeBag()
 
-    func setModel(settings: SettingsModel) {
-        self.settings = settings
+    private init() {
         kites.forEach { kite in
             settings.tetherLength.asObservable().bind(to: kite.tetherLength).addDisposableTo(bag)
             settings.tetheredHoverThrust.asObservable().bind(to: kite.tetheredHoverThrust).addDisposableTo(bag)

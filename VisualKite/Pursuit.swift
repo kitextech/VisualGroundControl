@@ -30,7 +30,7 @@ class PursuitViewController: NSViewController {
 }
 
 let n = 60
-let c = NSPoint(x: 700, y: 400)
+let c = CGPoint(x: 700, y: 400)
 
 class PursuitView: NSView {
     // Parameters
@@ -40,22 +40,22 @@ class PursuitView: NSView {
 
     // Internal
 
-    var position = NSPoint.zero
+    var position = CGPoint.zero
     var yaw: Scalar = π/4
 
-    let basePathPoints = (0..<n).map { Scalar($0)*2*π/Scalar(n) }.map { NSPoint(x: sin($0), y: cos($0)) }
+    let basePathPoints = (0..<n).map { Scalar($0)*2*π/Scalar(n) }.map { CGPoint(x: sin($0), y: cos($0)) }
 
-    var pathPoints: [NSPoint] { return basePathPoints.map { c + pathRadius*$0} }
+    var pathPoints: [CGPoint] { return basePathPoints.map { c + pathRadius*$0} }
 
     var index = 0
-    var target: NSPoint { return pathPoints[index] }
+    var target: CGPoint { return pathPoints[index] }
 
-    var arcCenter = NSPoint.zero
+    var arcCenter = CGPoint.zero
     var arcRadius: Scalar = 1000000
     var arcAngle: Scalar = 0
     var yawRate: Scalar = 0
 
-    var trail = [NSPoint]()
+    var trail = [CGPoint]()
 
     var timer: Timer!
 
@@ -114,7 +114,7 @@ class PursuitView: NSView {
     }
 
     func updateArc() {
-        let attitude = NSPoint(phi: yaw, r: 1)
+        let attitude = CGPoint(phi: yaw, r: 1)
         arcAngle = attitude.signedAngle(to: target - position)
         arcRadius = (target - position).norm/sqrt(2*(1 - cos(2*arcAngle)))
         arcCenter = position + arcRadius*attitude.rotated(by: (arcAngle.sign == .plus ? 1 : -1)*π/2)
@@ -125,11 +125,11 @@ class PursuitView: NSView {
     }
 
     func updatePosition() {
-        position = position + NSPoint(phi: yaw, r: speed)
+        position = position + CGPoint(phi: yaw, r: speed)
         yaw = (yaw + yawRate + 2*π).truncatingRemainder(dividingBy: 2*π)
     }
 
-    override func draw(_ dirtyRect: NSRect) {
+    override func draw(_ dirtyRect: CGRect) {
         // Draw search area
         NSColor(calibratedRed: 0.8, green: 0.8, blue: 0.8, alpha: 1).set()
         ballPath(at: position, radius: searchRadius).fill()
@@ -149,7 +149,7 @@ class PursuitView: NSView {
         // Draw position
         NSColor.orange.set()
         ballPath(at: position, radius: 5).fill()
-        makePath(lines: [(position, position + NSPoint(phi: yaw, r: 10*speed))]).stroke()
+        makePath(lines: [(position, position + CGPoint(phi: yaw, r: 10*speed))]).stroke()
 
         // Draw arc
         NSColor.purple.set()
@@ -157,7 +157,7 @@ class PursuitView: NSView {
         let startAngle = 180*(position - arcCenter).phi/π
         let endAngle = 180*(target - arcCenter).phi/π
 
-        let clockWise = (target - position).signedAngle(to: NSPoint(phi: yaw, r: 1)) > 0
+        let clockWise = (target - position).signedAngle(to: CGPoint(phi: yaw, r: 1)) > 0
         arc.appendArc(withCenter: arcCenter, radius: arcRadius, startAngle: startAngle, endAngle: endAngle, clockwise: clockWise)
         arc.lineWidth = 2
         arc.stroke()
@@ -169,24 +169,24 @@ class PursuitView: NSView {
             NSFontAttributeName : NSFont.systemFont(ofSize: 17)
         ]
 
-        ("yaw: \(180*yaw/π)" as NSString).draw(in: NSRect(x: 10, y: 10, width: 300, height: 35), withAttributes: attrib)
+        ("yaw: \(180*yaw/π)" as NSString).draw(in: CGRect(x: 10, y: 10, width: 300, height: 35), withAttributes: attrib)
 
-        ("arcAngle: \(180*arcAngle/π)" as NSString).draw(in: NSRect(x: 10, y: 50, width: 300, height: 35), withAttributes: attrib)
+        ("arcAngle: \(180*arcAngle/π)" as NSString).draw(in: CGRect(x: 10, y: 50, width: 300, height: 35), withAttributes: attrib)
 
-        ("yawRate: \(180*yawRate/π)" as NSString).draw(in: NSRect(x: 10, y: 90, width: 300, height: 35), withAttributes: attrib)
+        ("yawRate: \(180*yawRate/π)" as NSString).draw(in: CGRect(x: 10, y: 90, width: 300, height: 35), withAttributes: attrib)
 
-        ("pos: \(Int(position.x)):\(Int(position.y))" as NSString).draw(in: NSRect(x: 10, y: 130, width: 300, height: 35), withAttributes: attrib)
+        ("pos: \(Int(position.x)):\(Int(position.y))" as NSString).draw(in: CGRect(x: 10, y: 130, width: 300, height: 35), withAttributes: attrib)
 
-        ("trail: \(trail.count))" as NSString).draw(in: NSRect(x: 10, y: 170, width: 300, height: 35), withAttributes: attrib)
+        ("trail: \(trail.count))" as NSString).draw(in: CGRect(x: 10, y: 170, width: 300, height: 35), withAttributes: attrib)
 
         //        makePath(lines: [(position, position + 10*)]) // draw yawrate
     }
 
-    private func ballPath(at point: NSPoint, radius r: Scalar) -> NSBezierPath {
-        return NSBezierPath(ovalIn: NSRect(origin: NSPoint(x: -r, y: -r) + point, size: NSSize(width: 2*r, height: 2*r)))
+    private func ballPath(at point: CGPoint, radius r: Scalar) -> NSBezierPath {
+        return NSBezierPath(ovalIn: CGRect(origin: CGPoint(x: -r, y: -r) + point, size: NSSize(width: 2*r, height: 2*r)))
     }
 
-    private func makePath(lines: [(start: NSPoint, end: NSPoint)]) -> NSBezierPath {
+    private func makePath(lines: [(start: CGPoint, end: CGPoint)]) -> NSBezierPath {
         let p = NSBezierPath()
         p.lineWidth = 2
 
@@ -197,7 +197,7 @@ class PursuitView: NSView {
         return p
     }
 
-    private func makePath(points: [NSPoint]) -> NSBezierPath? {
+    private func makePath(points: [CGPoint]) -> NSBezierPath? {
         guard let first = points.first else { return nil }
         
         let p = NSBezierPath()

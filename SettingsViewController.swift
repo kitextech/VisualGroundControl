@@ -10,16 +10,16 @@ import AppKit
 import RxSwift
 
 struct SettingsModel {
-    public let tetherLength: Variable<Scalar> = Variable(0)
+    public let tetherLength: Variable<Scalar> = Variable(100)
     public let phiC: Variable<Scalar> = Variable(0)
     public let thetaC: Variable<Scalar> = Variable(0)
-    public let turningRadius: Variable<Scalar> = Variable(0)
+    public let turningRadius: Variable<Scalar> = Variable(10)
     public let tetheredHoverThrust: Variable<Scalar> = Variable(0)
 
     // MARK: BAG
     private let bag = DisposeBag()
 
-    init(_ tetherLength: Observable<Scalar>, _ tetheredHoverThrust: Observable<Scalar>, _ phiC: Observable<Scalar>, _ thetaC: Observable<Scalar>, _ turningRadius: Observable<Scalar>) {
+    func setup(_ tetherLength: Observable<Scalar>, _ tetheredHoverThrust: Observable<Scalar>, _ phiC: Observable<Scalar>, _ thetaC: Observable<Scalar>, _ turningRadius: Observable<Scalar>) {
 
         tetherLength.bind(to: self.tetherLength).disposed(by: bag)
         tetheredHoverThrust.bind(to: self.tetheredHoverThrust).disposed(by: bag)
@@ -76,9 +76,7 @@ class SettingsViewController: NSViewController {
         let thetaC = thetaCSlider.scalar.shareReplayLatestWhileConnected()
         let turningRadius = turningRadiusSlider.scalar.shareReplayLatestWhileConnected()
 
-        let settings = SettingsModel(tetherLength, tetheredHoverThrust, phiC, thetaC, turningRadius)
-
-        KiteController.shared.setModel(settings: settings)
+        KiteController.shared.settings.setup(tetherLength, tetheredHoverThrust, phiC, thetaC, turningRadius)
 
         // Parameters
 
@@ -91,14 +89,14 @@ class SettingsViewController: NSViewController {
         tetheredHoverThrust.map(getScalarString).bind(to: tetheredHoverThrustLabel.rx.text).disposed(by: bag)
 
         // Positions
-        KiteController.shared.kite0.globalPosition.asObservable().map(positionString).bind(to: position0Label.rx.text).disposed(by: bag)
-        KiteController.shared.kite1.globalPosition.asObservable().map(positionString).bind(to: position1Label.rx.text).disposed(by: bag)
+        KiteController.kite0.globalPosition.asObservable().map(positionString).bind(to: position0Label.rx.text).disposed(by: bag)
+        KiteController.kite1.globalPosition.asObservable().map(positionString).bind(to: position1Label.rx.text).disposed(by: bag)
 
         // Errors
         func prepend(_ string: String) -> (String) -> String { return { string + ": " + $0 } }
 
-        let kite0Errors = KiteController.shared.kite0.errorMessage.map(prepend("kite0"))
-        let kite1Errors = KiteController.shared.kite1.errorMessage.map(prepend("kite1"))
+        let kite0Errors = KiteController.kite0.errorMessage.map(prepend("kite0"))
+        let kite1Errors = KiteController.kite1.errorMessage.map(prepend("kite1"))
 
         Observable.merge(kite0Errors, kite1Errors).bind(to: errorLabel.rx.text).disposed(by: bag)
     }

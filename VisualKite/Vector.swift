@@ -1,9 +1,9 @@
 //
 //  Vector.swift
-//  SKLinearAlgebra
+//  VisualKite
 //
-//  Created by Cameron Little on 2/24/15.
-//  Copyright (c) 2015 Cameron Little. All rights reserved.
+//  Created by Gustaf Kugelberg on 2017-06-30.
+//  Copyright © 2017 Gustaf Kugelberg. All rights reserved.
 //
 
 import Foundation
@@ -17,9 +17,9 @@ public struct Line {
         return Line(start: start + vector, end: end + vector)
     }
 
-//    func rotated(_ q: Quaternion) -> Line {
-//        return Line(start: start.rotated(q), end: end.rotated(q))
-//    }
+    func rotated(_ q: Quaternion) -> Line {
+        return Line(start: start.rotated(q), end: end.rotated(q))
+    }
 
     func scaled(_ scalar: Scalar) -> Line {
         return Line(start: scalar*start, end: scalar*end)
@@ -73,14 +73,8 @@ public struct Sphere {
         return v + sqrt(radius*radius - v.squaredNorm)*n + center
     }
 
-    // MARK: - Higher order functions
-
-    public func spherifier(along normal: Vector) -> (Vector) -> Vector {
-        return { self.spherify(vector: $0, along: normal) }
-    }
-
-    public static func spherifier(along normal: Vector, on sphere: Sphere) -> (Vector) -> Vector {
-        return { sphere.spherify(vector: $0, along: normal) }
+    public func translated(_ vector: Vector) -> Sphere {
+        return Sphere(center: center + vector, radius: radius)
     }
 }
 
@@ -103,6 +97,15 @@ public struct Plane {
 
     public static func getCenter(plane: Plane) -> Vector {
         return plane.center
+    }
+
+    public func occlude(line: Line) -> Line? {
+        let line2 = line - center
+        switch (line2.start•normal > 0, line2.end•normal > 0) {
+        case (true, true): return nil
+        case (false, false): return line
+        case (true, false), (false, true): return line.split(by: self).neg
+        }
     }
 }
 
@@ -191,7 +194,11 @@ extension Vector: CustomStringConvertible, Equatable {
     public func rotated(around vector: Vector, by angle: Scalar) -> Vector {
         return self*Matrix(rotation: vector.unit, by: angle)
     }
-    
+
+    public func rotated(_ quaternion: Quaternion) -> Vector {
+        return quaternion.apply(self)
+    }
+
     public func transformed(by matrix: Matrix) -> Vector {
         return self*matrix
     }
@@ -235,10 +242,6 @@ extension Vector: CustomStringConvertible, Equatable {
 
     // Collapsed to point
 
-    public func collapsed(on bases: (x: Vector, y: Vector)) -> CGPoint {
-        return CGPoint(x: component(along: bases.x), y: component(along: bases.y))
-    }
-
     public func collapsed(along axis: Vector) -> CGPoint {
         if axis || e_z {
             return CGPoint(x: y, y: x)
@@ -247,6 +250,10 @@ extension Vector: CustomStringConvertible, Equatable {
         let bases = Plane(center: .origin, normal: axis).bases
 
         return collapsed(on: bases)
+    }
+
+    public func collapsed(on bases: (x: Vector, y: Vector)) -> CGPoint {
+        return CGPoint(x: component(along: bases.x), y: component(along: bases.y))
     }
 
     // Angles and norms
@@ -394,10 +401,4 @@ extension Vector: CustomStringConvertible, Equatable {
         
         return Vector(x: x, y: y, z: z)
     }
-
-//    // MARK: - Higher order functions
-//
-//    public static func translator(by vector: Vector) -> (Vector) -> Vector {
-//        return { $0 + vector }
-//    }
 }
