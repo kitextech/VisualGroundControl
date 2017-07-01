@@ -32,8 +32,7 @@ class TraceView: NSView {
 
     // MARK: - Output
 
-    public let requestedPosition0 = Variable(Vector.origin)
-    public let requestedPosition1 = Variable(Vector.origin)
+    public var requestedPositions: [Variable<Vector>] = []
 
     // Initialiser
 
@@ -87,7 +86,7 @@ class TraceView: NSView {
             return dist(v) < 10 && (tracer.projectionAxis == -e_z ? v.value.z <= 0 : v.value•tracer.projectionAxis <= 0.01)
         }
 
-        requestedPositionCurrent = [requestedPosition0, requestedPosition1].sorted { dist($0) < dist($1) }.first(where: grabbable)
+        requestedPositionCurrent = requestedPositions.sorted { dist($0) < dist($1) }.first(where: grabbable)
         redraw()
     }
 

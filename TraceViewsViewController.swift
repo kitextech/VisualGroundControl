@@ -29,6 +29,7 @@ class TraceViewsViewController: NSViewController {
     // MARK: - Private
 
     private let bag = DisposeBag()
+    private var views: [TraceView] = []
 
     // MARK: - View Controller Lifecycle Methods
 
@@ -39,6 +40,8 @@ class TraceViewsViewController: NSViewController {
         freeView.theta = 0
         freeView.scrolls = true
 
+        views = [xyView, freeView]
+
         // Kites
 
         add(KiteController.kite0, color: .purple)
@@ -47,7 +50,7 @@ class TraceViewsViewController: NSViewController {
         // The dome
 
         KiteController.shared.settings.tetherLength.asObservable()
-            .bind { radius in self.freeView.domeRadius = radius; self.xyView.domeRadius = radius }
+            .bind { radius in self.views.forEach { $0.domeRadius = radius } }
             .disposed(by: bag)
 
         // Coordinate axes
@@ -86,27 +89,13 @@ class TraceViewsViewController: NSViewController {
 
         // Trace views as controls
 
-        Observable.merge(xyView.requestedPosition0.asObservable(), freeView.requestedPosition0.asObservable())
-            .distinctUntilChanged()
-            .bind(to: KiteController.kite0.positionTarget)
-            .disposed(by: bag)
-
-        Observable.merge(xyView.requestedPosition1.asObservable(), freeView.requestedPosition1.asObservable())
-            .distinctUntilChanged()
-            .bind(to: KiteController.kite1.positionTarget)
-            .disposed(by: bag)
-
-        KiteController.kite0.positionTarget.asObservable().bind(to: xyView.requestedPosition0).disposed(by: bag)
-        KiteController.kite0.positionTarget.asObservable().bind(to: freeView.requestedPosition0).disposed(by: bag)
-
-        KiteController.kite1.positionTarget.asObservable().bind(to: xyView.requestedPosition1).disposed(by: bag)
-        KiteController.kite1.positionTarget.asObservable().bind(to: freeView.requestedPosition1).disposed(by: bag)
+        let rps = [KiteController.kite0.positionTarget, KiteController.kite1.positionTarget]
+        views.forEach { $0.requestedPositions = rps }
 
         // Redrawing
 
-        cPoint
-            .bind { _ in self.freeView.redraw(); self.xyView.redraw() }
-            .disposed(by: bag)
+        rps.map { $0.asObservable() }.forEach(useAsRedrawTrigger)
+        useAsRedrawTrigger(cPoint)
 
 //        xzButton.rx.tap.map { (0, π/2) }.bind(to: freeView.angles).disposed(by: bag)
 //        yzButton.rx.tap.map { (π/2, π/2) }.bind(to: freeView.angles).disposed(by: bag)
@@ -115,9 +104,13 @@ class TraceViewsViewController: NSViewController {
 
     // Helper methods
 
+    private func useAsRedrawTrigger<T>(_ observable: Observable<T>) {
+        let redrawViews = { self.views.forEach { $0.redraw() } }
+        observable.bind { _ in redrawViews() }.disposed(by: bag)
+    }
+
     private func add(_ drawable: Drawable) {
-        xyView.add(drawable)
-        freeView.add(drawable)
+        views.forEach { $0.add(drawable) }
     }
 
     private func add(_ kite: KiteLink, color: NSColor) {
