@@ -23,6 +23,12 @@ class KiteController {
 
     public var kites: [KiteLink] { return [kite0, kite1] }
 
+    // Public
+
+    public func resendOrigin() {
+        settings.globalOrigin.value = settings.globalOrigin.value
+    }
+
     // Private
 
     private let kite0: KiteLink
@@ -118,7 +124,7 @@ class KiteLink: NSObject {
         NSUserNotificationCenter.default.delegate = self
 
         // Common
-        settings.globalB.asObservable().bind(onNext: saveGlobalOrigin).disposed(by: bag)
+        settings.globalOrigin.asObservable().bind(onNext: saveGlobalOrigin).disposed(by: bag)
 
         bind(settings.tetherLength, using: setScalar(id: MPC_TETHER_LEN))
         bind(settings.phiC, using: setScalar(id: MPC_LOOP_PHI_C))
@@ -140,7 +146,7 @@ class KiteLink: NSObject {
             .map { TimedLocation(time: 0, pos: $0, vel: .zero) }
             .bind(to: location)
             .disposed(by: bag)
-        
+
         positionTarget
             .asObservable()
             .map { GPSVector(lat: Int32($0.x), lon: Int32($0.y), alt: Int32($0.z)) }

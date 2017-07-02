@@ -10,7 +10,7 @@ import AppKit
 import RxSwift
 
 struct SettingsModel {
-    public let globalB: Variable<GPSVector> = Variable(.zero)
+    public let globalOrigin: Variable<GPSVector> = Variable(.zero)
 
     public let tetherLength: Variable<Scalar> = Variable(100)
     public let phiC: Variable<Scalar> = Variable(0)
@@ -42,17 +42,17 @@ class SettingsViewController: NSViewController {
 
     @IBOutlet weak var tetheredHoverThrustSlider: NSSlider!
 
+    @IBOutlet weak var globalOriginButton: NSButton!
+
     // Labels
 
-    @IBOutlet weak var bLabel: NSTextField!
-    
+    @IBOutlet weak var globalOriginLabel: NSTextField!
+
     @IBOutlet weak var position0Label: NSTextField!
     @IBOutlet weak var position1Label: NSTextField!
 
     @IBOutlet weak var ned0Label: NSTextField!
     @IBOutlet weak var ned1Label: NSTextField!
-
-    @IBOutlet weak var errorLabel: NSTextField!
 
     @IBOutlet weak var tetherLengthLabel: NSTextField!
 
@@ -62,17 +62,19 @@ class SettingsViewController: NSViewController {
 
     @IBOutlet weak var tetheredHoverThrustLabel: NSTextField!
 
+    @IBOutlet weak var errorLabel: NSTextField!
+
     // MARK: Private
 
     // MARK: BAG
     private let bag = DisposeBag()
     
     @IBAction func pressedUse0AsB(_ sender: NSButton) {
-        KiteController.shared.settings.globalB.value = KiteController.kite0.latestGlobalPosition
+        KiteController.shared.settings.globalOrigin.value = KiteController.kite0.latestGlobalPosition
     }
 
     @IBAction func pressedUse1AsB(_ sender: NSButton) {
-        KiteController.shared.settings.globalB.value = KiteController.kite1.latestGlobalPosition
+        KiteController.shared.settings.globalOrigin.value = KiteController.kite1.latestGlobalPosition
     }
 
     override func viewDidLoad() {
@@ -91,7 +93,7 @@ class SettingsViewController: NSViewController {
         // Parameters
         let gpsString = { (p: GPSVector) in "GPS: \(p.lat), \(p.lon). \(p.alt/1000)" }
 
-        KiteController.shared.settings.globalB.asObservable().map(gpsString).map(prepend("B ")).bind(to: bLabel.rx.text).disposed(by: bag)
+        KiteController.shared.settings.globalOrigin.asObservable().map(gpsString).map(prepend("B ")).bind(to: globalOriginLabel.rx.text).disposed(by: bag)
 
         tetherLength.map(getScalarString).bind(to: tetherLengthLabel.rx.text).disposed(by: bag)
         phiC.map(getScalarString).bind(to: phiCLabel.rx.text).disposed(by: bag)
@@ -107,6 +109,8 @@ class SettingsViewController: NSViewController {
         let nedString = { (p: TimedLocation) in "NED: \(p.pos.x), \(p.pos.y). \(p.pos.z)" }
         KiteController.kite0.location.map(nedString).bind(to: ned0Label.rx.text).disposed(by: bag)
         KiteController.kite1.location.map(nedString).bind(to: ned1Label.rx.text).disposed(by: bag)
+
+        globalOriginButton.rx.tap.bind { _ in KiteController.shared.resendOrigin() }.disposed(by: bag)
 
         // Errors
         let kite0Errors = KiteController.kite0.errorMessage.map(prepend("kite0"))
