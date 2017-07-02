@@ -121,7 +121,7 @@ public class KiteDrawable: Drawable {
         return [wing, rightSideWing, leftSideWing, body, stabiliser, rudder]
     }
 
-    public let spheres = [Sphere(center: .origin, radius: 1.5)]
+    public let spheres = [Sphere(center: .origin, radius: 1)]
 
     public var orientation: Quaternion = .id
 
@@ -198,7 +198,7 @@ public class BallDrawable: Drawable {
 
     public var lines: [Line] = []
 
-    public let spheres: [Sphere] = [Sphere(center: .zero, radius: 3)]
+    public let spheres: [Sphere] = [Sphere(center: .zero, radius: 2)]
 
     public var orientation: Quaternion = .id
 
@@ -231,7 +231,7 @@ public class ArrowDrawable: Drawable {
         self.position = position
         self.color = color
         self.lines = [Line(start: position, end: position + vector)]
-        self.spheres = [Sphere(center: position + vector, radius: 3)]
+        self.spheres = [Sphere(center: position + vector, radius: 2)]
     }
 }
 
