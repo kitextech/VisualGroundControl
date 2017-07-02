@@ -69,7 +69,7 @@ class TraceViewsViewController: NSViewController {
 
         let cPoint = Observable.combineLatest(phiC, thetaC, d, resultSelector: getC)
 
-        let cDrawable = BallDrawable(color: .green)
+        let cDrawable = BallDrawable(color: .red)
         add(cDrawable)
 
         cPoint
@@ -151,11 +151,6 @@ class TraceViewsViewController: NSViewController {
     private func getC(phi: Scalar, theta: Scalar, d: Scalar) -> Vector {
         return Vector(phi: phi, theta: π/2 + theta, r: d)
     }
-
-//    private func getCKite(phi: Scalar, theta: Scalar, d: Scalar) -> Vector {
-//        let xyFactor = d*cos(theta);
-//        return Vector(xyFactor*cos(phi), xyFactor*sin(phi), -d*sin(theta))
-//    }
 }
 
 extension AffineTransform {

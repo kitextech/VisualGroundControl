@@ -119,6 +119,18 @@ extension CGSize {
     public var point: CGPoint {
         return CGPoint(x: width, y: height)
     }
+
+    public func scaled(by factor: Scalar) -> CGSize {
+        return CGSize(width: factor*width, height: factor*height)
+    }
+
+    public func absolute(in rect: CGRect) -> CGSize {
+        return CGSize(width: rect.width*width, height: rect.height*height)
+    }
+
+    public func relative(in rect: CGRect) -> CGSize {
+        return CGSize(width: width/rect.width, height: height/rect.height)
+    }
 }
 
 extension CGRect {

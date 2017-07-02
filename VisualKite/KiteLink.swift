@@ -25,25 +25,28 @@ class KiteController {
 
     // Private
 
-    private let kite0 = KiteLink(targetSystemId: 1, targetComponentId: 1)
-    private let kite1 = KiteLink(targetSystemId: 2, targetComponentId: 1)
+    private let kite0: KiteLink
+    private let kite1: KiteLink
 
     private let bag = DisposeBag()
 
     private init() {
-        kites.forEach { kite in
-            settings.tetherLength.asObservable().bind(to: kite.tetherLength).addDisposableTo(bag)
-            settings.tetheredHoverThrust.asObservable().bind(to: kite.tetheredHoverThrust).addDisposableTo(bag)
-            settings.phiC.asObservable().bind(to: kite.phiC).disposed(by: bag)
-            settings.thetaC.asObservable().bind(to: kite.thetaC).disposed(by: bag)
-            settings.turningRadius.asObservable().bind(to: kite.turningRadius).disposed(by: bag)
-        }
+        kite0 = KiteLink(targetSystemId: 1, targetComponentId: 1, settings: settings)
+        kite1 = KiteLink(targetSystemId: 2, targetComponentId: 1, settings: settings)
+
+//        kites.forEach { kite in
+//            settings.tetherLength.asObservable().bind(to: kite.tetherLength).addDisposableTo(bag)
+//            settings.tetheredHoverThrust.asObservable().bind(to: kite.tetheredHoverThrust).addDisposableTo(bag)
+//            settings.phiC.asObservable().bind(to: kite.phiC).disposed(by: bag)
+//            settings.thetaC.asObservable().bind(to: kite.thetaC).disposed(by: bag)
+//            settings.turningRadius.asObservable().bind(to: kite.turningRadius).disposed(by: bag)
+//        }
     }
 
-    public func saveB(from index: Int) {
-        let b = kites[index].latestGlobalPosition
-        kites.forEach { $0.saveAsB(b: b) }
-    }
+//    public func saveB(from index: Int) {
+//        let b = kites[index].latestGlobalPosition
+//        kites.forEach { $0.saveAsB(b: b) }
+//    }
 }
 
 class KiteLink: NSObject {
@@ -53,13 +56,13 @@ class KiteLink: NSObject {
 
     // MARK: Parameters
 
-    public let tetherLength = Variable<Scalar>(50) // Offboard
-
-    public let phiC = Variable<Scalar>(0) // Offboard>Looping
-    public let thetaC = Variable<Scalar>(0) // Offboard>Looping
-    public let turningRadius = Variable<Scalar>(0) // Offboard>Looping
-
-    public let tetheredHoverThrust = Variable<Scalar>(0.174) // Offboard>Position>Tethered
+//    public let tetherLength = Variable<Scalar>(50) // Offboard
+//
+//    public let phiC = Variable<Scalar>(0) // Offboard>Looping
+//    public let thetaC = Variable<Scalar>(0) // Offboard>Looping
+//    public let turningRadius = Variable<Scalar>(0) // Offboard>Looping
+//
+//    public let tetheredHoverThrust = Variable<Scalar>(0.174) // Offboard>Position>Tethered
 
     public let hoverPitchAngle = Variable<Scalar>(0.174) // Manual>Tethered
 
@@ -125,7 +128,7 @@ class KiteLink: NSObject {
 
     // MARK: Initializers
     
-    public init(targetSystemId: UInt8, targetComponentId: UInt8) {
+    public init(targetSystemId: UInt8, targetComponentId: UInt8, settings: SettingsModel) {
         box = MessageBox(sysId: systemId, compId: compId, tarSysId: targetSystemId, tarCompId: targetComponentId)
         super.init()
 
@@ -136,25 +139,28 @@ class KiteLink: NSObject {
         
         NSUserNotificationCenter.default.delegate = self
 
-        bind(tetherLength, using: setScalar(id: MPC_TETHER_LEN))
+//        tetherLength
+//        tetheredHoverThrust
+//        phiC
+//        thetaC
+//        turningRadius
+
         bind(hoverPitchAngle, using: setScalar(id: MPC_PITCH_HVR))
-        bind(tetheredHoverThrust, using: setScalar(id: MPC_THR_TETHER))
         bind(offboardPositionTethered, using: setBool(id: MPC_TET_POS_CTL))
+
+        // TODO: bind global position b
+
+        bind(settings.tetherLength, using: setScalar(id: MPC_TETHER_LEN))
+        bind(settings.tetheredHoverThrust, using: setScalar(id: MPC_THR_TETHER))
+        bind(settings.phiC, using: setScalar(id: MPC_LOOP_PHI_C))
+        bind(settings.thetaC, using: setScalar(id: MPC_LOOP_THETA_C))
+        bind(settings.turningRadius, using: setScalar(id: MPC_LOOP_TURN_R))
 
         flightMode.asObservable().bind(onNext: changedFlightMode).disposed(by: bag)
 
-        bind(phiC, using: setScalar(id: MPC_LOOP_PHI_C))
-        bind(thetaC, using: setScalar(id: MPC_LOOP_THETA_C))
-        bind(turningRadius, using: setScalar(id: MPC_LOOP_TURN_R))
-
         globalPosition.map(TimedGPSVector.getPosition).subscribe(onNext: { self.latestGlobalPosition = $0 }).disposed(by: bag)
 
-//        positionTarget.asObservable().map { TimedLocation(time: 0, pos: 2*$0, vel: .zero) }.bind(to: location).disposed(by: bag)
-
-        positionTarget.asObservable().bind { pos in
-            Swift.print("PositionTarget \(targetSystemId - 1) \(pos)")
-        }
-        .disposed(by: bag)
+//        positionTarget.asObservable().map { TimedLocation(time: 0, pos: $0, vel: .zero) }.bind(to: location).disposed(by: bag)
     }
 
     deinit {

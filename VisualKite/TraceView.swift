@@ -124,8 +124,6 @@ class TraceView: NSView {
 
     override func draw(_ dirtyRect: CGRect) {
 //        ballPath(at: bPoint.value, radius: 5).fill()
-//        let tether = NSBezierPath()
-
         drawables.values.forEach(draw)
     }
 
@@ -160,9 +158,7 @@ class TraceView: NSView {
     }
 
     private func spherePath(sphere: Sphere) -> NSBezierPath {
-//        let rect = CGRect(center: tracer.pointify(sphere.center), size: tracer.project(CGSize(side: sphere.radius)))
-
-        let rect = CGRect(center: tracer.pointify(sphere.center), size: CGSize(side: sphere.radius))
+        let rect = CGRect(center: tracer.pointify(sphere.center), size: tracer.project(CGSize(side: sphere.radius)))
         return NSBezierPath(ovalIn: rect)
     }
 }

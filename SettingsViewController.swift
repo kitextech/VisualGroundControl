@@ -10,6 +10,8 @@ import AppKit
 import RxSwift
 
 struct SettingsModel {
+    public let globalB: Variable<GPSVector> = Variable(.zero)
+
     public let tetherLength: Variable<Scalar> = Variable(100)
     public let phiC: Variable<Scalar> = Variable(0)
     public let thetaC: Variable<Scalar> = Variable(0)
@@ -20,7 +22,6 @@ struct SettingsModel {
     private let bag = DisposeBag()
 
     func setup(_ tetherLength: Observable<Scalar>, _ tetheredHoverThrust: Observable<Scalar>, _ phiC: Observable<Scalar>, _ thetaC: Observable<Scalar>, _ turningRadius: Observable<Scalar>) {
-
         tetherLength.bind(to: self.tetherLength).disposed(by: bag)
         tetheredHoverThrust.bind(to: self.tetheredHoverThrust).disposed(by: bag)
         phiC.bind(to: self.phiC).disposed(by: bag)
@@ -60,11 +61,11 @@ class SettingsViewController: NSViewController {
     private let bag = DisposeBag()
     
     @IBAction func pressedUse0AsB(_ sender: NSButton) {
-        KiteController.shared.saveB(from: 0)
+        KiteController.shared.settings.globalB.value = KiteController.kite0.latestGlobalPosition
     }
 
     @IBAction func pressedUse1AsB(_ sender: NSButton) {
-        KiteController.shared.saveB(from: 1)
+        KiteController.shared.settings.globalB.value = KiteController.kite1.latestGlobalPosition
     }
 
     override func viewDidLoad() {
@@ -77,8 +78,6 @@ class SettingsViewController: NSViewController {
         let turningRadius = turningRadiusSlider.scalar.shareReplayLatestWhileConnected()
 
         KiteController.shared.settings.setup(tetherLength, tetheredHoverThrust, phiC, thetaC, turningRadius)
-
-//        phiC.map { Vector(0, 0, -20*$0) }.bind(to: KiteController.kite0.lo)
 
         // Parameters
 

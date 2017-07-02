@@ -15,13 +15,9 @@ public class Tracer {
     public var bounds: CGRect = .unit
 
     public func project(_ vectorSize: CGSize) -> CGSize {
-        Swift.print("Project: \(vectorSize.width) -> \(vectorSize.point.scaled(by: 1/scaleFactor).x) -> \(vectorSize.point.scaled(by: 1/scaleFactor).absolute(in: bounds).x)")
-
         return vectorSize
-            .point
             .scaled(by: 1/scaleFactor)
             .absolute(in: bounds)
-            .size
     }
 
     public func pointify(_ vector: Vector) -> CGPoint {
@@ -125,7 +121,7 @@ public class KiteDrawable: Drawable {
         return [wing, rightSideWing, leftSideWing, body, stabiliser, rudder]
     }
 
-    public let spheres = [Sphere(center: .origin, radius: 5)]
+    public let spheres = [Sphere(center: .origin, radius: 1.5)]
 
     public var orientation: Quaternion = .id
 
@@ -202,7 +198,7 @@ public class BallDrawable: Drawable {
 
     public var lines: [Line] = []
 
-    public let spheres: [Sphere] = [Sphere(center: .zero, radius: 20)]
+    public let spheres: [Sphere] = [Sphere(center: .zero, radius: 3)]
 
     public var orientation: Quaternion = .id
 
@@ -235,7 +231,7 @@ public class ArrowDrawable: Drawable {
         self.position = position
         self.color = color
         self.lines = [Line(start: position, end: position + vector)]
-        self.spheres = [Sphere(center: position + vector, radius: 5)]
+        self.spheres = [Sphere(center: position + vector, radius: 3)]
     }
 }
 
