@@ -146,12 +146,12 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         glideSlider.scalar.bind(to: emulator.speedFactor).disposed(by: bag)
         
         // General
-        tetherLengthSlider.setupExp(min: 30, max: 250, current: 100)
-        tetherLengthSlider.expScalar(min: 30, max: 250).bind(to: kite.tetherLength).disposed(by: bag)
-        
-        turningRadiusSlider.setupExp(min: 10, max: 100, current: 20)
-        turningRadiusSlider.expScalar(min: 10, max: 100).bind(to: kite.turningRadius).disposed(by: bag)
-        
+//        tetherLengthSlider.setupExp(min: 30, max: 250, current: 100)
+//        tetherLengthSlider.expScalar(min: 30, max: 250).bind(to: kite.tetherLength).disposed(by: bag)
+//        
+//        turningRadiusSlider.setupExp(min: 10, max: 100, current: 20)
+//        turningRadiusSlider.expScalar(min: 10, max: 100).bind(to: kite.turningRadius).disposed(by: bag)
+
         phaseDeltaSlider.setup(min: -π, max: π, current: 0)
         phaseDeltaSlider.scalar.bind(to: emulator.phaseDelta).disposed(by: bag)
         
@@ -175,7 +175,6 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
         Observable.combineLatest(xSlider.scalar, ySlider.scalar, zSlider.scalar.map(-), resultSelector: Vector.fromScalars).bind(to: positionTarget).disposed(by: bag)
 
         positionTarget.asObservable().bind(to: viewer.positionTarget).disposed(by: bag)
-        positionTarget.asObservable().bind(to: kite.positionTarget).disposed(by: bag)
 
         // Kite Attitude Target
 
@@ -192,10 +191,10 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
             .bind(to: euler)
             .disposed(by: bag)
 
-        euler.asObservable()
-            .map(makeQuaternion)
-            .bind(to: kite.attitudeTarget)
-            .disposed(by: bag)
+//        euler.asObservable()
+//            .map(makeQuaternion)
+//            .bind(to: kite.attitudeTarget)
+//            .disposed(by: bag)
 
 //        euler.asObservable()
 //            .map(makeMatrix)

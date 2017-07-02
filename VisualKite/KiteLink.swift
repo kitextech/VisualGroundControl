@@ -149,7 +149,12 @@ class KiteLink: NSObject {
 
         globalPosition.map(TimedGPSVector.getPosition).subscribe(onNext: { self.latestGlobalPosition = $0 }).disposed(by: bag)
 
-        positionTarget.asObservable().map { TimedLocation(time: 0, pos: 2*$0, vel: .zero) }.bind(to: location).disposed(by: bag)
+//        positionTarget.asObservable().map { TimedLocation(time: 0, pos: 2*$0, vel: .zero) }.bind(to: location).disposed(by: bag)
+
+        positionTarget.asObservable().bind { pos in
+            Swift.print("PositionTarget \(targetSystemId - 1) \(pos)")
+        }
+        .disposed(by: bag)
     }
 
     deinit {
