@@ -33,20 +33,7 @@ class KiteController {
     private init() {
         kite0 = KiteLink(targetSystemId: 1, targetComponentId: 1, settings: settings)
         kite1 = KiteLink(targetSystemId: 2, targetComponentId: 1, settings: settings)
-
-//        kites.forEach { kite in
-//            settings.tetherLength.asObservable().bind(to: kite.tetherLength).addDisposableTo(bag)
-//            settings.tetheredHoverThrust.asObservable().bind(to: kite.tetheredHoverThrust).addDisposableTo(bag)
-//            settings.phiC.asObservable().bind(to: kite.phiC).disposed(by: bag)
-//            settings.thetaC.asObservable().bind(to: kite.thetaC).disposed(by: bag)
-//            settings.turningRadius.asObservable().bind(to: kite.turningRadius).disposed(by: bag)
-//        }
     }
-
-//    public func saveB(from index: Int) {
-//        let b = kites[index].latestGlobalPosition
-//        kites.forEach { $0.saveAsB(b: b) }
-//    }
 }
 
 class KiteLink: NSObject {
@@ -56,14 +43,6 @@ class KiteLink: NSObject {
 
     // MARK: Parameters
 
-//    public let tetherLength = Variable<Scalar>(50) // Offboard
-//
-//    public let phiC = Variable<Scalar>(0) // Offboard>Looping
-//    public let thetaC = Variable<Scalar>(0) // Offboard>Looping
-//    public let turningRadius = Variable<Scalar>(0) // Offboard>Looping
-//
-//    public let tetheredHoverThrust = Variable<Scalar>(0.174) // Offboard>Position>Tethered
-
     public let hoverPitchAngle = Variable<Scalar>(0.174) // Manual>Tethered
 
     public let offboardPositionTethered = Variable<Bool>(true) // Offboard>Position
@@ -71,7 +50,6 @@ class KiteLink: NSObject {
     // MARK: - Continuous Parameters
     
     public let positionTarget = Variable<Vector>(.zero) // Offboard>Position
-    
     public let attitudeTarget = Variable<Quaternion>(.id) // Offboard>Attitude
     public let thrust = Variable<Scalar>(0) // Offboard>Attitude
 
@@ -88,6 +66,8 @@ class KiteLink: NSObject {
     public let errorMessage = PublishSubject<String>()
 
     public var isSerialPortOpen: Bool { return serialPort?.isOpen ?? false }
+
+    public var latestGlobalPosition: GPSVector = .zero
 
     // MARK: Serial Port Properties
 
@@ -124,8 +104,6 @@ class KiteLink: NSObject {
     private let parameterGracePeriod: TimeInterval = 1
     private let parameterRetries = 10
 
-    public var latestGlobalPosition: GPSVector = .zero
-
     // MARK: Initializers
     
     public init(targetSystemId: UInt8, targetComponentId: UInt8, settings: SettingsModel) {
@@ -139,28 +117,36 @@ class KiteLink: NSObject {
         
         NSUserNotificationCenter.default.delegate = self
 
-//        tetherLength
-//        tetheredHoverThrust
-//        phiC
-//        thetaC
-//        turningRadius
-
-        bind(hoverPitchAngle, using: setScalar(id: MPC_PITCH_HVR))
-        bind(offboardPositionTethered, using: setBool(id: MPC_TET_POS_CTL))
-
-        // TODO: bind global position b
+        // Common
+        settings.globalB.asObservable().bind(onNext: saveGlobalOrigin).disposed(by: bag)
 
         bind(settings.tetherLength, using: setScalar(id: MPC_TETHER_LEN))
-        bind(settings.tetheredHoverThrust, using: setScalar(id: MPC_THR_TETHER))
         bind(settings.phiC, using: setScalar(id: MPC_LOOP_PHI_C))
         bind(settings.thetaC, using: setScalar(id: MPC_LOOP_THETA_C))
         bind(settings.turningRadius, using: setScalar(id: MPC_LOOP_TURN_R))
+        bind(settings.tetheredHoverThrust, using: setScalar(id: MPC_THR_TETHER))
+
+        // Specific
+        bind(hoverPitchAngle, using: setScalar(id: MPC_PITCH_HVR))
+        bind(offboardPositionTethered, using: setBool(id: MPC_TET_POS_CTL))
 
         flightMode.asObservable().bind(onNext: changedFlightMode).disposed(by: bag)
 
-        globalPosition.map(TimedGPSVector.getPosition).subscribe(onNext: { self.latestGlobalPosition = $0 }).disposed(by: bag)
+        globalPosition.map(TimedGPSVector.getPosition).bind { self.latestGlobalPosition = $0 }.disposed(by: bag)
 
-//        positionTarget.asObservable().map { TimedLocation(time: 0, pos: $0, vel: .zero) }.bind(to: location).disposed(by: bag)
+        // TODO: Remove
+        positionTarget
+            .asObservable()
+            .map { TimedLocation(time: 0, pos: $0, vel: .zero) }
+            .bind(to: location)
+            .disposed(by: bag)
+        
+        positionTarget
+            .asObservable()
+            .map { GPSVector(lat: Int32($0.x), lon: Int32($0.y), alt: Int32($0.z)) }
+            .map { TimedGPSVector(time: 3, pos: $0)  }
+            .bind(to: globalPosition)
+            .disposed(by: bag)
     }
 
     deinit {
@@ -168,10 +154,6 @@ class KiteLink: NSObject {
     }
 
     // MARK: Public Methods
-
-    public func saveAsB(b: GPSVector) {
-        send(box.setGlobalOrigin(gps: b))
-    }
 
     public func togglePort() {
         guard let serialPort = serialPort else {
@@ -192,6 +174,10 @@ class KiteLink: NSObject {
     }
 
     // MARK: Private Methods
+
+    private func saveGlobalOrigin(b: GPSVector) {
+        send(box.setGlobalOrigin(gps: b))
+    }
 
     private func heartbeat(timer: Timer) {
         let now = Date()

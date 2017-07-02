@@ -153,6 +153,8 @@ struct MessageBox {
     }
 
     public func setGlobalOrigin(gps: GPSVector) -> MavlinkMessage {
+        Swift.print("GPS ORIGIN \(tarSysId - 1): \(gps)")
+
         var setOrigin = mavlink_set_gps_global_origin_t()
 
         setOrigin.altitude = gps.alt
@@ -177,9 +179,8 @@ struct MessageBox {
         paramSet.param_type = UInt8(parameterValue.type.rawValue)
 
         var msg = mavlink_message_t()
-        
         mavlink_msg_param_set_encode(sysId, compId, &msg, &paramSet)
-        
+
         return msg
     }
 }
