@@ -164,6 +164,8 @@ struct MessageBox {
         var msg = mavlink_message_t()
         mavlink_msg_set_gps_global_origin_encode(sysId, compId, &msg, &setOrigin)
 
+        print("SET globalOrigin (\(msg.msgid)): \(gps)")
+
         return msg
     }
 

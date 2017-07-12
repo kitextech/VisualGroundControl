@@ -25,9 +25,9 @@ class KiteController {
 
     // Public
 
-    public func resendOrigin() {
-        settings.globalOrigin.value = settings.globalOrigin.value
-    }
+//    public func resendOrigin() {
+//        settings.globalOrigin.value = settings.globalOrigin.value
+//    }
 
     // Private
 
@@ -37,8 +37,8 @@ class KiteController {
     private let bag = DisposeBag()
 
     private init() {
-        kite0 = KiteLink(targetSystemId: 1, targetComponentId: 1, settings: settings)
-        kite1 = KiteLink(targetSystemId: 2, targetComponentId: 1, settings: settings)
+        kite0 = KiteLink(targetSystemId: 0, targetComponentId: 1, settings: settings)
+        kite1 = KiteLink(targetSystemId: 1, targetComponentId: 1, settings: settings)
     }
 }
 
@@ -52,6 +52,8 @@ class KiteLink: NSObject {
     public let hoverPitchAngle = Variable<Scalar>(0.174) // Manual>Tethered
 
     public let offboardPositionTethered = Variable<Bool>(true) // Offboard>Position
+
+    public let positionB = Variable<Vector>(.zero)
 
     // MARK: - Continuous Parameters
     
@@ -71,9 +73,12 @@ class KiteLink: NSObject {
 
     public let errorMessage = PublishSubject<String>()
 
+    public let gpsOrigin = Variable<GPSVector>(.zero)
+
     public var isSerialPortOpen: Bool { return serialPort?.isOpen ?? false }
 
-    public var latestGlobalPosition: GPSVector = .zero
+//    public var latestGlobalPosition: GPSVector = .zero
+    public var latestPosition: Vector = .zero
 
     // MARK: Serial Port Properties
 
@@ -124,7 +129,7 @@ class KiteLink: NSObject {
         NSUserNotificationCenter.default.delegate = self
 
         // Common
-        settings.globalOrigin.asObservable().bind(onNext: saveGlobalOrigin).disposed(by: bag)
+//        settings.globalOrigin.asObservable().bind(onNext: saveGlobalOrigin).disposed(by: bag)
 
         bind(settings.tetherLength, using: setScalar(id: MPC_TETHER_LEN))
         bind(settings.phiC, using: setScalar(id: MPC_LOOP_PHI_C))
@@ -132,27 +137,29 @@ class KiteLink: NSObject {
         bind(settings.turningRadius, using: setScalar(id: MPC_LOOP_TURN_R))
         bind(settings.tetheredHoverThrust, using: setScalar(id: MPC_THR_TETHER))
 
+        bind(positionB, using: setVector(ids: (MPC_X_POS_B, MPC_Y_POS_B, MPC_Z_POS_B)))
+
         // Specific
         bind(hoverPitchAngle, using: setScalar(id: MPC_PITCH_HVR))
         bind(offboardPositionTethered, using: setBool(id: MPC_TET_POS_CTL))
 
         flightMode.asObservable().bind(onNext: changedFlightMode).disposed(by: bag)
 
-        globalPosition.map(TimedGPSVector.getPosition).bind { self.latestGlobalPosition = $0 }.disposed(by: bag)
+//        globalPosition.map(TimedGPSVector.getPosition).bind { self.latestGlobalPosition = $0 }.disposed(by: bag)
 
         // TODO: Remove
-        positionTarget
-            .asObservable()
-            .map { TimedLocation(time: 0, pos: $0, vel: .zero) }
-            .bind(to: location)
-            .disposed(by: bag)
-
-        positionTarget
-            .asObservable()
-            .map { GPSVector(lat: Int32($0.x), lon: Int32($0.y), alt: Int32($0.z)) }
-            .map { TimedGPSVector(time: 3, pos: $0)  }
-            .bind(to: globalPosition)
-            .disposed(by: bag)
+//        positionTarget
+//            .asObservable()
+//            .map { TimedLocation(time: 0, pos: $0, vel: .zero) }
+//            .bind(to: location)
+//            .disposed(by: bag)
+//
+//        positionTarget
+//            .asObservable()
+//            .map { GPSVector(lat: Int32($0.x), lon: Int32($0.y), alt: Int32($0.z)) }
+//            .map { TimedGPSVector(time: 3, pos: $0)  }
+//            .bind(to: globalPosition)
+//            .disposed(by: bag)
     }
 
     deinit {
@@ -160,6 +167,12 @@ class KiteLink: NSObject {
     }
 
     // MARK: Public Methods
+
+    public func saveB() {
+        positionB.value = latestPosition
+
+        print("Using \(latestPosition) as B for kite \(box.tarSysId)")
+    }
 
     public func togglePort() {
         guard let serialPort = serialPort else {
@@ -181,9 +194,9 @@ class KiteLink: NSObject {
 
     // MARK: Private Methods
 
-    private func saveGlobalOrigin(b: GPSVector) {
-        send(box.setGlobalOrigin(gps: b))
-    }
+//    private func saveGlobalOrigin(b: GPSVector) {
+//        send(box.setGlobalOrigin(gps: b))
+//    }
 
     private func heartbeat(timer: Timer) {
         let now = Date()
@@ -259,6 +272,12 @@ class KiteLink: NSObject {
                   ParameterValue(id: ids.2, value: Scalar($0.alt), type: MAV_PARAM_TYPE_INT32)] }
     }
 
+    private func setVector(ids: (String, String, String)) -> (Vector) -> [ParameterValue] {
+        return { [ParameterValue(id: ids.0, value: $0.x, type: MAV_PARAM_TYPE_REAL32),
+                  ParameterValue(id: ids.1, value: $0.y, type: MAV_PARAM_TYPE_REAL32),
+                  ParameterValue(id: ids.2, value: $0.z, type: MAV_PARAM_TYPE_REAL32)] }
+    }
+
     internal func confirm(_ p: ParameterValue) {
         func isCloseEnough(actual: Scalar, received: Scalar) -> Bool {
             let relativeError: Scalar = 1/10000
@@ -307,7 +326,7 @@ class KiteLink: NSObject {
         serialPort.send(message.data)
 
         if message.msgid != 84 {
-            print("SEND: \(message)")
+//            print("SEND: \(message)")
         }
     }
     
@@ -406,7 +425,8 @@ extension KiteLink: ORSSerialPortDelegate {
                 guard message.sysid == box.tarSysId && message.compid == box.tarCompId else { return }
 
                 if let loc = message.location {
-                    location.onNext(loc)
+                    latestPosition = loc.pos
+                    location.onNext(loc.translated(by: -positionB.value))
                 }
                 else if let att = message.attitude {
                     attitude.onNext(att)
@@ -416,6 +436,10 @@ extension KiteLink: ORSSerialPortDelegate {
                 }
                 else if let g = message.globalPosition {
                     globalPosition.onNext(g)
+                }
+                else if let o = message.gpsOrigin {
+                    gpsOrigin.value = o
+                    print("RECEIVED globalOrigin (\(message.msgid)): \(o)")
                 }
                 else if let value = message.parameterValue {
                     print("Received Parameter: \(value.id) (\(value.id.characters.count)) = \(value.value)")
@@ -544,6 +568,10 @@ struct TimedLocation {
         self.time = time
         self.pos = pos
         self.vel = vel
+    }
+
+    func translated(by offset: Vector) -> TimedLocation {
+        return TimedLocation(time: time, pos: pos + offset, vel: vel)
     }
 
     static func getPosition(timedLocation: TimedLocation) -> Vector {

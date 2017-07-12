@@ -10,7 +10,7 @@ import AppKit
 import RxSwift
 
 struct SettingsModel {
-    public let globalOrigin: Variable<GPSVector> = Variable(.zero)
+//    public let globalOrigin: Variable<GPSVector> = Variable(.zero)
 
     public let tetherLength: Variable<Scalar> = Variable(100)
     public let phiC: Variable<Scalar> = Variable(0)
@@ -70,11 +70,13 @@ class SettingsViewController: NSViewController {
     private let bag = DisposeBag()
     
     @IBAction func pressedUse0AsB(_ sender: NSButton) {
-        KiteController.shared.settings.globalOrigin.value = KiteController.kite0.latestGlobalPosition
+//        KiteController.shared.settings.globalOrigin.value = KiteController.kite0.latestGlobalPosition
+        KiteController.kite0.saveB()
     }
 
     @IBAction func pressedUse1AsB(_ sender: NSButton) {
-        KiteController.shared.settings.globalOrigin.value = KiteController.kite1.latestGlobalPosition
+//        KiteController.shared.settings.globalOrigin.value = KiteController.kite1.latestGlobalPosition
+        KiteController.kite1.saveB()
     }
 
     override func viewDidLoad() {
@@ -93,7 +95,7 @@ class SettingsViewController: NSViewController {
         // Parameters
         let gpsString = { (p: GPSVector) in "GPS: \(p.lat), \(p.lon). \(p.alt/1000)" }
 
-        KiteController.shared.settings.globalOrigin.asObservable().map(gpsString).map(prepend("B ")).bind(to: globalOriginLabel.rx.text).disposed(by: bag)
+//        KiteController.shared.settings.globalOrigin.asObservable().map(gpsString).map(prepend("B ")).bind(to: globalOriginLabel.rx.text).disposed(by: bag)
 
         tetherLength.map(getScalarString).bind(to: tetherLengthLabel.rx.text).disposed(by: bag)
         phiC.map(getScalarString).bind(to: phiCLabel.rx.text).disposed(by: bag)
@@ -110,7 +112,7 @@ class SettingsViewController: NSViewController {
         KiteController.kite0.location.map(nedString).bind(to: ned0Label.rx.text).disposed(by: bag)
         KiteController.kite1.location.map(nedString).bind(to: ned1Label.rx.text).disposed(by: bag)
 
-        globalOriginButton.rx.tap.bind { _ in KiteController.shared.resendOrigin() }.disposed(by: bag)
+//        globalOriginButton.rx.tap.bind { _ in KiteController.shared.resendOrigin() }.disposed(by: bag)
 
         // Errors
         let kite0Errors = KiteController.kite0.errorMessage.map(prepend("kite0"))

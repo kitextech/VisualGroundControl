@@ -23,7 +23,7 @@ class SerialViewController: NSViewController {
     
     // MARK: - Private Properties
 
-    internal let kite = KiteController.kite0
+    internal let kite = KiteController.kite1
     private let bag = DisposeBag()
     
     private var messages = [String]()
