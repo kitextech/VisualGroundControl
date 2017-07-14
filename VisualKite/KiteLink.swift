@@ -140,7 +140,7 @@ class KiteLink: NSObject {
         bind(positionB, using: setVector(ids: (MPC_X_POS_B, MPC_Y_POS_B, MPC_Z_POS_B)))
 
         // Specific
-        bind(hoverPitchAngle, using: setScalar(id: MPC_PITCH_HVR))
+//        bind(hoverPitchAngle, using: setScalar(id: MPC_PITCH_HVR))
         bind(offboardPositionTethered, using: setBool(id: MPC_TET_POS_CTL))
 
         flightMode.asObservable().bind(onNext: changedFlightMode).disposed(by: bag)
