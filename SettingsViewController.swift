@@ -68,10 +68,15 @@ class SettingsViewController: NSViewController {
 
     // MARK: BAG
     private let bag = DisposeBag()
-    
+
     @IBAction func pressedUse0AsB(_ sender: NSButton) {
 //        KiteController.shared.settings.globalOrigin.value = KiteController.kite0.latestGlobalPosition
         KiteController.kite0.saveB()
+    }
+
+    @IBAction func didNudgeB(_ sender: NSStepper) {
+        (sender.tag/3 == 0 ? KiteController.kite0 : KiteController.kite1).nudgeB(by: Scalar(sender.intValue)*[e_x, e_y, e_z][sender.tag % 3])
+        sender.intValue = 0
     }
 
     @IBAction func pressedUse1AsB(_ sender: NSButton) {
@@ -108,7 +113,7 @@ class SettingsViewController: NSViewController {
         KiteController.kite0.globalPosition.asObservable().map(stripTime).map(gpsString).bind(to: position0Label.rx.text).disposed(by: bag)
         KiteController.kite1.globalPosition.asObservable().map(stripTime).map(gpsString).bind(to: position1Label.rx.text).disposed(by: bag)
 
-        let nedString = { (p: TimedLocation) in "NED: \(p.pos.x), \(p.pos.y). \(p.pos.z)" }
+        let nedString = { (p: TimedLocation) in String(format: "NED: %.1f, %.1f, %.1f", p.pos.x, p.pos.y, p.pos.z) }
         KiteController.kite0.location.map(nedString).bind(to: ned0Label.rx.text).disposed(by: bag)
         KiteController.kite1.location.map(nedString).bind(to: ned1Label.rx.text).disposed(by: bag)
 

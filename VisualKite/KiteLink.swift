@@ -171,7 +171,13 @@ class KiteLink: NSObject {
     public func saveB() {
         positionB.value = latestPosition
 
-        print("Using \(latestPosition) as B for kite \(box.tarSysId)")
+        print("Using \(positionB.value) as B for kite \(box.tarSysId)")
+    }
+
+    public func nudgeB(by offset: Vector) {
+        positionB.value += offset
+
+        print("Nudging B to \(positionB.value) for kite \(box.tarSysId)")
     }
 
     public func togglePort() {
