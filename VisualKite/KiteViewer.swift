@@ -29,7 +29,7 @@ final class KiteViewer {
 
     public let position = Variable<Vector>(.origin)
     public let velocity = Variable<Vector>(.zero)
-    public let quaternion = Variable<Quaternion>(.id)
+    public let orientation = Variable<Quaternion>(.id)
     
     public let wind = Variable<Vector>(.zero)
 
@@ -112,7 +112,7 @@ final class KiteViewer {
         let misc = [kiteBall, turningPointBall, tetherLine, tetherPointBall, positionTargetBall]
         (axes + arrows + misc).forEach(scene.rootNode.addChildNode)
         
-        Observable.combineLatest(position.asObservable(), velocity.asObservable(), quaternion.asObservable(), wind.asObservable(), tetherPoint.asObservable(), turningPoint.asObservable(), resultSelector: ignore)
+        Observable.combineLatest(position.asObservable(), velocity.asObservable(), orientation.asObservable(), wind.asObservable(), tetherPoint.asObservable(), turningPoint.asObservable(), resultSelector: ignore)
             .subscribe(onNext: updateScene)
             .disposed(by: bag)
     }
@@ -137,7 +137,7 @@ final class KiteViewer {
     public func updateScene() {
         let p = position.value
         let v = velocity.value
-        let q = quaternion.value
+        let q = orientation.value
         let w = wind.value
         let b = tetherPoint.value
 		let c = turningPoint.value

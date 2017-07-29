@@ -291,7 +291,7 @@ extension MavlinkMessage {
         return TimedAttitude(time: time, att: euler, rate: rate)
     }
 
-    var quaternion: TimedQuaternion? {
+    var orientation: TimedOrientation? {
         guard msgid == 31 else {
             return nil
         }
@@ -304,7 +304,7 @@ extension MavlinkMessage {
         let quat = Quaternion(q.q2, q.q3, q.q4, q.q1)
         let rate = Vector(q.yawspeed, q.pitchspeed, q.rollspeed)
 
-        return TimedQuaternion(time: time, quaternion: quat, rate: rate)
+        return TimedOrientation(time: time, orientation: quat, rate: rate)
     }
     
     var location: TimedLocation? {

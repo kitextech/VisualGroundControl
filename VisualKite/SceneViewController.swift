@@ -240,10 +240,10 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
 //        kite.attitude.map(KiteAttitude.getAttitude).map(Matrix.init).bind(to: viewer.attitude).disposed(by: bag)
 
 
-        let quaternion = Variable<Quaternion>(.id)
-        kite.quaternion.map(TimedQuaternion.getQuaternion).bind(to: quaternion).disposed(by: bag)
+        let orientation = Variable<Quaternion>(.id)
+        kite.orientation.map(TimedOrientation.getQuaternion).bind(to: orientation).disposed(by: bag)
 
-        quaternion.asObservable().bind(to: viewer.quaternion).disposed(by: bag)
+        orientation.asObservable().bind(to: viewer.orientation).disposed(by: bag)
 
 //        quaternion.asObservable().bind(to: overlay.kiteOrientation).disposed(by: bag)
 //        quaternion.asObservable().subscribe(onNext: { print("Q: \($0)") }).disposed(by: bag)

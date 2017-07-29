@@ -22,6 +22,8 @@ class TraceViewsViewController: NSViewController {
     @IBOutlet weak var xyView: TraceView!
     @IBOutlet weak var freeView: TraceView!
 
+    @IBOutlet weak var slider: NSSlider!
+
     @IBOutlet weak var xzButton: NSButton!
     @IBOutlet weak var yzButton: NSButton!
     @IBOutlet weak var piButton: NSButton!
@@ -30,6 +32,12 @@ class TraceViewsViewController: NSViewController {
 
     private let bag = DisposeBag()
     private var views: [TraceView] = []
+
+    private let pathLogDrawable = PathDrawable()
+    private let velocitiesLogDrawable = ArrowsDrawable(color: .orange)
+    private let orientationsLogDrawableX = ArrowsDrawable(color: .red)
+    private let orientationsLogDrawableY = ArrowsDrawable(color: .green)
+    private let orientationsLogDrawableZ = ArrowsDrawable(color: .blue)
 
     // MARK: - View Controller Lifecycle Methods
 
@@ -101,6 +109,9 @@ class TraceViewsViewController: NSViewController {
 //        xzButton.rx.tap.map { (0, π/2) }.bind(to: freeView.angles).disposed(by: bag)
 //        yzButton.rx.tap.map { (π/2, π/2) }.bind(to: freeView.angles).disposed(by: bag)
 //        piButton.rx.tap.map { (π + kite.phiC.value, π/2 - kite.thetaC.value) }.bind(to: freeView.angles).disposed(by: bag)
+
+        [pathLogDrawable, velocitiesLogDrawable, orientationsLogDrawableX, orientationsLogDrawableY, orientationsLogDrawableZ].forEach(add)
+        slider.scalar.bind(onNext: updateLog).disposed(by: bag)
     }
 
     // Helper methods
@@ -126,8 +137,8 @@ class TraceViewsViewController: NSViewController {
             .bind { pos in drawable.position = pos }
             .disposed(by: bag)
 
-        kite.quaternion
-            .map(TimedQuaternion.getQuaternion)
+        kite.orientation
+            .map(TimedOrientation.getQuaternion)
             .bind { q in drawable.orientation = q }
             .disposed(by: bag)
 
@@ -141,7 +152,25 @@ class TraceViewsViewController: NSViewController {
             .disposed(by: bag)
 
         useAsRedrawTrigger(kite.location)
-        useAsRedrawTrigger(kite.quaternion)
+        useAsRedrawTrigger(kite.orientation)
+    }
+
+    private func updateLog(tRelRel: Scalar) {
+        LogProcessor.shared.tRelRel = tRelRel
+
+        let positions = LogProcessor.shared.positions
+        let velocities = LogProcessor.shared.velocities
+        pathLogDrawable.update(positions)
+//        velocitiesLogDrawable.update(positions, velocities)
+
+        func update(_ drawable: ArrowsDrawable, _ vector: Vector) {
+            drawable.update(positions, LogProcessor.shared.orientations.map { 3*$0.apply(vector) })
+        }
+
+        update(orientationsLogDrawableX, e_x)
+        update(orientationsLogDrawableY, e_y)
+        update(orientationsLogDrawableZ, e_z)
+        redrawViews()
     }
 
     private func getD(tether: Scalar, r: Scalar) -> Scalar {

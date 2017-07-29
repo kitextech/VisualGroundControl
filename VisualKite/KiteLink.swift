@@ -66,7 +66,7 @@ class KiteLink: NSObject {
     public let mavlinkMessage = PublishSubject<MavlinkMessage>()
     
     public let location = PublishSubject<TimedLocation>()
-    public let quaternion = PublishSubject<TimedQuaternion>()
+    public let orientation = PublishSubject<TimedOrientation>()
     public let attitude = PublishSubject<TimedAttitude>()
 
     public let globalPosition = PublishSubject<TimedGPSVector>()
@@ -132,8 +132,8 @@ class KiteLink: NSObject {
 //        settings.globalOrigin.asObservable().bind(onNext: saveGlobalOrigin).disposed(by: bag)
 
         bind(settings.tetherLength, using: setScalar(id: MPC_TETHER_LEN))
-        bind(settings.phiC, using: setScalar(id: MPC_LOOP_PHI_C))
-        bind(settings.thetaC, using: setScalar(id: MPC_LOOP_THETA_C))
+        bind(settings.phiC, using: setScalar(id: MPC_PHI_C))
+        bind(settings.thetaC, using: setScalar(id: MPC_THETA_C))
         bind(settings.turningRadius, using: setScalar(id: MPC_LOOP_TURN_R))
         bind(settings.tetheredHoverThrust, using: setScalar(id: MPC_THR_TETHER))
 
@@ -437,8 +437,8 @@ extension KiteLink: ORSSerialPortDelegate {
                 else if let att = message.attitude {
                     attitude.onNext(att)
                 }
-                else if let q = message.quaternion {
-                    quaternion.onNext(q)
+                else if let q = message.orientation {
+                    orientation.onNext(q)
                 }
                 else if let g = message.globalPosition {
                     globalPosition.onNext(g)
@@ -551,9 +551,8 @@ let MPC_X_POS_B = "MPC_X_POS_B"
 let MPC_Y_POS_B = "MPC_Y_POS_B"
 let MPC_Z_POS_B = "MPC_Z_POS_B"
 
-// TODO: Add in FC
-let MPC_LOOP_PHI_C = "MPC_LOOP_PHI_C"
-let MPC_LOOP_THETA_C = "MPC_LOOP_THETA_C"
+let MPC_PHI_C = "MPC_PHI_C"
+let MPC_THETA_C = "MPC_THETA_C"
 let MPC_LOOP_TURN_R = "MPC_LOOP_TURN_R"
 
 struct TimedGPSVector {
@@ -605,19 +604,19 @@ struct TimedAttitude {
     }
 }
 
-struct TimedQuaternion {
+struct TimedOrientation {
     let time: TimeInterval
-    let quaternion: Quaternion
+    let orientation: Quaternion
     let rate: Vector
 
-    init(time: TimeInterval = 0, quaternion: Quaternion = .id, rate: Vector = .zero) {
+    init(time: TimeInterval = 0, orientation: Quaternion = .id, rate: Vector = .zero) {
         self.time = time
-        self.quaternion = quaternion
+        self.orientation = orientation
         self.rate = rate
     }
 
-    static func getQuaternion(timedQuaternion: TimedQuaternion) -> Quaternion {
-        return timedQuaternion.quaternion
+    static func getQuaternion(timedOrientation: TimedOrientation) -> Quaternion {
+        return timedOrientation.orientation
     }
 }
 

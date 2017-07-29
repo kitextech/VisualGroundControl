@@ -235,6 +235,61 @@ public class ArrowDrawable: Drawable {
     }
 }
 
+public class ArrowsDrawable: Drawable {
+    public let id = UUID()
+
+    public let occluded = false
+
+    public let color: NSColor
+
+    public var lines: [Line] = []
+
+    public let lineWidth: Scalar = 2
+
+    public let spheres: [Sphere] = []
+
+    public var orientation: Quaternion = .id
+
+    public var position: Vector = .origin
+
+    public init(color: NSColor = .black) {
+        self.color = color
+    }
+
+    public func update(_ positions: [Vector], _ vectors: [Vector]) {
+        lines = zip(positions, vectors).map { pos, vec in
+            Line(start: pos, end: pos + vec)
+        }
+    }
+}
+
+public class PathDrawable: Drawable {
+    public let id = UUID()
+
+    public let occluded = false
+
+    public let color: NSColor
+
+    public var lines: [Line] = []
+
+    public let lineWidth: Scalar = 2
+
+    public var spheres: [Sphere] = []
+
+    public var orientation: Quaternion = .id
+
+    public var position: Vector = .origin
+
+    public init(color: NSColor = .darkGray) {
+        self.color = color
+    }
+
+    public func update(_ positions: [Vector]) {
+        lines = positions.count >= 2 ? zip(positions.dropLast(), positions.dropFirst()).map(Line.init) : []
+//        spheres = positions.map { Sphere(center: $0, radius: 1) }
+    }
+}
+
 public class BoxDrawable: Drawable {
     public let id = UUID()
 

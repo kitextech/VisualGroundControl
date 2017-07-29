@@ -123,7 +123,6 @@ class TraceView: NSView {
     // Drawing
 
     override func draw(_ dirtyRect: CGRect) {
-//        ballPath(at: bPoint.value, radius: 5).fill()
         drawables.values.forEach(draw)
     }
 

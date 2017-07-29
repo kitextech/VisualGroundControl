@@ -18,8 +18,8 @@ extension Vector4 {
 extension Quaternion: Equatable {
     // Creation
 
-    init(rotationAround u: Vector, by alpha: Scalar) {
-        self = cos(alpha/2) + u*sin(alpha/2)
+    init(axis: Vector, angle: Scalar) {
+        self = cos(angle/2) + axis*sin(angle/2)
     }
 
     init(_ vector: Vector) {
