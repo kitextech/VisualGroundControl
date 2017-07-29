@@ -23,7 +23,7 @@ struct LogMNodel {
         let n = 1000
         let tetherLength: Scalar = 100
         let indices = 0..<n
-        let turns = 1
+        let turns = 3
         let phiC: Scalar = π/3
         let thetaC: Scalar = π/4
 
@@ -36,8 +36,6 @@ struct LogMNodel {
 
         let speed: Scalar = 10
 
-        let alpha: Scalar = π/8
-
         let locations: [TimedLocation] = indices.map { i in
             let rho = Scalar(i)/Scalar(n - 1)
             let gamma = 2*π*Scalar(turns)*rho
@@ -45,21 +43,16 @@ struct LogMNodel {
             let time = duration*Double(rho)
 
             let pos = c + r*(ePiX*sin(gamma) + ePiY*cos(gamma))
-            let deltaPos = 0*(r/10)*Vector(cos(17*gamma), cos(19*gamma), cos(23*gamma))
+            let deltaPos = (r/50)*Vector(cos(17*gamma), cos(19*gamma), cos(23*gamma))
 
             let vel = speed*(ePiX*cos(gamma) - ePiY*sin(gamma))
-            let deltaVel = 0*(speed/10)*Vector(cos(29*gamma), cos(37*gamma), cos(41*gamma))
+            let deltaVel = (speed/50)*Vector(cos(29*gamma), cos(37*gamma), cos(41*gamma))
 
             return TimedLocation(time: time, pos: pos + deltaPos, vel: vel + deltaVel)
         }
 
         let orientations: [TimedOrientation] = locations.map { location in
-            let vel = location.vel
-            let angle = vel.angle(to: e_z)
-            let axis = Vector(vel.y, -vel.x, 0).unit
-            let orientation = Quaternion(axis: axis, angle: angle)
-
-            return TimedOrientation(time: location.time, orientation: orientation, rate: .zero)
+            return TimedOrientation(time: location.time, orientation: Quaternion(rotationFrom: e_z, to: location.vel), rate: .zero)
         }
 
         return LogMNodel(duration: duration, locations: locations, orientations: orientations)
@@ -83,6 +76,7 @@ struct LogProcessor {
     public var orientation: Quaternion = .id
 
     // Visible
+    public var strodePositions: [Vector] = []
     public var positions: [Vector] = []
     public var velocities: [Vector] = []
     public var orientations: [Quaternion] = []
@@ -101,31 +95,43 @@ struct LogProcessor {
 
     public mutating func clear() {
         model = .empty
-        position = .zero
-        velocity = .zero
-        orientation = .id
-        positions = []
-        velocities = []
-        orientations = []
+        updateCurrent()
+        updateVisible()
     }
 
     private mutating func updateCurrent() {
+        guard !model.isEmpty else {
+            time = 0
+            position = .zero
+            velocity = .zero
+            orientation = .id
+            return
+        }
+
         let tRel = t0Rel*(1 - tRelRel) + t1Rel*tRelRel
         time = duration*Double(tRel)
         let i = index(for: tRel)
         position = model.locations[i].pos
         velocity = model.locations[i].vel
         orientation = model.orientations[i].orientation
-
-        print("Update Current: (\(t0Rel) \(t1Rel)) \(tRel) - > \(i) [\(model.locations.count)]")
     }
 
     private mutating func updateVisible() {
-        let visibleRange = stride(from: index(for: t0Rel), to: index(for: t1Rel), by: step)
-        let visibleLocations = visibleRange.map { model.locations[$0] }
-        positions = visibleLocations.map(TimedLocation.getPosition)
+        guard !model.isEmpty else {
+            positions = []
+            velocities = []
+            orientations = []
+            return
+        }
+
+        let range = index(for: t0Rel)...index(for: t1Rel)
+        positions = model.locations[range].map(TimedLocation.getPosition)
+
+        let strodeRange = stride(from: index(for: t0Rel), to: index(for: t1Rel), by: step)
+        let visibleLocations = strodeRange.map { model.locations[$0] }
+        strodePositions = visibleLocations.map(TimedLocation.getPosition)
         velocities = visibleLocations.map(TimedLocation.getVelocity)
-        orientations = visibleRange.map { model.orientations[$0].orientation }
+        orientations = strodeRange.map { model.orientations[$0].orientation }
     }
 
     private func index(for rel: Scalar) -> Int {

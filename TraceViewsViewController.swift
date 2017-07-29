@@ -158,13 +158,13 @@ class TraceViewsViewController: NSViewController {
     private func updateLog(tRelRel: Scalar) {
         LogProcessor.shared.tRelRel = tRelRel
 
-        let positions = LogProcessor.shared.positions
-        let velocities = LogProcessor.shared.velocities
-        pathLogDrawable.update(positions)
-//        velocitiesLogDrawable.update(positions, velocities)
+        pathLogDrawable.update(LogProcessor.shared.positions)
+
+        let strodePositions = LogProcessor.shared.strodePositions
+//        velocitiesLogDrawable.update(strodePositions, LogProcessor.shared.velocities)
 
         func update(_ drawable: ArrowsDrawable, _ vector: Vector) {
-            drawable.update(positions, LogProcessor.shared.orientations.map { 3*$0.apply(vector) })
+            drawable.update(strodePositions, LogProcessor.shared.orientations.map { 3*$0.apply(vector) })
         }
 
         update(orientationsLogDrawableX, e_x)

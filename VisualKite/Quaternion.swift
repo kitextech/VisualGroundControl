@@ -18,6 +18,10 @@ extension Vector4 {
 extension Quaternion: Equatable {
     // Creation
 
+    init(rotationFrom u: Vector, to v: Vector) {
+        self = (u.norm*v.norm + u•v + u×v).unit
+    }
+
     init(axis: Vector, angle: Scalar) {
         self = cos(angle/2) + axis*sin(angle/2)
     }
@@ -87,6 +91,20 @@ extension Quaternion: Equatable {
     public var vector: Vector {
         get { return Vector(x, y, z) }
         set { (x, y, z) = (newValue.x, newValue.y, newValue.z) }
+    }
+
+    // Norm
+
+    public var squaredNorm: Scalar {
+        return (scalar*scalar + vector•vector)
+    }
+
+    public var norm: Scalar {
+        return sqrt(squaredNorm)
+    }
+
+    public var unit: Quaternion {
+        return 1/norm*self
     }
 
     // Conjugate
