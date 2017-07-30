@@ -37,7 +37,9 @@ public class Tracer {
 
 public protocol Drawable {
     var id: UUID { get }
-    var occluded: Bool { get }
+    var isHidden: Bool { get }
+
+    var occlude: Bool { get }
     var color: NSColor { get }
     var lineWidth: Scalar { get }
     var lines: [Line] { get }
@@ -64,7 +66,9 @@ public class VectorDrawable: Drawable {
 
     public let id = UUID()
 
-    public let occluded = false
+    public var isHidden = false
+    public let occlude = false
+
     public let color: NSColor
     public let lineWidth: Scalar = 3
 
@@ -95,7 +99,9 @@ public class KiteDrawable: Drawable {
 
     public let id = UUID()
 
-    public let occluded = false
+    public var isHidden = false
+
+    public let occlude = false
 
     public var color: NSColor
 
@@ -142,7 +148,9 @@ public class SphereDrawable: Drawable {
 
     public let id = UUID()
 
-    public var occluded = true
+    public var isHidden = false
+
+    public var occlude = true
 
     public let color = NSColor.darkGray
 
@@ -190,7 +198,9 @@ public class SphereDrawable: Drawable {
 public class BallDrawable: Drawable {
     public let id = UUID()
 
-    public let occluded = false
+    public var isHidden = false
+
+    public let occlude = false
 
     public let color: NSColor
 
@@ -213,7 +223,9 @@ public class BallDrawable: Drawable {
 public class ArrowDrawable: Drawable {
     public let id = UUID()
 
-    public let occluded = false
+    public var isHidden = false
+
+    public let occlude = false
 
     public let color: NSColor
 
@@ -238,7 +250,9 @@ public class ArrowDrawable: Drawable {
 public class ArrowsDrawable: Drawable {
     public let id = UUID()
 
-    public let occluded = false
+    public var isHidden = false
+
+    public let occlude = false
 
     public let color: NSColor
 
@@ -266,7 +280,9 @@ public class ArrowsDrawable: Drawable {
 public class PathDrawable: Drawable {
     public let id = UUID()
 
-    public let occluded = false
+    public var isHidden = false
+
+    public let occlude = false
 
     public let color: NSColor
 
@@ -293,7 +309,9 @@ public class PathDrawable: Drawable {
 public class BoxDrawable: Drawable {
     public let id = UUID()
 
-    public let occluded = false
+    public var isHidden = false
+
+    public let occlude = false
 
     public let color: NSColor
 
@@ -331,7 +349,9 @@ public class CircleDrawable: Drawable {
 
     public let id = UUID()
 
-    public let occluded = true
+    public var isHidden = false
+
+    public let occlude = true
 
     public let color: NSColor
 

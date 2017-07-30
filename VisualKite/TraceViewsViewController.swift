@@ -111,7 +111,10 @@ class TraceViewsViewController: NSViewController {
 //        piButton.rx.tap.map { (π + kite.phiC.value, π/2 - kite.thetaC.value) }.bind(to: freeView.angles).disposed(by: bag)
 
         [pathLogDrawable, velocitiesLogDrawable, orientationsLogDrawableX, orientationsLogDrawableY, orientationsLogDrawableZ].forEach(add)
-        slider.scalar.bind(onNext: updateLog).disposed(by: bag)
+
+        LogProcessor.shared.change.filter { $0 == .changedRange }.bind { _ in self.updateLog() }.disposed(by: bag)
+
+
     }
 
     // Helper methods
@@ -155,8 +158,8 @@ class TraceViewsViewController: NSViewController {
         useAsRedrawTrigger(kite.orientation)
     }
 
-    private func updateLog(tRelRel: Scalar) {
-        LogProcessor.shared.tRelRel = tRelRel
+    private func updateLog() {
+//        LogProcessor.shared.tRelRel = tRelRel
 
         pathLogDrawable.update(LogProcessor.shared.positions)
 

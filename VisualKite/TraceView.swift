@@ -123,7 +123,7 @@ class TraceView: NSView {
     // Drawing
 
     override func draw(_ dirtyRect: CGRect) {
-        drawables.values.forEach(draw)
+        drawables.values.filter { !$0.isHidden }.forEach(draw)
     }
 
     // Drawing Helper Methods
@@ -137,7 +137,7 @@ class TraceView: NSView {
 
         let occlusionPlane = Plane(center: .origin, normal: tracer.projectionAxis)
 
-        linesPath(lines: drawable.occluded ? lines.flatMap(occlusionPlane.occlude) : lines, width: drawable.lineWidth).stroke()
+        linesPath(lines: drawable.occlude ? lines.flatMap(occlusionPlane.occlude) : lines, width: drawable.lineWidth).stroke()
 
         drawable.spheres
             .map { $0.translated(drawable.position) }

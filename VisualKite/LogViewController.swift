@@ -60,6 +60,10 @@ struct LogMNodel {
 }
 
 struct LogProcessor {
+    enum Change { case scrubbed, changedRange }
+
+    public let change = PublishSubject<Change>()
+
     public static var shared = LogProcessor()
 
     public var duration: Double { return model.duration }
@@ -68,7 +72,7 @@ struct LogProcessor {
     public var t0Rel: Scalar = 0 { didSet { updateVisible() } }
     public var t1Rel: Scalar = 1 { didSet { updateVisible() } }
     public var step = 10 { didSet { updateVisible() } }
-    
+
     // Current
     public var time: Double = 0
     public var position: Vector = .origin
@@ -114,6 +118,7 @@ struct LogProcessor {
         position = model.locations[i].pos
         velocity = model.locations[i].vel
         orientation = model.orientations[i].orientation
+        change.onNext(.scrubbed)
     }
 
     private mutating func updateVisible() {
@@ -132,6 +137,7 @@ struct LogProcessor {
         strodePositions = visibleLocations.map(TimedLocation.getPosition)
         velocities = visibleLocations.map(TimedLocation.getVelocity)
         orientations = strodeRange.map { model.orientations[$0].orientation }
+        change.onNext(.changedRange)
     }
 
     private func index(for rel: Scalar) -> Int {
@@ -169,7 +175,7 @@ class LogViewController: NSViewController {
         let t0Rel = t0Slider.scalar.shareReplayLatestWhileConnected()
         let t1Rel = t1Slider.scalar.shareReplayLatestWhileConnected()
 
-//        tRelRel.bind { LogProcessor.shared.tRelRel = $0 }.disposed(by: bag)
+        tRelRel.bind { LogProcessor.shared.tRelRel = $0 }.disposed(by: bag)
         t0Rel.bind { LogProcessor.shared.t0Rel = $0 }.disposed(by: bag)
         t1Rel.bind { LogProcessor.shared.t1Rel = $0 }.disposed(by: bag)
 
