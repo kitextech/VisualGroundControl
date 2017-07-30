@@ -19,8 +19,8 @@ public struct Estimate<T> {
 class KiteAnalyzer {
     // Inputs
     
-    public let location = Variable<KiteLocation>(KiteLocation())
-    public let attitude = Variable<KiteAttitude>(KiteAttitude())
+    public let location = Variable<TimedLocation>(TimedLocation())
+    public let attitude = Variable<TimedAttitude>(TimedAttitude())
     public let tetherLength = Variable<Scalar>(100)
     
 //    public let position = Variable<Vector>(.origin)
@@ -40,13 +40,13 @@ class KiteAnalyzer {
     private let bag = DisposeBag()
     
     private let realm = try! Realm()
-    
+
     private var data: KiteData?
-    
-    private var locations = [KiteLocation]()
+
+    private var locations = [TimedLocation]()
     
     init() {
-//        location.asObservable().bindNext(receivedLocation).disposed(by: bag)
+//        location.asObservable().bind(next: receivedLocation).disposed(by: bag)
     }
     
     public func start() {

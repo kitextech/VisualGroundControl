@@ -19,12 +19,11 @@ class SerialViewController: NSViewController {
     @IBOutlet var textView: NSTextView!
     @IBOutlet weak var clearButton: NSButton!
 
-    @IBOutlet weak var thrustSlider: NSSlider!
     @IBOutlet weak var offboardButton: NSButton!
     
     // MARK: - Private Properties
 
-    private let kite = KiteLink.shared
+    internal let kite = KiteController.kite1
     private let bag = DisposeBag()
     
     private var messages = [String]()
@@ -32,12 +31,10 @@ class SerialViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        clearButton.rx.tap.bindNext(clearText).disposed(by: bag)
-        toggleOpenPortButton.rx.tap.bindNext(kite.togglePort).disposed(by: bag)
-        
-//        thrustSlider.rx.value.map(Float.init).bindTo(kite.thrust).disposed(by: bag)
-        
-        offboardButton.bool.bindTo(kite.isOffboard).disposed(by: bag)
+        clearButton.rx.tap.bind(onNext: clearText).disposed(by: bag)
+        toggleOpenPortButton.rx.tap.bind(onNext: kite.togglePort).disposed(by: bag)
+
+        offboardButton.bool.bind(to: kite.isOffboard).disposed(by: bag)
 
         kite.mavlinkMessage.subscribe(onNext: addMessage).disposed(by: bag)
     }
@@ -54,9 +51,6 @@ class SerialViewController: NSViewController {
     private func clearText() {
         messages = []
         updateUI()
-        
-        // temp 
-        kite.requestParameterList()
     }
     
     private func updateUI() {

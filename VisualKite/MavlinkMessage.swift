@@ -14,7 +14,7 @@ struct MessageBox {
     public let compId: UInt8
     public let tarSysId: UInt8
     public let tarCompId: UInt8
-    
+
     public func setOffboardEnabled(on: Bool) -> MavlinkMessage {
         var com = mavlink_command_long_t()
         com.target_system = tarSysId
@@ -22,7 +22,7 @@ struct MessageBox {
         com.command = UInt16(MAV_CMD_NAV_GUIDED_ENABLE.rawValue)
         com.confirmation = UInt8(true)
         com.param1 = on ? 1 : 0 // // flag >0.5 => start, <0.5 => stop
-        
+
         var message = mavlink_message_t()
         mavlink_msg_command_long_encode(sysId, compId, &message, &com);
         
@@ -91,7 +91,7 @@ struct MessageBox {
         //        let MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_YAW_ANGLE     : UInt16 = 0b0000100111111111
         //        let MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_YAW_RATE      : UInt16 = 0b0000010111111111
         //
-        setPositionTarget.time_boot_ms = UInt32(ProcessInfo.processInfo.systemUptime * 1000)
+        setPositionTarget.time_boot_ms = UInt32(ProcessInfo.processInfo.systemUptime*1000)
         setPositionTarget.type_mask = MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_POSITION // Bitmask should work for now.
         setPositionTarget.coordinate_frame = UInt8(MAV_FRAME_LOCAL_NED.rawValue)
         
@@ -151,20 +151,36 @@ struct MessageBox {
         
         return msg
     }
-    
-    public func setParameter(id: String, value: Float, type: MAV_PARAM_TYPE) -> MavlinkMessage {
+
+    public func setGlobalOrigin(gps: GPSVector) -> MavlinkMessage {
+        var setOrigin = mavlink_set_gps_global_origin_t()
+
+        setOrigin.altitude = gps.alt
+        setOrigin.latitude = gps.lat
+        setOrigin.longitude = gps.lon
+
+        setOrigin.target_system = tarSysId
+
+        var msg = mavlink_message_t()
+        mavlink_msg_set_gps_global_origin_encode(sysId, compId, &msg, &setOrigin)
+
+        print("SET globalOrigin (\(msg.msgid)): \(gps)")
+
+        return msg
+    }
+
+    public func setParameter(value parameterValue: ParameterValue) -> MavlinkMessage {
         var paramSet = mavlink_param_set_t()
         paramSet.target_component = tarCompId
         paramSet.target_system = tarSysId
         
-        paramSet.param_id = id.paramId
-        paramSet.param_value = value
-        paramSet.param_type = UInt8(type.rawValue)
-        
+        paramSet.param_id = parameterValue.id.paramId
+        paramSet.param_value = Float(parameterValue.value)
+        paramSet.param_type = UInt8(parameterValue.type.rawValue)
+
         var msg = mavlink_message_t()
-        
         mavlink_msg_param_set_encode(sysId, compId, &msg, &paramSet)
-        
+
         return msg
     }
 }
@@ -174,19 +190,18 @@ extension String {
         let a = unicodeScalars.filter { $0.isASCII }.map { Int8($0.value) } + Array(repeating: 0, count: 16)
         return (a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13], a[14], a[15])
     }
-    
+
     init(paramId p: ParamId) {
-        let array = [p.0, p.1, p.2, p.3, p.4, p.5, p.6, p.7, p.8, p.9, p.10, p.11, p.12, p.13, p.14, p.15]
-        
-        let chars = array.map { Character( UnicodeScalar(UInt8($0)) ) }
-        
-        let str = String(chars)
-        
-        self = str
+        let array = [p.0, p.1, p.2, p.3, p.4, p.5, p.6, p.7, p.8, p.9, p.10, p.11, p.12, p.13, p.14, p.15].filter { $0 != 0 }
+        self = String(array.map { Character(UnicodeScalar(UInt8($0))) })
     }
 }
 
 public typealias ParamId = (Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8, Int8)
+
+public func ==(lhs: ParamId, rhs: ParamId) -> Bool {
+    return String(paramId: lhs) == String(paramId: rhs)
+}
 
 public typealias MavlinkMessage = mavlink_message_t
 
@@ -202,15 +217,16 @@ extension MavlinkMessage: CustomStringConvertible {
             var sys_status = mavlink_sys_status_t()
             mavlink_msg_sys_status_decode(&message, &sys_status)
             return "SYS_STATUS comms drop rate: \(sys_status.drop_rate_comm)%"
+        case 21:
+            return "REQUEST PARAM LIST :comp: \(message.compid) sys: \(message.sysid)"
         case 22:
-            var param_value = mavlink_param_value_t()
-            mavlink_msg_param_value_decode(&message, &param_value)
-            
-            let p = param_value
-            
-            print("PARAM_VALUE: id: \(String(paramId: p.param_id)), \(p.param_type),  \(p.param_value), \(p.param_index),  \(p.param_count)")
-            
-            return "PARAM_VALUE: id: \(param_value.param_id), \(param_value.param_type) \(param_value.param_value)"
+            var p = mavlink_param_value_t()
+            mavlink_msg_param_value_decode(&message, &p)
+            return "PARAM_VALUE: id: \(String(paramId: p.param_id)), type: \(p.param_type), \(p.param_value), \(p.param_index), \(p.param_count)"
+        case 23:
+            var param_set = mavlink_param_set_t()
+            mavlink_msg_param_set_decode(&message, &param_set)
+            return "PARAM_SET: \(String(paramId: param_set.param_id)) = \(param_set.param_value) type: \(param_set.param_type) cmp: \(param_set.target_component) sys: \(param_set.target_system)"
         case 30:
             var attitude = mavlink_attitude_t()
             mavlink_msg_attitude_decode(&message, &attitude)
@@ -220,7 +236,8 @@ extension MavlinkMessage: CustomStringConvertible {
             mavlink_msg_local_position_ned_decode(&message, &local_position_ned)
             return "LOCAL POSITION NED x: \(local_position_ned.x) y: \(local_position_ned.y) z: \(local_position_ned.z)"
         case 33:
-            return "GLOBAL_POSITION_INT"
+            let pos = globalPosition!.pos
+            return "GLOBAL_POSITION_INT lat:\(pos.lat), lon:\(pos.lon), alt: \(pos.alt)"
         case 74:
             var vfr_hud = mavlink_vfr_hud_t()
             mavlink_msg_vfr_hud_decode(&message, &vfr_hud)
@@ -236,19 +253,34 @@ extension MavlinkMessage: CustomStringConvertible {
             mavlink_msg_battery_status_decode(&message, &battery_status)
             return "BATTERY_STATUS current consumed: \(battery_status.current_consumed) mAh"
         default:
-            return "OTHER Message with id \(message.msgid)"
+            return "OTHER Message with id \(message.msgid) comp: \(message.compid) sys: \(message.sysid)"
         }
     }
 }
 
 extension MavlinkMessage {
-    var attitude: KiteAttitude? {
+    var parameterValue: ParameterValue? {
+        guard msgid == 22 else {
+            return nil
+        } 
+
+        var message = self
+        var param = mavlink_param_value_t()
+        mavlink_msg_param_value_decode(&message, &param)
+
+        let id = String(paramId: param.param_id)
+        let value = param.param_value
+        let type = MAV_PARAM_TYPE(UInt32(param.param_type))
+
+        return ParameterValue(id: id, value: Scalar(value), type: type)
+    }
+
+    var attitude: TimedAttitude? {
         guard msgid == 30 else {
             return nil
         }
         
         var message = self
-        
         var att = mavlink_attitude_t()
         mavlink_msg_attitude_decode(&message, &att)
         
@@ -256,34 +288,31 @@ extension MavlinkMessage {
         let euler = Vector(att.yaw, att.pitch, att.roll)
         let rate = Vector(att.yawspeed, att.pitchspeed, att.rollspeed)
         
-        return KiteAttitude(time: time, att: euler, rate: rate)
+        return TimedAttitude(time: time, att: euler, rate: rate)
     }
 
-    var quaternion: KiteQuaternion? {
+    var orientation: TimedOrientation? {
         guard msgid == 31 else {
             return nil
         }
 
         var message = self
-        
         var q = mavlink_attitude_quaternion_t()
         mavlink_msg_attitude_quaternion_decode(&message, &q)
         
         let time = Double(q.time_boot_ms)
-
-        let quat = Quaternion(q.q1, q.q2, q.q3, q.q4)
+        let quat = Quaternion(q.q2, q.q3, q.q4, q.q1)
         let rate = Vector(q.yawspeed, q.pitchspeed, q.rollspeed)
 
-        return KiteQuaternion(time: time, quaternion: quat, rate: rate)
+        return TimedOrientation(time: time, orientation: quat, rate: rate)
     }
     
-    var location: KiteLocation? {
+    var location: TimedLocation? {
         guard msgid == 32 else {
             return nil
         }
         
         var message = self
-        
         var local_position_ned = mavlink_local_position_ned_t()
         mavlink_msg_local_position_ned_decode(&message, &local_position_ned)
         
@@ -291,9 +320,48 @@ extension MavlinkMessage {
         let pos = Vector(local_position_ned.x, local_position_ned.y, local_position_ned.z)
         let vel = Vector(local_position_ned.vx, local_position_ned.vy, local_position_ned.vz)
         
-        return KiteLocation(time: time, pos: pos, vel: vel)
+        return TimedLocation(time: time, pos: pos, vel: vel)
     }
-    
+
+    var globalPosition: TimedGPSVector? {
+        guard msgid == 33 else {
+            return nil
+        }
+
+        var message = self
+        var global_position = mavlink_global_position_int_t()
+        mavlink_msg_global_position_int_decode(&message, &global_position)
+
+        let time = Double(global_position.time_boot_ms)
+        let gpsPos = GPSVector(lat: global_position.lat, lon: global_position.lon, alt: global_position.alt)
+
+        return TimedGPSVector(time: time, pos: gpsPos)
+    }
+
+    var gpsOrigin: GPSVector? {
+        guard msgid == 49 else {
+            return nil
+        }
+
+        var message = self
+        var global_origin = mavlink_gps_global_origin_t()
+        mavlink_msg_gps_global_origin_decode(&message, &global_origin)
+
+        return GPSVector(lat: global_origin.latitude, lon: global_origin.longitude, alt: global_origin.altitude)
+    }
+
+    var positionTarget: Vector? {
+        guard msgid == 85 else {
+            return nil
+        }
+
+        var message = self
+        var local_position_ned = mavlink_position_target_local_ned_t()
+        mavlink_msg_position_target_local_ned_decode(&message, &local_position_ned)
+
+        return Vector(local_position_ned.x, local_position_ned.y, local_position_ned.z)
+    }
+
     var data: Data {
         let buffer = Data(count: 300) // 300 from mavlink example c_uart_interface_example
         
