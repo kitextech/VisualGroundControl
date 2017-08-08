@@ -87,7 +87,7 @@ struct LogProcessor {
 
 //    public var angularVelocities: [Vector] = []
 
-    private var model: LogMNodel = .test
+    private var model: LogMNodel = LogLoader().loadData() ?? .test
 
     public mutating func load(_ newModel: LogMNodel) {
         model = newModel
@@ -147,6 +147,84 @@ struct LogProcessor {
 
 class LogLoader {
 
+    func loadData() -> LogMNodel? {
+                let path = "~/Dropbox/KiteX/PrototypeDesign/10_32_17.ulg"
+//        let path = "/Users/aokholm/src/kitex/PX4/Firmware/build_posix_sitl_default_replay/tmp/rootfs/fs/microsd/log/2017-08-04/15_19_22_replayed.ulg"
+        
+        let location = NSString(string: path).expandingTildeInPath
+        
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: location)) else {
+            print("failed to load data")
+            return nil
+        }
+        
+        guard let ulog = ULog(data: data) else {
+            print("error")
+            return nil
+        }
+        
+//        let messageName = "fw_turning"
+//        let variableKey = "arc_radius"
+//        
+//        let f = ulog.formats[messageName]!
+//        let sensorCombinedData = ulog.data[messageName]!
+//        
+//        let variableIndex = f.lookup[variableKey]!
+//        
+//        let variableArray = sensorCombinedData.map { $0[variableIndex] }
+        
+//        public let duration: Double
+//        public let locations: [TimedLocation]
+//        public let orientations: [TimedOrientation]
+        
+        
+        let vehicleLocalPositions = ulog.data["vehicle_local_position"]!
+        let VLPf = ulog.formats["vehicle_local_position"]!
+        
+        print(VLPf)
+        
+        func toTimedLocation(value: [UlogValue] ) -> TimedLocation {
+            
+            let time = value[VLPf.lookup["timestamp"]!].getValue() as UInt64
+            
+            let x = value[VLPf.lookup["x"]!].getValue() as Float
+            let y = value[VLPf.lookup["y"]!].getValue() as Float
+            let z = value[VLPf.lookup["z"]!].getValue() as Float
+            let vx = value[VLPf.lookup["vx"]!].getValue() as Float
+            let vy = value[VLPf.lookup["vy"]!].getValue() as Float
+            let vz = value[VLPf.lookup["vz"]!].getValue() as Float
+            let pos = Vector(x,y,z)
+            let vel = Vector(vx,vy,vz)
+
+            return TimedLocation(time: Double(time)/1000000, pos: pos, vel: vel)
+            
+        }
+        
+        let VAf = ulog.formats["vehicle_attitude"]!
+
+        func toTimedOrientation(value: [UlogValue] ) -> TimedOrientation {
+            
+            let time = value[VAf.lookup["timestamp"]!].getValue() as UInt64
+            let qarray = value[VAf.lookup["q"]!].getValue() as [UlogValue]
+            
+            let w = qarray[0].getValue() as Float
+            let x = qarray[1].getValue() as Float
+            let y = qarray[2].getValue() as Float
+            let z = qarray[3].getValue() as Float
+
+            return TimedOrientation(time: Double(time)/1000000, orientation: Quaternion(x, y, z, w), rate: Vector(0,0,0))
+            
+        }
+        
+        let timedLocations = vehicleLocalPositions.map(toTimedLocation)
+        let timedOrientations = ulog.data["vehicle_attitude"]!.map(toTimedOrientation)
+
+//        print(timedLocations)
+//
+//        print(timedOrientations)
+
+        return LogMNodel(duration: 180, locations: timedLocations, orientations: timedOrientations)
+    }
 }
 
 class LogViewController: NSViewController {
@@ -170,7 +248,10 @@ class LogViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+//        let logLoader = LogLoader.init()
+//        logLoader.loadData()
+        
         let tRelRel = tSlider.scalar.shareReplayLatestWhileConnected()
         let t0Rel = t0Slider.scalar.shareReplayLatestWhileConnected()
         let t1Rel = t1Slider.scalar.shareReplayLatestWhileConnected()

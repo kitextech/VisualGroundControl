@@ -41,6 +41,7 @@
 		22EC26A41E62219B00370170 /* Rotations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC269D1E62219B00370170 /* Rotations.swift */; };
 		22EC26A61E62219B00370170 /* Vector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC269F1E62219B00370170 /* Vector.swift */; };
 		22EC26A71E62219B00370170 /* Quaternion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26A01E62219B00370170 /* Quaternion.swift */; };
+		9F19D5561F38A20100914C13 /* ULog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F19D5551F38A20100914C13 /* ULog.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -269,6 +270,7 @@
 		22EC269D1E62219B00370170 /* Rotations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rotations.swift; sourceTree = "<group>"; };
 		22EC269F1E62219B00370170 /* Vector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector.swift; sourceTree = "<group>"; };
 		22EC26A01E62219B00370170 /* Quaternion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Quaternion.swift; sourceTree = "<group>"; };
+		9F19D5551F38A20100914C13 /* ULog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ULog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -388,6 +390,7 @@
 				22EC26A01E62219B00370170 /* Quaternion.swift */,
 				22EC269D1E62219B00370170 /* Rotations.swift */,
 				22DD78471F06714400E73346 /* Tracer.swift */,
+				9F19D5551F38A20100914C13 /* ULog.swift */,
 			);
 			path = VisualKite;
 			sourceTree = "<group>";
@@ -658,6 +661,7 @@
 				2298CE551F2E8D0C00319634 /* TraceViewsViewController.swift in Sources */,
 				22389A141E66034400E596EA /* KiteEmulator.swift in Sources */,
 				22BFFA4A1E72B97A006BE86D /* DataModels.swift in Sources */,
+				9F19D5561F38A20100914C13 /* ULog.swift in Sources */,
 				22389A121E6602DE00E596EA /* KiteViewer.swift in Sources */,
 				22DD78461F06505B00E73346 /* Point.swift in Sources */,
 				22BFFA841E793700006BE86D /* LeapObjectiveC.mm in Sources */,
