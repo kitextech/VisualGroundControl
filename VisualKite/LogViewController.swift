@@ -9,16 +9,16 @@
 import AppKit
 import RxSwift
 
-struct LogMNodel {
+struct LogModel {
     public let duration: Double
     public let locations: [TimedLocation]
     public let orientations: [TimedOrientation]
 
     public var isEmpty: Bool { return locations.isEmpty }
 
-    public static let empty = LogMNodel(duration: 1, locations: [], orientations: [])
+    public static let empty = LogModel(duration: 1, locations: [], orientations: [])
 
-    public static let test: LogMNodel = {
+    public static let test: LogModel = {
         let duration = 10.0
         let n = 1000
         let tetherLength: Scalar = 100
@@ -55,7 +55,7 @@ struct LogMNodel {
             return TimedOrientation(time: location.time, orientation: Quaternion(rotationFrom: e_z, to: location.vel), rate: .zero)
         }
 
-        return LogMNodel(duration: duration, locations: locations, orientations: orientations)
+        return LogModel(duration: duration, locations: locations, orientations: orientations)
     }()
 }
 
@@ -87,9 +87,9 @@ struct LogProcessor {
 
 //    public var angularVelocities: [Vector] = []
 
-    private var model: LogMNodel = .test
+    private var model: LogModel = .test
 
-    public mutating func load(_ newModel: LogMNodel) {
+    public mutating func load(_ newModel: LogModel) {
         model = newModel
         updateCurrent()
         updateVisible()
