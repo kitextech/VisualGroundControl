@@ -39,7 +39,7 @@ class TraceViewsViewController: NSViewController {
     private let orientationsLogDrawableY = ArrowsDrawable(color: .green)
     private let orientationsLogDrawableZ = ArrowsDrawable(color: .blue)
 
-    private var currentPositionLogDrawable = KiteDrawable(color: .red)
+    private var currentLogDrawable = KiteDrawable(color: .red)
 
     // MARK: - View Controller Lifecycle Methods
 
@@ -112,7 +112,7 @@ class TraceViewsViewController: NSViewController {
 //        yzButton.rx.tap.map { (π/2, π/2) }.bind(to: freeView.angles).disposed(by: bag)
 //        piButton.rx.tap.map { (π + kite.phiC.value, π/2 - kite.thetaC.value) }.bind(to: freeView.angles).disposed(by: bag)
 
-        [currentPositionLogDrawable, pathLogDrawable, velocitiesLogDrawable, orientationsLogDrawableX, orientationsLogDrawableY, orientationsLogDrawableZ].forEach(add)
+        [currentLogDrawable, pathLogDrawable, velocitiesLogDrawable, orientationsLogDrawableX, orientationsLogDrawableY, orientationsLogDrawableZ].forEach(add)
 
         LogProcessor.shared.change.bind(onNext: updateLogPaths).disposed(by: bag)
     }
@@ -159,23 +159,22 @@ class TraceViewsViewController: NSViewController {
     }
 
     private func updateLogPaths(_ change: LogProcessor.Change) {
-        //        LogProcessor.shared.tRelRel = tRelRel
-
-        currentPositionLogDrawable.position = LogProcessor.shared.position
+        currentLogDrawable.position = LogProcessor.shared.currentConfiguration.loc.pos
+        currentLogDrawable.orientation = LogProcessor.shared.currentConfiguration.ori.orientation
 
         if change == .changedRange {
-            pathLogDrawable.update(LogProcessor.shared.positions)
+            pathLogDrawable.update(LogProcessor.shared.pathLocations.map(TimedLocation.getPosition))
 
-            let strodePositions = LogProcessor.shared.strodePositions
-            //        velocitiesLogDrawable.update(strodePositions, LogProcessor.shared.velocities)
-
-            func update(_ drawable: ArrowsDrawable, _ vector: Vector) {
-                drawable.update(strodePositions, LogProcessor.shared.orientations.map { 3*$0.apply(vector) })
-            }
-
-            update(orientationsLogDrawableX, e_x)
-            update(orientationsLogDrawableY, e_y)
-            update(orientationsLogDrawableZ, e_z)
+//            let strodePositions = LogProcessor.shared.strodePositions
+//            //        velocitiesLogDrawable.update(strodePositions, LogProcessor.shared.velocities)
+//
+//            func update(_ drawable: ArrowsDrawable, _ vector: Vector) {
+//                drawable.update(strodePositions, LogProcessor.shared.orientations.map { 3*$0.apply(vector) })
+//            }
+//
+//            update(orientationsLogDrawableX, e_x)
+//            update(orientationsLogDrawableY, e_y)
+//            update(orientationsLogDrawableZ, e_z)
         }
 
         redrawViews()

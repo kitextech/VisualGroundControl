@@ -10,6 +10,7 @@ import AppKit
 import Foundation
 
 public class Tracer {
+    public var offset: CGPoint = .zero
     public var projectionAxis = e_z
     public var scaleFactor: Scalar = 70
     public var bounds: CGRect = .unit
@@ -25,10 +26,12 @@ public class Tracer {
             .collapsed(along: projectionAxis)
             .scaled(by: 1/scaleFactor)
             .absolute(in: bounds)
+            .translated(by: offset)
     }
 
     public func vectorify(_ point: CGPoint) -> Vector {
         return point
+            .translated(by: -offset)
             .relative(in: bounds)
             .scaled(by: scaleFactor)
             .deCollapsed(along: projectionAxis)
@@ -84,9 +87,9 @@ public class VectorDrawable: Drawable {
 }
 
 public class KiteDrawable: Drawable {
-    let span: Scalar = 5*1.2
-    let length: Scalar = 5*1
-    let height: Scalar = 5*0.6
+    let span: Scalar = 10*1.2
+    let length: Scalar = 10*1
+    let height: Scalar = 10*0.6
 
     private let tailProportion: Scalar = 0.8
     private let stabiliserProportion: Scalar = 0.8

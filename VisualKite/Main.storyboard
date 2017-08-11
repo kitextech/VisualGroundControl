@@ -981,7 +981,7 @@
                         <subviews>
                             <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bxV-kI-9Rc">
                                 <rect key="frame" x="72" y="324" width="329" height="24"/>
-                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="10" maxValue="100" doubleValue="50" tickMarkPosition="above" numberOfTickMarks="91" allowsTickMarkValuesOnly="YES" sliderType="linear" id="BzM-zC-xpx"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="10" maxValue="100" doubleValue="84" tickMarkPosition="above" numberOfTickMarks="91" allowsTickMarkValuesOnly="YES" sliderType="linear" id="BzM-zC-xpx"/>
                             </slider>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eQx-8t-FVf">
                                 <rect key="frame" x="8" y="331" width="68" height="17"/>
@@ -1513,7 +1513,7 @@
                             </textField>
                             <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="O1Z-m6-atU">
                                 <rect key="frame" x="72" y="91" width="425" height="19"/>
-                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="1" maxValue="100" doubleValue="10" tickMarkPosition="above" sliderType="linear" id="9BD-t4-2H1"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="1" maxValue="10" doubleValue="5" tickMarkPosition="above" sliderType="linear" id="9BD-t4-2H1"/>
                             </slider>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GE3-9z-yRQ">
                                 <rect key="frame" x="8" y="91" width="68" height="17"/>

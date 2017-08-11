@@ -87,11 +87,17 @@ class TraceView: NSView {
         }
 
         requestedPositionCurrent = requestedPositions.sorted { dist($0) < dist($1) }.first(where: grabbable)
+
         redraw()
     }
 
     override func mouseDragged(with event: NSEvent) {
-        requestedPositionCurrent?.value = domeVector(point: touchPoint(event: event))
+        if requestedPositionCurrent == nil {
+            tracer.offset = tracer.offset + CGPoint(x: event.deltaX, y: -event.deltaY)
+        }
+        else {
+            requestedPositionCurrent?.value = domeVector(point: touchPoint(event: event))
+        }
         redraw()
     }
 
