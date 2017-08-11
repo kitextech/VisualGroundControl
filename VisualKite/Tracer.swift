@@ -87,9 +87,9 @@ public class VectorDrawable: Drawable {
 }
 
 public class KiteDrawable: Drawable {
-    let span: Scalar = 10*1.2
-    let length: Scalar = 10*1
-    let height: Scalar = 10*0.6
+    let span: Scalar = 6*1.2
+    let length: Scalar = 6*1
+    let height: Scalar = 6*0.6
 
     private let tailProportion: Scalar = 0.8
     private let stabiliserProportion: Scalar = 0.8
@@ -108,7 +108,7 @@ public class KiteDrawable: Drawable {
 
     public var color: NSColor
 
-    public let lineWidth: Scalar = 4
+    public let lineWidth: Scalar = 2
 
     public var lines: [Line] {
         let halfSpan = span/2

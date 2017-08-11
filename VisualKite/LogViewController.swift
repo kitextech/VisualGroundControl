@@ -15,7 +15,7 @@ struct LogModel {
     public let locations: [TimedLocation]
     public let orientations: [TimedOrientation]
 
-    public var isEmpty: Bool { return locations.isEmpty }
+    public var isEmpty: Bool { return locations.isEmpty || orientations.isEmpty }
 
     init(locations: [TimedLocation], orientations: [TimedOrientation]) {
         self.locations = locations
@@ -80,114 +80,84 @@ struct LogProcessor {
     public var end: Double { return model.end }
     public var duration: Double { return model.end - model.start }
 
-    public var tRelRel: Scalar = 0 { didSet { updateCurrent() } }
-    public var t0Rel: Scalar = 0 { didSet { updateVisible() } }
-    public var t1Rel: Scalar = 1 { didSet { updateVisible() } }
-    public var step: Scalar = 10 { didSet { updateVisible() } }
+    public var tRelRel: Scalar = 0 { didSet { updateStepped() } }
+    public var t0Rel: Scalar = 0 { didSet { updateAll() } }
+    public var t1Rel: Scalar = 1 { didSet { updateAll() } }
+    public var step: Scalar = 10 { didSet { updateAll() } }
 
-    // Current
-    public var time: Double = 0
-    public var currentConfiguration: TimedConfiguration = (TimedLocation(), TimedOrientation())
-
-    // Visible
+    // Path
     public var pathLocations: [TimedLocation] = []
+
+    // Stepped
+    public var time: Double = 0
     public var steppedConfigurations: [TimedConfiguration] = []
 
     private var model: LogModel = .test
 
     public mutating func load(_ newModel: LogModel) {
         model = newModel
-        updateCurrent()
-        updateVisible()
+        updateAll()
+    }
+
+    public mutating func clear() {
+        model = .empty
+        updateAll()
     }
 
     // Helper methods
 
-    public mutating func clear() {
-        model = .empty
-        updateCurrent()
-        updateVisible()
+    private mutating func updateAll() {
+        updatePath()
+        updateStepped()
     }
 
-    private mutating func updateCurrent() {
-        guard !model.isEmpty else {
-            time = 0
-            currentConfiguration = (TimedLocation(), TimedOrientation())
-            return
-        }
-
-        let tRel = t0Rel*(1 - tRelRel) + t1Rel*tRelRel
-        time = absolute(tRel)
-
-        guard let config = configuration(for: time) else {
-            return
-        }
-
-        currentConfiguration = config
-        change.onNext(.scrubbed)
-    }
-
-    private func configuration(for time: TimeInterval) -> TimedConfiguration? {
-        guard let iLoc = locationIndex(for: time), let iOri = orientationIndex(for: time) else {
-            return nil
-        }
-
-        return (model.locations[iLoc], model.orientations[iOri])
-    }
-
-    private mutating func updateVisible() {
-        steppedConfigurations = []
-
+    private mutating func updatePath() {
         guard !model.isEmpty else {
             pathLocations = []
             return
         }
 
-        let startTime = absolute(t0Rel)
-        let endTime = absolute(t1Rel)
-
-        // Position path
-        guard let fromLocIndex = locationIndex(for: startTime), let toLocIndex = locationIndex(for: endTime) else {
-            return
-        }
-
-        pathLocations = Array(model.locations[fromLocIndex...toLocIndex])
-
-        guard let fromOriIndex = orientationIndex(for: startTime), let toOriIndex = orientationIndex(for: endTime) else {
-            return
-        }
-
-
-        var locIndex = fromLocIndex
-        var oriIndex = fromOriIndex
-
-//        while locationIndex < toLocationIndex, orientationIndex < toOrientationoIndex   {
-////            let orientation = orien
-//
-//        }
-
-
-            //        let visibleLocations = strodeRange.map { model.locations[$0] }
-
-
-//        let strodeRange = stride(from: index(for: t0Rel), to: index(for: t1Rel), by: step)
-//        let visibleLocations = strodeRange.map { model.locations[$0] }
-//        strodePositions = visibleLocations.map(TimedLocation.getPosition)
-//        velocities = visibleLocations.map(TimedLocation.getVelocity)
-//        orientations = strodeRange.map { model.orientations[$0].orientation }
+        pathLocations = Array(model.locations[locationIndex(for: absolute(t0Rel))..<locationIndex(for: absolute(t1Rel))])
         change.onNext(.changedRange)
+    }
+
+    private mutating func updateStepped() {
+        steppedConfigurations = []
+
+        guard !model.isEmpty else {
+            time = 0
+            return
+        }
+
+        let tRel = t0Rel*(1 - tRelRel) + t1Rel*tRelRel
+        time = absolute(tRel)
+        let startTime = absolute(t0Rel)
+        let timeSinceStart = time - startTime
+        let timeStep = Double(step)
+        let visibleDuration = duration*Double(t1Rel - t0Rel)
+        let n = Int(ceil(visibleDuration/timeStep))
+
+        steppedConfigurations = (0..<n)
+            .map { i in (timeSinceStart + Double(i)*timeStep).truncatingRemainder(dividingBy: visibleDuration) + startTime }
+            .map(configuration)
+
+        change.onNext(.scrubbed)
+    }
+
+    private func configuration(for time: TimeInterval) -> TimedConfiguration {
+        return (model.locations[locationIndex(for: time)], model.orientations[orientationIndex(for: time)])
     }
 
     private func absolute(_ rel: Scalar) -> TimeInterval {
         return start + duration*Double(rel)
     }
 
-    private func locationIndex(for time: TimeInterval) -> Int? {
-        return model.locations.index { $0.time >= time }
+    private func locationIndex(for time: TimeInterval) -> Int {
+        return model.locations.enumerated().max { abs($1.element.time - time) < abs($0.element.time - time) }?.offset ?? 0
     }
 
-    private func orientationIndex(for time: TimeInterval) -> Int? {
-        return model.orientations.index { $0.time >= time }
+    private func orientationIndex(for time: TimeInterval) -> Int {
+        return model.orientations.enumerated().max { abs($1.element.time - time) < abs($0.element.time - time) }?.offset ?? 0
     }
 }
 
@@ -222,7 +192,7 @@ class LogViewController: NSViewController {
         t1Rel.bind { LogProcessor.shared.t1Rel = $0 }.disposed(by: bag)
 
         Observable.combineLatest(tRelRel, t0Rel, t1Rel).bind { _ in
-            let p = LogProcessor.shared.currentConfiguration.loc.pos
+            let p = LogProcessor.shared.steppedConfigurations.first?.loc.pos ?? .zero
             self.currentPositionLabel.stringValue = String(format: "NED: %.1f, %.1f, %.1f", p.x, p.y, p.z)
             self.tLabel.stringValue = String(format: "%.2f", LogProcessor.shared.time)
             }

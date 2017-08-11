@@ -34,12 +34,7 @@ class TraceViewsViewController: NSViewController {
     private var views: [TraceView] = []
 
     private let pathLogDrawable = PathDrawable()
-    private let velocitiesLogDrawable = ArrowsDrawable(color: .orange)
-    private let orientationsLogDrawableX = ArrowsDrawable(color: .red)
-    private let orientationsLogDrawableY = ArrowsDrawable(color: .green)
-    private let orientationsLogDrawableZ = ArrowsDrawable(color: .blue)
-
-    private var currentLogDrawable = KiteDrawable(color: .red)
+    private var steppedLogDrawables = [KiteDrawable(color: .red)]
 
     // MARK: - View Controller Lifecycle Methods
 
@@ -108,13 +103,10 @@ class TraceViewsViewController: NSViewController {
         useAsRedrawTrigger(cPoint)
         redrawViews()
 
-//        xzButton.rx.tap.map { (0, π/2) }.bind(to: freeView.angles).disposed(by: bag)
-//        yzButton.rx.tap.map { (π/2, π/2) }.bind(to: freeView.angles).disposed(by: bag)
-//        piButton.rx.tap.map { (π + kite.phiC.value, π/2 - kite.thetaC.value) }.bind(to: freeView.angles).disposed(by: bag)
+        add(pathLogDrawable)
+        steppedLogDrawables.forEach(add)
 
-        [currentLogDrawable, pathLogDrawable, velocitiesLogDrawable, orientationsLogDrawableX, orientationsLogDrawableY, orientationsLogDrawableZ].forEach(add)
-
-        LogProcessor.shared.change.bind(onNext: updateLogPaths).disposed(by: bag)
+        LogProcessor.shared.change.bind(onNext: updateLog).disposed(by: bag)
     }
 
     // Helper methods
@@ -158,23 +150,26 @@ class TraceViewsViewController: NSViewController {
         useAsRedrawTrigger(kite.orientation)
     }
 
-    private func updateLogPaths(_ change: LogProcessor.Change) {
-        currentLogDrawable.position = LogProcessor.shared.currentConfiguration.loc.pos
-        currentLogDrawable.orientation = LogProcessor.shared.currentConfiguration.ori.orientation
+    private func updateLog(_ change: LogProcessor.Change) {
+        for (index, current) in LogProcessor.shared.steppedConfigurations.enumerated() {
+            if index >= steppedLogDrawables.count {
+                let newDrawable = KiteDrawable(color: NSColor(red: 1, green: 0, blue: 0, alpha: 0.3))
+                add(newDrawable)
+                steppedLogDrawables.append(newDrawable)
+            }
+
+            steppedLogDrawables[index].position = current.loc.pos
+            steppedLogDrawables[index].orientation = current.ori.orientation
+            steppedLogDrawables[index].isHidden = false
+        }
+
+        let drawablesNeeded = LogProcessor.shared.steppedConfigurations.count
+        for kiteDrawable in steppedLogDrawables[drawablesNeeded..<steppedLogDrawables.count] {
+            kiteDrawable.isHidden = true
+        }
 
         if change == .changedRange {
             pathLogDrawable.update(LogProcessor.shared.pathLocations.map(TimedLocation.getPosition))
-
-//            let strodePositions = LogProcessor.shared.strodePositions
-//            //        velocitiesLogDrawable.update(strodePositions, LogProcessor.shared.velocities)
-//
-//            func update(_ drawable: ArrowsDrawable, _ vector: Vector) {
-//                drawable.update(strodePositions, LogProcessor.shared.orientations.map { 3*$0.apply(vector) })
-//            }
-//
-//            update(orientationsLogDrawableX, e_x)
-//            update(orientationsLogDrawableY, e_y)
-//            update(orientationsLogDrawableZ, e_z)
         }
 
         redrawViews()
