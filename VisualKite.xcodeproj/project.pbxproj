@@ -12,7 +12,8 @@
 		22389A121E6602DE00E596EA /* KiteViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22389A111E6602DE00E596EA /* KiteViewer.swift */; };
 		22389A141E66034400E596EA /* KiteEmulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22389A131E66034400E596EA /* KiteEmulator.swift */; };
 		224B2BA91E9984730090C7B9 /* Pursuit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224B2BA81E9984730090C7B9 /* Pursuit.swift */; };
-		22BFFA201E6DF6E8006BE86D /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA1F1E6DF6E8006BE86D /* WindowController.swift */; };
+		2298CE541F2E8D0C00319634 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2298CE521F2E8D0C00319634 /* SettingsViewController.swift */; };
+		2298CE551F2E8D0C00319634 /* TraceViewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2298CE531F2E8D0C00319634 /* TraceViewsViewController.swift */; };
 		22BFFA221E6DFC4A006BE86D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22BFFA211E6DFC4A006BE86D /* Main.storyboard */; };
 		22BFFA4A1E72B97A006BE86D /* DataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA491E72B97A006BE86D /* DataModels.swift */; };
 		22BFFA4C1E72ED54006BE86D /* KiteAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA4B1E72ED54006BE86D /* KiteAnalyzer.swift */; };
@@ -24,7 +25,6 @@
 		22BFFA841E793700006BE86D /* LeapObjectiveC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA831E793700006BE86D /* LeapObjectiveC.mm */; };
 		22BFFA861E793771006BE86D /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA851E793771006BE86D /* libLeap.dylib */; };
 		22BFFA881E793810006BE86D /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22BFFA851E793771006BE86D /* libLeap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		22BFFA8A1E798A01006BE86D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA891E798A01006BE86D /* SettingsViewController.swift */; };
 		22C5766A1E9BEEA80097345B /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C576681E9BEEA80097345B /* Realm.framework */; };
 		22C5766B1E9BEEA80097345B /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 22C576681E9BEEA80097345B /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		22C5766C1E9BEEA80097345B /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C576691E9BEEA80097345B /* RealmSwift.framework */; };
@@ -33,7 +33,6 @@
 		22DD78461F06505B00E73346 /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DD78451F06505B00E73346 /* Point.swift */; };
 		22DD78481F06714500E73346 /* Tracer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DD78471F06714400E73346 /* Tracer.swift */; };
 		22DD784A1F06734D00E73346 /* TraceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DD78491F06734D00E73346 /* TraceView.swift */; };
-		22E1D5631E7D8CFA005B8237 /* TraceViewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA8B1E7D7D07006BE86D /* TraceViewsViewController.swift */; };
 		22EC26881E61DD7E00370170 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26871E61DD7E00370170 /* AppDelegate.swift */; };
 		22EC268C1E61DD7E00370170 /* SceneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC268B1E61DD7E00370170 /* SceneViewController.swift */; };
 		22EC268E1E61DD7E00370170 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 22EC268D1E61DD7E00370170 /* art.scnassets */; };
@@ -42,6 +41,9 @@
 		22EC26A41E62219B00370170 /* Rotations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC269D1E62219B00370170 /* Rotations.swift */; };
 		22EC26A61E62219B00370170 /* Vector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC269F1E62219B00370170 /* Vector.swift */; };
 		22EC26A71E62219B00370170 /* Quaternion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22EC26A01E62219B00370170 /* Quaternion.swift */; };
+		22F6480F1F3DC56100B40D88 /* ULogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F6480C1F3DC56100B40D88 /* ULogParser.swift */; };
+		22F648101F3DC56100B40D88 /* ULogFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F6480D1F3DC56100B40D88 /* ULogFormat.swift */; };
+		22F648111F3DC56100B40D88 /* ULogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F6480E1F3DC56100B40D88 /* ULogMessage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -238,7 +240,8 @@
 		22389A111E6602DE00E596EA /* KiteViewer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteViewer.swift; sourceTree = "<group>"; };
 		22389A131E66034400E596EA /* KiteEmulator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteEmulator.swift; sourceTree = "<group>"; };
 		224B2BA81E9984730090C7B9 /* Pursuit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pursuit.swift; sourceTree = "<group>"; };
-		22BFFA1F1E6DF6E8006BE86D /* WindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
+		2298CE521F2E8D0C00319634 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		2298CE531F2E8D0C00319634 /* TraceViewsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TraceViewsViewController.swift; sourceTree = "<group>"; };
 		22BFFA211E6DFC4A006BE86D /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		22BFFA491E72B97A006BE86D /* DataModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataModels.swift; sourceTree = "<group>"; };
 		22BFFA4B1E72ED54006BE86D /* KiteAnalyzer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KiteAnalyzer.swift; sourceTree = "<group>"; };
@@ -253,11 +256,9 @@
 		22BFFA821E793700006BE86D /* LeapObjectiveC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeapObjectiveC.h; sourceTree = "<group>"; };
 		22BFFA831E793700006BE86D /* LeapObjectiveC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LeapObjectiveC.mm; sourceTree = "<group>"; };
 		22BFFA851E793771006BE86D /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libLeap.dylib; sourceTree = "<group>"; };
-		22BFFA891E798A01006BE86D /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsViewController.swift; path = ../SettingsViewController.swift; sourceTree = "<group>"; };
-		22BFFA8B1E7D7D07006BE86D /* TraceViewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TraceViewsViewController.swift; path = ../TraceViewsViewController.swift; sourceTree = "<group>"; };
 		22C576681E9BEEA80097345B /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		22C576691E9BEEA80097345B /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
-		22DA65D11F2B6ED40055CB37 /* LogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LogViewController.swift; path = VisualKite/LogViewController.swift; sourceTree = "<group>"; };
+		22DA65D11F2B6ED40055CB37 /* LogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewController.swift; sourceTree = "<group>"; };
 		22DD78451F06505B00E73346 /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		22DD78471F06714400E73346 /* Tracer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tracer.swift; sourceTree = "<group>"; };
 		22DD78491F06734D00E73346 /* TraceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TraceView.swift; sourceTree = "<group>"; };
@@ -271,6 +272,9 @@
 		22EC269D1E62219B00370170 /* Rotations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rotations.swift; sourceTree = "<group>"; };
 		22EC269F1E62219B00370170 /* Vector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector.swift; sourceTree = "<group>"; };
 		22EC26A01E62219B00370170 /* Quaternion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Quaternion.swift; sourceTree = "<group>"; };
+		22F6480C1F3DC56100B40D88 /* ULogParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ULogParser.swift; sourceTree = "<group>"; };
+		22F6480D1F3DC56100B40D88 /* ULogFormat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ULogFormat.swift; sourceTree = "<group>"; };
+		22F6480E1F3DC56100B40D88 /* ULogMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ULogMessage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -344,7 +348,6 @@
 		22EC267B1E61DD7E00370170 = {
 			isa = PBXGroup;
 			children = (
-				22DA65D11F2B6ED40055CB37 /* LogViewController.swift */,
 				22C576681E9BEEA80097345B /* Realm.framework */,
 				22C576691E9BEEA80097345B /* RealmSwift.framework */,
 				22BFFA511E7354DB006BE86D /* ORSSerialPort.xcodeproj */,
@@ -366,33 +369,60 @@
 		22EC26861E61DD7E00370170 /* VisualKite */ = {
 			isa = PBXGroup;
 			children = (
-				224B2BA81E9984730090C7B9 /* Pursuit.swift */,
-				22BFFA1F1E6DF6E8006BE86D /* WindowController.swift */,
+				22F6482B1F3DCB3200B40D88 /* Resources */,
+				22DA65D11F2B6ED40055CB37 /* LogViewController.swift */,
 				22EC268B1E61DD7E00370170 /* SceneViewController.swift */,
-				22BFFA891E798A01006BE86D /* SettingsViewController.swift */,
 				22BFFA611E782302006BE86D /* SerialViewController.swift */,
-				22BFFA8B1E7D7D07006BE86D /* TraceViewsViewController.swift */,
+				2298CE521F2E8D0C00319634 /* SettingsViewController.swift */,
+				2298CE531F2E8D0C00319634 /* TraceViewsViewController.swift */,
 				22DD78491F06734D00E73346 /* TraceView.swift */,
+				22DD78471F06714400E73346 /* Tracer.swift */,
+				224B2BA81E9984730090C7B9 /* Pursuit.swift */,
 				22BFFA7C1E78863B006BE86D /* LeapMotion.swift */,
 				22BFFA4F1E7351F4006BE86D /* KiteLink.swift */,
 				22BFFA4B1E72ED54006BE86D /* KiteAnalyzer.swift */,
-				22BFFA211E6DFC4A006BE86D /* Main.storyboard */,
 				22BFFA7A1E7841E6006BE86D /* MavlinkMessage.swift */,
-				22EC26871E61DD7E00370170 /* AppDelegate.swift */,
 				22BFFA491E72B97A006BE86D /* DataModels.swift */,
 				22389A131E66034400E596EA /* KiteEmulator.swift */,
 				22389A111E6602DE00E596EA /* KiteViewer.swift */,
-				22EC268D1E61DD7E00370170 /* art.scnassets */,
-				22EC268F1E61DD7E00370170 /* Assets.xcassets */,
-				22EC26941E61DD7F00370170 /* Info.plist */,
+				22F6482A1F3DCB2000B40D88 /* Geomerty */,
+				22F648291F3DC56500B40D88 /* ULog */,
+			);
+			path = VisualKite;
+			sourceTree = "<group>";
+		};
+		22F648291F3DC56500B40D88 /* ULog */ = {
+			isa = PBXGroup;
+			children = (
+				22F6480C1F3DC56100B40D88 /* ULogParser.swift */,
+				22F6480D1F3DC56100B40D88 /* ULogFormat.swift */,
+				22F6480E1F3DC56100B40D88 /* ULogMessage.swift */,
+			);
+			name = ULog;
+			sourceTree = "<group>";
+		};
+		22F6482A1F3DCB2000B40D88 /* Geomerty */ = {
+			isa = PBXGroup;
+			children = (
 				22EC269F1E62219B00370170 /* Vector.swift */,
 				22DD78451F06505B00E73346 /* Point.swift */,
 				22EC269B1E62219B00370170 /* Matrix.swift */,
 				22EC26A01E62219B00370170 /* Quaternion.swift */,
 				22EC269D1E62219B00370170 /* Rotations.swift */,
-				22DD78471F06714400E73346 /* Tracer.swift */,
 			);
-			path = VisualKite;
+			name = Geomerty;
+			sourceTree = "<group>";
+		};
+		22F6482B1F3DCB3200B40D88 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				22EC26871E61DD7E00370170 /* AppDelegate.swift */,
+				22BFFA211E6DFC4A006BE86D /* Main.storyboard */,
+				22EC268D1E61DD7E00370170 /* art.scnassets */,
+				22EC268F1E61DD7E00370170 /* Assets.xcassets */,
+				22EC26941E61DD7F00370170 /* Info.plist */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -645,29 +675,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22F6480F1F3DC56100B40D88 /* ULogParser.swift in Sources */,
 				22BFFA501E7351F4006BE86D /* KiteLink.swift in Sources */,
-				22E1D5631E7D8CFA005B8237 /* TraceViewsViewController.swift in Sources */,
 				22DD78481F06714500E73346 /* Tracer.swift in Sources */,
 				22BFFA7D1E78863B006BE86D /* LeapMotion.swift in Sources */,
 				22DD784A1F06734D00E73346 /* TraceView.swift in Sources */,
 				22BFFA4C1E72ED54006BE86D /* KiteAnalyzer.swift in Sources */,
 				22EC26A21E62219B00370170 /* Matrix.swift in Sources */,
-				22BFFA8A1E798A01006BE86D /* SettingsViewController.swift in Sources */,
 				224B2BA91E9984730090C7B9 /* Pursuit.swift in Sources */,
 				22EC26A71E62219B00370170 /* Quaternion.swift in Sources */,
 				22BFFA7B1E7841E6006BE86D /* MavlinkMessage.swift in Sources */,
 				22EC26A41E62219B00370170 /* Rotations.swift in Sources */,
 				22EC268C1E61DD7E00370170 /* SceneViewController.swift in Sources */,
 				22EC26881E61DD7E00370170 /* AppDelegate.swift in Sources */,
-				22BFFA201E6DF6E8006BE86D /* WindowController.swift in Sources */,
 				22DA65D21F2B6ED40055CB37 /* LogViewController.swift in Sources */,
+				2298CE551F2E8D0C00319634 /* TraceViewsViewController.swift in Sources */,
 				22389A141E66034400E596EA /* KiteEmulator.swift in Sources */,
 				22BFFA4A1E72B97A006BE86D /* DataModels.swift in Sources */,
 				22389A121E6602DE00E596EA /* KiteViewer.swift in Sources */,
 				22DD78461F06505B00E73346 /* Point.swift in Sources */,
+				22F648101F3DC56100B40D88 /* ULogFormat.swift in Sources */,
 				22BFFA841E793700006BE86D /* LeapObjectiveC.mm in Sources */,
 				22EC26A61E62219B00370170 /* Vector.swift in Sources */,
 				22BFFA621E782302006BE86D /* SerialViewController.swift in Sources */,
+				2298CE541F2E8D0C00319634 /* SettingsViewController.swift in Sources */,
+				22F648111F3DC56100B40D88 /* ULogMessage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -98,6 +98,10 @@ extension CGPoint {
         return CGPoint(x: CGFloat(factor)*x, y: CGFloat(factor)*y)
     }
 
+    public func translated(by delta: CGPoint) -> CGPoint {
+        return self + delta
+    }
+
     public func absolute(in rect: CGRect) -> CGPoint {
         return CGPoint(x: rect.maxX - rect.width*(0.5 + x), y: rect.minY + rect.height*(0.5 + y))
     }

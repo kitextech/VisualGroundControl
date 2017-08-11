@@ -9,16 +9,24 @@
 import AppKit
 import RxSwift
 
-struct LogMNodel {
-    public let duration: Double
+struct LogModel {
+    public let start: TimeInterval
+    public let end: TimeInterval
     public let locations: [TimedLocation]
     public let orientations: [TimedOrientation]
 
-    public var isEmpty: Bool { return locations.isEmpty }
+    public var isEmpty: Bool { return locations.isEmpty || orientations.isEmpty }
 
-    public static let empty = LogMNodel(duration: 1, locations: [], orientations: [])
+    init(locations: [TimedLocation], orientations: [TimedOrientation]) {
+        self.locations = locations
+        self.orientations = orientations
+        self.start = min(orientations.first?.time ?? 0, locations.first?.time ?? 0)
+        self.end = max(orientations.last?.time ?? 1, locations.last?.time ?? 1)
+    }
 
-    public static let test: LogMNodel = {
+    public static let empty = LogModel(locations: [], orientations: [])
+
+    public static let test: LogModel = {
         let duration = 10.0
         let n = 1000
         let tetherLength: Scalar = 100
@@ -55,9 +63,11 @@ struct LogMNodel {
             return TimedOrientation(time: location.time, orientation: Quaternion(rotationFrom: e_z, to: location.vel), rate: .zero)
         }
 
-        return LogMNodel(duration: duration, locations: locations, orientations: orientations)
+        return LogModel(locations: locations, orientations: orientations)
     }()
 }
+
+typealias TimedConfiguration = (loc: TimedLocation, ori: TimedOrientation)
 
 struct LogProcessor {
     enum Change { case scrubbed, changedRange }
@@ -66,87 +76,88 @@ struct LogProcessor {
 
     public static var shared = LogProcessor()
 
-    public var duration: Double { return model.duration }
+    public var start: Double { return model.start }
+    public var end: Double { return model.end }
+    public var duration: Double { return model.end - model.start }
 
-    public var tRelRel: Scalar = 0 { didSet { updateCurrent() } }
-    public var t0Rel: Scalar = 0 { didSet { updateVisible() } }
-    public var t1Rel: Scalar = 1 { didSet { updateVisible() } }
-    public var step = 10 { didSet { updateVisible() } }
+    public var tRelRel: Scalar = 0 { didSet { updateStepped() } }
+    public var t0Rel: Scalar = 0 { didSet { updateAll() } }
+    public var t1Rel: Scalar = 1 { didSet { updateAll() } }
+    public var stepCount: Int = 1 { didSet { updateAll() } }
 
-    // Current
+    // Path
+    public var pathLocations: [TimedLocation] = []
+
+    // Stepped
     public var time: Double = 0
-    public var position: Vector = .origin
-    public var velocity: Vector = .origin
-    public var orientation: Quaternion = .id
+    public var steppedConfigurations: [TimedConfiguration] = []
 
-    // Visible
-    public var strodePositions: [Vector] = []
-    public var positions: [Vector] = []
-    public var velocities: [Vector] = []
-    public var orientations: [Quaternion] = []
+    private var model: LogModel = .test
 
-//    public var angularVelocities: [Vector] = []
-
-    private var model: LogMNodel = .test
-
-    public mutating func load(_ newModel: LogMNodel) {
+    public mutating func load(_ newModel: LogModel) {
         model = newModel
-        updateCurrent()
-        updateVisible()
+        updateAll()
+    }
+
+    public mutating func clear() {
+        model = .empty
+        updateAll()
     }
 
     // Helper methods
 
-    public mutating func clear() {
-        model = .empty
-        updateCurrent()
-        updateVisible()
+    private mutating func updateAll() {
+        updatePath()
+        updateStepped()
     }
 
-    private mutating func updateCurrent() {
+    private mutating func updatePath() {
+        guard !model.isEmpty else {
+            pathLocations = []
+            return
+        }
+
+        pathLocations = Array(model.locations[locationIndex(for: absolute(t0Rel))..<locationIndex(for: absolute(t1Rel))])
+        change.onNext(.changedRange)
+    }
+
+    private mutating func updateStepped() {
+        steppedConfigurations = []
+
         guard !model.isEmpty else {
             time = 0
-            position = .zero
-            velocity = .zero
-            orientation = .id
             return
         }
 
         let tRel = t0Rel*(1 - tRelRel) + t1Rel*tRelRel
-        time = duration*Double(tRel)
-        let i = index(for: tRel)
-        position = model.locations[i].pos
-        velocity = model.locations[i].vel
-        orientation = model.orientations[i].orientation
+        time = absolute(tRel)
+        let startTime = absolute(t0Rel)
+        let timeSinceStart = time - startTime
+        let visibleDuration = duration*Double(t1Rel - t0Rel) + 0.0001
+        let timeStep = visibleDuration/Double(stepCount)
+
+        steppedConfigurations = (0..<stepCount)
+            .map { i in (timeSinceStart + Double(i)*timeStep).truncatingRemainder(dividingBy: visibleDuration) + startTime }
+            .map(configuration)
+
         change.onNext(.scrubbed)
     }
 
-    private mutating func updateVisible() {
-        guard !model.isEmpty else {
-            positions = []
-            velocities = []
-            orientations = []
-            return
-        }
-
-        let range = index(for: t0Rel)...index(for: t1Rel)
-        positions = model.locations[range].map(TimedLocation.getPosition)
-
-        let strodeRange = stride(from: index(for: t0Rel), to: index(for: t1Rel), by: step)
-        let visibleLocations = strodeRange.map { model.locations[$0] }
-        strodePositions = visibleLocations.map(TimedLocation.getPosition)
-        velocities = visibleLocations.map(TimedLocation.getVelocity)
-        orientations = strodeRange.map { model.orientations[$0].orientation }
-        change.onNext(.changedRange)
+    private func configuration(for time: TimeInterval) -> TimedConfiguration {
+        return (model.locations[locationIndex(for: time)], model.orientations[orientationIndex(for: time)])
     }
 
-    private func index(for rel: Scalar) -> Int {
-        return Int(round(rel*Scalar(model.locations.count - 1)))
+    private func absolute(_ rel: Scalar) -> TimeInterval {
+        return start + duration*Double(rel)
     }
-}
 
-class LogLoader {
+    private func locationIndex(for time: TimeInterval) -> Int {
+        return model.locations.enumerated().max { abs($1.element.time - time) < abs($0.element.time - time) }?.offset ?? 0
+    }
 
+    private func orientationIndex(for time: TimeInterval) -> Int {
+        return model.orientations.enumerated().max { abs($1.element.time - time) < abs($0.element.time - time) }?.offset ?? 0
+    }
 }
 
 class LogViewController: NSViewController {
@@ -179,38 +190,50 @@ class LogViewController: NSViewController {
         t0Rel.bind { LogProcessor.shared.t0Rel = $0 }.disposed(by: bag)
         t1Rel.bind { LogProcessor.shared.t1Rel = $0 }.disposed(by: bag)
 
-        let allTsCombined = Observable.combineLatest(tRelRel, t0Rel, t1Rel)
-
-        allTsCombined
-            .map(getT)
-            .map(getDoubleString)
-            .bind(to: tLabel.rx.text)
-            .disposed(by: bag)
-
-        allTsCombined.bind { _ in
-            let p = LogProcessor.shared.position
+        Observable.combineLatest(tRelRel, t0Rel, t1Rel).bind { _ in
+            let p = LogProcessor.shared.steppedConfigurations.first?.loc.pos ?? .zero
             self.currentPositionLabel.stringValue = String(format: "NED: %.1f, %.1f, %.1f", p.x, p.y, p.z)
+            self.tLabel.stringValue = String(format: "%.2f", LogProcessor.shared.time)
             }
             .disposed(by: bag)
 
-        let step = stepSlider.scalar.map { Int(round($0)) }.shareReplayLatestWhileConnected()
-        step.map(String.init).bind(to: stepLabel.rx.text).disposed(by: bag)
-        step.bind { LogProcessor.shared.step = $0 }.disposed(by: bag)
+        let stepCount = stepSlider.scalar.map { Int(round($0*$0)) }.shareReplayLatestWhileConnected()
+        stepCount.map { String(format: "%.1f", LogProcessor.shared.duration/Double($0)) }.bind(to: stepLabel.rx.text).disposed(by: bag)
+        stepCount.bind { LogProcessor.shared.stepCount = $0 }.disposed(by: bag)
 
-        loadButton.rx.tap.bind { LogProcessor.shared.load(.test) }.disposed(by: bag)
+        loadButton.rx.tap.bind { self.load("~/Dropbox/10. KITEX/PrototypeDesign/10_32_17.ulg") }.disposed(by: bag)
         clearButton.rx.tap.bind { LogProcessor.shared.clear() }.disposed(by: bag)
     }
 
-    private func getScalarString(scalar: Scalar) -> String {
-        return String(format: "%.2f", scalar)
-    }
+    private func load(_ path: String) {
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: NSString(string: path).expandingTildeInPath)) else {
+            fatalError("failed to load data")
+        }
 
-    private func getDoubleString(double: Double) -> String {
-        return String(format: "%.2f", double)
-    }
+        guard let parser = ULogParser(data) else {
+            fatalError("failed to parse data")
+        }
 
-    private func getT(tRelRel: Scalar, t0Rel: Scalar, t1Rel: Scalar) -> Double {
-        return Double(t0Rel*(1 - tRelRel) + t1Rel*tRelRel)*LogProcessor.shared.duration
+        let locations: [TimedLocation] = parser.read("vehicle_local_position") { read in
+            let time = Double(read.value("timestamp") as UInt64)/1000000
+            let pos = Vector(read.value("x") as Float, read.value("y") as Float, read.value("z") as Float)
+            let vel = Vector(read.value("vx") as Float, read.value("vy") as Float, read.value("vz") as Float)
+
+            return TimedLocation(time: time, pos: pos, vel: vel)
+        }
+
+        let orientations: [TimedOrientation] = parser.read("vehicle_attitude") { read in
+            let time = Double(read.value("timestamp") as UInt64)/1000000
+
+            let qs: [Float] = read.values("q")
+            let orientation = Quaternion(qs[1], qs[2], qs[3], qs[0])
+
+            return TimedOrientation(time: time, orientation: orientation, rate: .zero)
+        }
+
+        let model = LogModel(locations: locations, orientations: orientations)
+
+        LogProcessor.shared.load(model)
     }
 }
 

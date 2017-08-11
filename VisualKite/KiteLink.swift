@@ -588,22 +588,6 @@ struct TimedLocation {
     }
 }
 
-struct TimedAttitude {
-    let time: TimeInterval
-    let att: Vector
-    let rate: Vector
-
-    init(time: TimeInterval = 0, att: Vector = .zero, rate: Vector = .zero) {
-        self.time = time
-        self.att = att
-        self.rate = rate
-    }
-
-    static func getAttitude(timedAttitude: TimedAttitude) -> Vector {
-        return timedAttitude.att
-    }
-}
-
 struct TimedOrientation {
     let time: TimeInterval
     let orientation: Quaternion
@@ -617,6 +601,22 @@ struct TimedOrientation {
 
     static func getQuaternion(timedOrientation: TimedOrientation) -> Quaternion {
         return timedOrientation.orientation
+    }
+}
+
+struct TimedAttitude {
+    let time: TimeInterval
+    let att: Vector
+    let rate: Vector
+
+    init(time: TimeInterval = 0, att: Vector = .zero, rate: Vector = .zero) {
+        self.time = time
+        self.att = att
+        self.rate = rate
+    }
+
+    static func getAttitude(timedAttitude: TimedAttitude) -> Vector {
+        return timedAttitude.att
     }
 }
 
