@@ -10,13 +10,21 @@ import AppKit
 import RxSwift
 
 struct LogModel {
-    public let duration: Double
+    public let start: TimeInterval
+    public let end: TimeInterval
     public let locations: [TimedLocation]
     public let orientations: [TimedOrientation]
 
     public var isEmpty: Bool { return locations.isEmpty }
 
-    public static let empty = LogModel(duration: 1, locations: [], orientations: [])
+    init(locations: [TimedLocation], orientations: [TimedOrientation]) {
+        self.locations = locations
+        self.orientations = orientations
+        self.start = min(orientations.first?.time ?? 0, locations.first?.time ?? 0)
+        self.end = max(orientations.last?.time ?? 1, locations.last?.time ?? 1)
+    }
+
+    public static let empty = LogModel(locations: [], orientations: [])
 
     public static let test: LogModel = {
         let duration = 10.0
@@ -55,7 +63,7 @@ struct LogModel {
             return TimedOrientation(time: location.time, orientation: Quaternion(rotationFrom: e_z, to: location.vel), rate: .zero)
         }
 
-        return LogModel(duration: duration, locations: locations, orientations: orientations)
+        return LogModel(locations: locations, orientations: orientations)
     }()
 }
 
@@ -66,7 +74,9 @@ struct LogProcessor {
 
     public static var shared = LogProcessor()
 
-    public var duration: Double { return model.duration }
+    public var start: Double { return model.start }
+    public var end: Double { return model.end }
+    public var duration: Double { return model.end - model.start }
 
     public var tRelRel: Scalar = 0 { didSet { updateCurrent() } }
     public var t0Rel: Scalar = 0 { didSet { updateVisible() } }
@@ -114,10 +124,14 @@ struct LogProcessor {
 
         let tRel = t0Rel*(1 - tRelRel) + t1Rel*tRelRel
         time = duration*Double(tRel)
-        let i = index(for: tRel)
-        position = model.locations[i].pos
-        velocity = model.locations[i].vel
-        orientation = model.orientations[i].orientation
+
+        guard let (iLoc, iOri) = indices(for: tRel) else {
+            return
+        }
+
+        position = model.locations[iLoc].pos
+        velocity = model.locations[iLoc].vel
+        orientation = model.orientations[iOri].orientation
         change.onNext(.scrubbed)
     }
 
@@ -142,6 +156,18 @@ struct LogProcessor {
 
     private func index(for rel: Scalar) -> Int {
         return Int(round(rel*Scalar(model.locations.count - 1)))
+    }
+
+    private func indices(for rel: Scalar) -> (location: Int, orientation: Int)? {
+        let time = model.start + Double(rel)*(model.end - model.start)
+
+        print("Time: \(time) \(model.locations.index(where: { $0.time >= time }) ?? -1), \(model.orientations.index(where: { $0.time >= time }) ?? -1)")
+
+        guard let iLoc = model.locations.index(where: { $0.time >= time }), let iOri = model.orientations.index(where: { $0.time >= time }) else {
+            return nil
+        }
+
+        return (iLoc, iOri)
     }
 }
 
@@ -235,7 +261,7 @@ class LogViewController: NSViewController {
             return TimedOrientation(time: time, orientation: orientation, rate: .zero)
         }
 
-        let model = LogModel(duration: 100, locations: locations, orientations: orientations)
+        let model = LogModel(locations: locations, orientations: orientations)
 
         LogProcessor.shared.load(model)
     }

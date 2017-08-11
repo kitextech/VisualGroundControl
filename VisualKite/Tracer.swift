@@ -84,9 +84,9 @@ public class VectorDrawable: Drawable {
 }
 
 public class KiteDrawable: Drawable {
-    let span: Scalar = 20*1.2
-    let length: Scalar = 20*1
-    let height: Scalar = 20*0.6
+    let span: Scalar = 5*1.2
+    let length: Scalar = 5*1
+    let height: Scalar = 5*0.6
 
     private let tailProportion: Scalar = 0.8
     private let stabiliserProportion: Scalar = 0.8
