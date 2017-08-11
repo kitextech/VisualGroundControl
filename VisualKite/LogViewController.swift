@@ -83,7 +83,7 @@ struct LogProcessor {
     public var tRelRel: Scalar = 0 { didSet { updateStepped() } }
     public var t0Rel: Scalar = 0 { didSet { updateAll() } }
     public var t1Rel: Scalar = 1 { didSet { updateAll() } }
-    public var step: Scalar = 10 { didSet { updateAll() } }
+    public var stepCount: Int = 1 { didSet { updateAll() } }
 
     // Path
     public var pathLocations: [TimedLocation] = []
@@ -133,11 +133,10 @@ struct LogProcessor {
         time = absolute(tRel)
         let startTime = absolute(t0Rel)
         let timeSinceStart = time - startTime
-        let timeStep = Double(step)
-        let visibleDuration = duration*Double(t1Rel - t0Rel)
-        let n = Int(ceil(visibleDuration/timeStep))
+        let visibleDuration = duration*Double(t1Rel - t0Rel) + 0.0001
+        let timeStep = visibleDuration/Double(stepCount)
 
-        steppedConfigurations = (0..<n)
+        steppedConfigurations = (0..<stepCount)
             .map { i in (timeSinceStart + Double(i)*timeStep).truncatingRemainder(dividingBy: visibleDuration) + startTime }
             .map(configuration)
 
@@ -198,9 +197,9 @@ class LogViewController: NSViewController {
             }
             .disposed(by: bag)
 
-        let step = stepSlider.scalar.shareReplayLatestWhileConnected()
-        step.map { String(format: "%.1f", $0) }.bind(to: stepLabel.rx.text).disposed(by: bag)
-        step.bind { LogProcessor.shared.step = $0 }.disposed(by: bag)
+        let stepCount = stepSlider.scalar.map { Int(round($0*$0)) }.shareReplayLatestWhileConnected()
+        stepCount.map { String(format: "%.1f", LogProcessor.shared.duration/Double($0)) }.bind(to: stepLabel.rx.text).disposed(by: bag)
+        stepCount.bind { LogProcessor.shared.stepCount = $0 }.disposed(by: bag)
 
         loadButton.rx.tap.bind { self.load("~/Dropbox/10. KITEX/PrototypeDesign/10_32_17.ulg") }.disposed(by: bag)
         clearButton.rx.tap.bind { LogProcessor.shared.clear() }.disposed(by: bag)
