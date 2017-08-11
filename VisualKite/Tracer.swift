@@ -152,7 +152,7 @@ public class SphereDrawable: Drawable {
 
     public var occlude = true
 
-    public let color = NSColor.darkGray
+    public let color = NSColor.lightGray
 
     public let lineWidth: Scalar = 3
 

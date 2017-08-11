@@ -14,7 +14,7 @@
         <!--Window Controller-->
         <scene sceneID="Eqx-ED-uGP">
             <objects>
-                <windowController showSeguePresentationStyle="single" id="KvJ-u7-H6y" customClass="WindowController" customModule="VisualKite" customModuleProvider="target" sceneMemberID="viewController">
+                <windowController showSeguePresentationStyle="single" id="KvJ-u7-H6y" sceneMemberID="viewController">
                     <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="V4r-vQ-pLP">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -948,7 +948,7 @@
                             <touchBarItem id="DwP-dJ-AYR">
                                 <viewController key="viewController" id="XqX-86-0CF">
                                     <button key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gNt-Z7-Y05">
-                                        <rect key="frame" x="0.0" y="0.0" width="90" height="41"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="102" height="41"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="push" title="Offboard" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qgP-YG-dWC">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -1620,10 +1620,6 @@
                         <outlet property="clearButton" destination="hyo-ew-6TN" id="STT-Uh-1R2"/>
                         <outlet property="currentPositionLabel" destination="1a6-Ib-6ch" id="ivZ-iw-lqv"/>
                         <outlet property="loadButton" destination="vYP-ju-N9G" id="BLn-Im-zfL"/>
-                        <outlet property="ned0Label" destination="zub-EY-GNv" id="Ft8-sa-I48"/>
-                        <outlet property="ned1Label" destination="bEa-gc-yJp" id="Q65-M4-2la"/>
-                        <outlet property="position0Label" destination="1a6-Ib-6ch" id="Nku-TH-aw7"/>
-                        <outlet property="position1Label" destination="nKD-mS-fhQ" id="ZP0-c3-QBk"/>
                         <outlet property="stepLabel" destination="3XE-Jj-Zb0" id="VXu-Ic-Jbs"/>
                         <outlet property="stepSlider" destination="O1Z-m6-atU" id="u7w-3H-PYt"/>
                         <outlet property="t0Slider" destination="GBR-sW-ZLS" id="ng8-pk-aPd"/>

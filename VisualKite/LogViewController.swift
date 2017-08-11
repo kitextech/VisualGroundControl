@@ -145,10 +145,6 @@ struct LogProcessor {
     }
 }
 
-class LogLoader {
-
-}
-
 class LogViewController: NSViewController {
     @IBOutlet weak var tSlider: NSSlider!
     @IBOutlet weak var t0Slider: NSSlider!
@@ -197,7 +193,7 @@ class LogViewController: NSViewController {
         step.map(String.init).bind(to: stepLabel.rx.text).disposed(by: bag)
         step.bind { LogProcessor.shared.step = $0 }.disposed(by: bag)
 
-        loadButton.rx.tap.bind { LogProcessor.shared.load(.test) }.disposed(by: bag)
+        loadButton.rx.tap.bind { self.load("~/Dropbox/10. KITEX/PrototypeDesign/10_32_17.ulg") }.disposed(by: bag)
         clearButton.rx.tap.bind { LogProcessor.shared.clear() }.disposed(by: bag)
     }
 
@@ -211,6 +207,37 @@ class LogViewController: NSViewController {
 
     private func getT(tRelRel: Scalar, t0Rel: Scalar, t1Rel: Scalar) -> Double {
         return Double(t0Rel*(1 - tRelRel) + t1Rel*tRelRel)*LogProcessor.shared.duration
+    }
+
+    private func load(_ path: String) {
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: NSString(string: path).expandingTildeInPath)) else {
+            fatalError("failed to load data")
+        }
+
+        guard let parser = ULogParser(data) else {
+            fatalError("failed to parse data")
+        }
+
+        let locations: [TimedLocation] = parser.read("vehicle_local_position") { read in
+            let time = Double(read.value("timestamp") as UInt64)/1000000
+            let pos = Vector(read.value("x") as Float, read.value("y") as Float, read.value("z") as Float)
+            let vel = Vector(read.value("vx") as Float, read.value("vy") as Float, read.value("vz") as Float)
+
+            return TimedLocation(time: time, pos: pos, vel: vel)
+        }
+
+        let orientations: [TimedOrientation] = parser.read("vehicle_attitude") { read in
+            let time = Double(read.value("timestamp") as UInt64)/1000000
+
+            let qs: [Float] = read.values("q")
+            let orientation = Quaternion(qs[1], qs[2], qs[3], qs[0])
+
+            return TimedOrientation(time: time, orientation: orientation, rate: .zero)
+        }
+
+        let model = LogModel(duration: 100, locations: locations, orientations: orientations)
+
+        LogProcessor.shared.load(model)
     }
 }
 
