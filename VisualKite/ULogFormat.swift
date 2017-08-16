@@ -152,6 +152,12 @@ enum ULogProperty {
         }
     }
 
+    // MARK: - Textifying Data API -
+
+    func textify() {
+
+    }
+
     // MARK: - Recursive Expansion API -
 
     public func expanded(with customType: ULogFormat) -> ULogProperty {
@@ -164,7 +170,7 @@ enum ULogProperty {
 
     // MARK: - Information API -
 
-    // MARK: Non-recursive
+    // Non-recursive
     public var isArray: Bool {
         switch self {
         case .customs, .builtins: return true
@@ -195,7 +201,7 @@ enum ULogProperty {
         }
     }
 
-    // MARK: Recursive
+    // Recursive
 
     public func property(at path: [String]) -> ULogProperty? {
         switch (path.count, self) {
@@ -212,7 +218,6 @@ enum ULogProperty {
         default: return nil
         }
     }
-
 
     // MARK: - Description API -
 

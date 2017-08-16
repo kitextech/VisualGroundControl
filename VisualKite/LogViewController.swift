@@ -9,22 +9,44 @@
 import AppKit
 import RxSwift
 
+struct TimedActuatorValues {
+    let time: TimeInterval
+    let values: [Float]
+}
+
 struct LogModel {
     public let start: TimeInterval
     public let end: TimeInterval
+    public var duration: Double { return end - start }
+
+    public let tetherLength: Float
+    public let posB: Vector
+    public let phiC: Float
+    public let thetaC: Float
+    public let turningRadius: Float
+
     public let locations: [TimedLocation]
     public let orientations: [TimedOrientation]
+    public let actuators: [TimedActuatorValues]
 
     public var isEmpty: Bool { return locations.isEmpty || orientations.isEmpty }
 
-    init(locations: [TimedLocation], orientations: [TimedOrientation]) {
-        self.locations = locations
-        self.orientations = orientations
+    init(tetherLength: Float, posB: Vector, phiC: Float, thetaC: Float, turningRadius: Float, locations: [TimedLocation], orientations: [TimedOrientation], actuators: [TimedActuatorValues]) {
         self.start = min(orientations.first?.time ?? 0, locations.first?.time ?? 0)
         self.end = max(orientations.last?.time ?? 1, locations.last?.time ?? 1)
+
+        self.tetherLength = tetherLength
+        self.posB = posB
+        self.phiC = phiC
+        self.thetaC = thetaC
+        self.turningRadius = turningRadius
+
+        self.locations = locations
+        self.orientations = orientations
+        self.actuators = actuators
     }
 
-    public static let empty = LogModel(locations: [], orientations: [])
+    public static let empty = LogModel(tetherLength: 0, posB: .zero, phiC: 0, thetaC: 0, turningRadius: 0, locations: [], orientations: [], actuators: [])
 
     public static let test: LogModel = {
         let duration = 10.0
@@ -63,7 +85,7 @@ struct LogModel {
             return TimedOrientation(time: location.time, orientation: Quaternion(rotationFrom: e_z, to: location.vel), rate: .zero)
         }
 
-        return LogModel(locations: locations, orientations: orientations)
+        return LogModel(tetherLength: 100, posB: .zero, phiC: 0, thetaC: 0, turningRadius: 0, locations: locations, orientations: orientations, actuators: [])
     }()
 }
 
@@ -75,10 +97,6 @@ struct LogProcessor {
     public let change = PublishSubject<Change>()
 
     public static var shared = LogProcessor()
-
-    public var start: Double { return model.start }
-    public var end: Double { return model.end }
-    public var duration: Double { return model.end - model.start }
 
     public var tRelRel: Scalar = 0 { didSet { updateStepped() } }
     public var t0Rel: Scalar = 0 { didSet { updateAll() } }
@@ -92,7 +110,8 @@ struct LogProcessor {
     public var time: Double = 0
     public var steppedConfigurations: [TimedConfiguration] = []
 
-    private var model: LogModel = .test
+    // Model
+    public var model: LogModel = .test
 
     public mutating func load(_ newModel: LogModel) {
         model = newModel
@@ -133,7 +152,7 @@ struct LogProcessor {
         time = absolute(tRel)
         let startTime = absolute(t0Rel)
         let timeSinceStart = time - startTime
-        let visibleDuration = duration*Double(t1Rel - t0Rel) + 0.0001
+        let visibleDuration = model.duration*Double(t1Rel - t0Rel) + 0.0001
         let timeStep = visibleDuration/Double(stepCount)
 
         steppedConfigurations = (0..<stepCount)
@@ -148,7 +167,7 @@ struct LogProcessor {
     }
 
     private func absolute(_ rel: Scalar) -> TimeInterval {
-        return start + duration*Double(rel)
+        return model.start + model.duration*Double(rel)
     }
 
     private func locationIndex(for time: TimeInterval) -> Int {
@@ -198,7 +217,7 @@ class LogViewController: NSViewController {
             .disposed(by: bag)
 
         let stepCount = stepSlider.scalar.map { Int(round($0*$0)) }.shareReplayLatestWhileConnected()
-        stepCount.map { String(format: "%.1f", LogProcessor.shared.duration/Double($0)) }.bind(to: stepLabel.rx.text).disposed(by: bag)
+        stepCount.map { String(format: "%.1f", LogProcessor.shared.model.duration/Double($0)) }.bind(to: stepLabel.rx.text).disposed(by: bag)
         stepCount.bind { LogProcessor.shared.stepCount = $0 }.disposed(by: bag)
 
         loadButton.rx.tap.bind { self.load("~/Dropbox/10. KITEX/PrototypeDesign/10_32_17.ulg") }.disposed(by: bag)
@@ -214,29 +233,53 @@ class LogViewController: NSViewController {
             fatalError("failed to parse data")
         }
 
-        let locations: [TimedLocation] = parser.read("vehicle_local_position") { read in
-            let time = Double(read.value("timestamp") as UInt64)/1000000
-            let pos = Vector(read.value("x") as Float, read.value("y") as Float, read.value("z") as Float)
-            let vel = Vector(read.value("vx") as Float, read.value("vy") as Float, read.value("vz") as Float)
+        let tetherLength = parser.floatParameter("MPC_TETHER_LEN")
+        let posB = parser.vectorParameter("MPC_X_POS_B", "MPC_Y_POS_B", "MPC_Z_POS_B")
+        let phiC = parser.floatParameter("MPC_PHI_C")
+        let thetaC = parser.floatParameter("MPC_THETA_C")
+        let turningRadius = parser.floatParameter("MPC_LOOP_TURN_R")
 
-            return TimedLocation(time: time, pos: pos, vel: vel)
-        }
+        let locations: [TimedLocation] = parser.read("vehicle_local_position") { TimedLocation(time: $0.timestamp, pos: $0.vector("x", "y", "z") - posB, vel: $0.vector("vx", "vy", "vz")) }
 
-        let orientations: [TimedOrientation] = parser.read("vehicle_attitude") { read in
-            let time = Double(read.value("timestamp") as UInt64)/1000000
+        let orientations: [TimedOrientation] = parser.read("vehicle_attitude") { TimedOrientation(time: $0.timestamp, orientation: $0.quaternion("q"), rate: .zero) }
 
-            let qs: [Float] = read.values("q")
-            let orientation = Quaternion(qs[1], qs[2], qs[3], qs[0])
+        let actuators: [TimedActuatorValues] = parser.read("actuator_controls_1") { TimedActuatorValues(time: $0.timestamp, values: $0.values("control")) }
 
-            return TimedOrientation(time: time, orientation: orientation, rate: .zero)
-        }
+        let actuatorOutputs: [TimedActuatorValues] = parser.read("actuator_outputs") { TimedActuatorValues(time: $0.timestamp, values: $0.values("output")) }
 
-        let model = LogModel(locations: locations, orientations: orientations)
+        print("-------------------")
+        actuators.forEach { print("\($0.time) \($0.values)") }
+        print("--- actuators: \(actuators.count)")
+        print("-------------------")
+        actuatorOutputs.forEach { print("\($0.time) \($0.values)") }
+        print("--- actuatorOutputs: \(actuatorOutputs.count)")
+        print("-------------------")
+        print("tetherLength: \(tetherLength)")
+        print("phiC: \(phiC)")
+        print("thetaC: \(thetaC)")
+        print("turningRadius: \(turningRadius)")
+        print("posB: \(posB)")
 
+        let model = LogModel(tetherLength: tetherLength, posB: posB, phiC: phiC, thetaC: thetaC, turningRadius: turningRadius, locations: locations, orientations: orientations, actuators: actuators)
         LogProcessor.shared.load(model)
     }
 }
 
+extension ULogReader {
+    public func vector(_ pathX: String, _ pathY: String, _ pathZ: String) -> Vector {
+        return Vector(float(pathX), float(pathY), float(pathZ))
+    }
 
+    public func quaternion(_ path: String) -> Quaternion {
+        let q = floats(path)
+        return Quaternion(q[1], q[2], q[3], q[0])
+    }
+}
+
+extension ULogParser {
+    public func vectorParameter(_ nameX: String, _ nameY: String, _ nameZ: String) -> Vector {
+        return Vector(floatParameter(nameX), floatParameter(nameY), floatParameter(nameZ))
+    }
+}
 
 

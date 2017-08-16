@@ -33,8 +33,11 @@ class TraceViewsViewController: NSViewController {
     private let bag = DisposeBag()
     private var views: [TraceView] = []
 
+    private let arcLogDrawable = CircleDrawable(color: .yellow)
+    private let circleLogDrawable = CircleDrawable(color: .darkGray)
     private let pathLogDrawable = PathDrawable()
     private var steppedLogDrawables = [KiteDrawable(color: .red)]
+    private let actuatorsLogDrawable = ArrowsDrawable(color: .purple)
 
     // MARK: - View Controller Lifecycle Methods
 
@@ -103,7 +106,10 @@ class TraceViewsViewController: NSViewController {
         useAsRedrawTrigger(cPoint)
         redrawViews()
 
+        // Log reading
+
         add(pathLogDrawable)
+        add(circleLogDrawable)
         steppedLogDrawables.forEach(add)
 
         LogProcessor.shared.change.bind(onNext: updateLog).disposed(by: bag)
@@ -167,6 +173,15 @@ class TraceViewsViewController: NSViewController {
         for kiteDrawable in steppedLogDrawables[drawablesNeeded..<steppedLogDrawables.count] {
             kiteDrawable.isHidden = true
         }
+
+        let model = LogProcessor.shared.model
+        let pos = getC(phi: CGFloat(model.phiC), theta: CGFloat(model.thetaC), d: getD(tether: CGFloat(model.tetherLength), r: CGFloat(model.turningRadius)))
+
+        circleLogDrawable.position = pos
+        circleLogDrawable.normal = pos.unit
+        circleLogDrawable.radius = CGFloat(model.turningRadius)
+
+//        steppedLogDrawables[0].
 
         if change == .changedRange {
             pathLogDrawable.update(LogProcessor.shared.pathLocations.map(TimedLocation.getPosition))

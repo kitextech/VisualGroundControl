@@ -17,6 +17,8 @@ class ULogParser: CustomStringConvertible {
     private var dataMessages: [String : [MessageData]] = [:]
     private var messageNames: [UInt16 : String] = [:]
 
+    private var parameters: [String : [MessageParameter]] = [:]
+
     // MARK: - Initialiser -
 
     init?(_ data: Data) {
@@ -27,6 +29,24 @@ class ULogParser: CustomStringConvertible {
         }
 
         parse(data: data.subdata(in: 16..<data.endIndex))
+
+        dataMessages.forEach { key, value in print("\(key): \(value.count)") }
+        messageNames.forEach { print("\($0): \($1)") }
+        parameters.forEach { print("\($0): \($1.last?.type ?? .bool) = [#\($1.count)]") }
+    }
+
+    // MARK: - Parameter API -
+
+    public func floatParameter(_ parameterName: String) -> Float {
+        return parameterValue(parameterName)!
+    }
+
+    public func intParameter(_ parameterName: String) -> Int32 {
+        return parameterValue(parameterName)!
+    }
+
+    private func parameterValue<T>(_ parameterName: String) -> T? {
+        return parameters[parameterName]?.last?.value()
     }
 
     // MARK: - Reading API -
@@ -37,7 +57,6 @@ class ULogParser: CustomStringConvertible {
         }
 
         let reader = ULogReader(parser: self, typeName: typeName, messages: messages)
-
 
         var result: [S] = []
         for i in range ?? 0..<messages.count {
@@ -68,6 +87,10 @@ class ULogParser: CustomStringConvertible {
 
     // MARK: - Information API -
 
+    public func parameterType(of parameterName: String) -> ULogPrimitive? {
+        return parameters[parameterName]?.last?.type
+    }
+
     public func format(of typeName: String, at path: String = "") -> ULogFormat? {
         return property(of: typeName, at: path)?.format
     }
@@ -92,7 +115,6 @@ class ULogParser: CustomStringConvertible {
 
         let numberOfBytes = data.count
 
-
         data.withUnsafeBytes { (u8Ptr: UnsafePointer<UInt8>) in
             var ptr = UnsafeMutableRawPointer(mutating: u8Ptr)
             let initialPointer = ptr
@@ -114,16 +136,12 @@ class ULogParser: CustomStringConvertible {
                 case .info:
                     guard let message = MessageInfo(data: data, header: messageHeader) else { return }
                     //                    infos.append(message)
-
                 //                    print(message)
                 case .format:
                     add(ULogFormat(data.subdata(in: 0..<Int(messageHeader.size)).asString()))
-                    //                case .parameter:
-                    //                    let message = MessageParameter(data: data, header: messageHeader)
-                //                    parameters.append(message)
                 case .parameter:
                     let message = MessageParameter(data: data, header: messageHeader)
-                //                    parameters.append(message)
+                    parameters[message.name] = (parameters[message.name] ?? []) + [message]
                 case .addLoggedMessage:
                     let message = MessageAddLoggedMessage(data: data, header: messageHeader)
                     messageNames[message.id] = message.messageName
@@ -245,6 +263,22 @@ class ULogReader {
 
     // MARK: - Reading API -
 
+    // Convenience
+
+    public var timestamp: Double {
+        return Double(value("timestamp") as UInt64)/1000000
+    }
+
+    public func float(_ path: String) -> Float {
+        return value(path)
+    }
+
+    public func floats(_ path: String) -> [Float] {
+        return values(path)
+    }
+
+    // Main
+
     public var index = 0
 
     public func value<T>(_ path: String) -> T {
@@ -276,6 +310,10 @@ class ULogReader {
 }
 
 extension String {
+    init(chars: [UInt8]) {
+        self = String(chars.map { Character(UnicodeScalar($0)) })
+    }
+
     var pathComponents: [String] {
         return components(separatedBy: ".").filter { $0 != "" }
     }

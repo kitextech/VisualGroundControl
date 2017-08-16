@@ -91,21 +91,22 @@ struct MessageInfo: CustomStringConvertible {
 
 struct MessageParameter {
     let header: MessageHeader
-    let keyLength: UInt8
-    let key: String
-    let value: UlogValue
+    let name: String
+    let data: Data
+    let type: ULogPrimitive
 
     init(data: Data, header: MessageHeader) {
         self.header = header
-        keyLength = data.value()
-        let typeAndName = data.subdata(in: 1..<(1+Int(keyLength))).asString()
-        let typeNName = typeAndName.components(separatedBy: " ")
+        let keyLength: UInt8 = data.value()
+        let typeAndName = data.subdata(in: 1..<Int(1 + keyLength)).asString().components(separatedBy: " ")
 
-        let dataValue = data.subdata(in: 1 + Int(keyLength)..<Int(header.size))
+        self.name = typeAndName[1]
+        self.data = data.subdata(in: Int(1 + keyLength)..<Int(header.size))
+        self.type = ULogPrimitive(rawValue: typeAndName[0])!
+    }
 
-        value = UlogValue(type: UlogType(typeName: typeNName.first!)!, data: dataValue)
-
-        key = typeNName[1]
+    func value<T>() -> T {
+        return data.value()
     }
 }
 
@@ -119,7 +120,7 @@ struct MessageAddLoggedMessage {
         self.header = header
         multi_id = data[0]
         id = data.advanced(by: 1).value()
-        messageName = data.subdata(in: 3..<Int(header.size) ).asString()
+        messageName = data.subdata(in: 3..<Int(header.size)).asString()
     }
 }
 
