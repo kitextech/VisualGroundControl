@@ -14,6 +14,11 @@ struct TimedActuatorValues: Timed {
     let values: [Float]
 }
 
+struct TimedValue: Timed {
+    let time: TimeInterval
+    let value: Float
+}
+
 struct TimedPursuitLog: Timed {
     let time: TimeInterval
     let rollRate: Float32
