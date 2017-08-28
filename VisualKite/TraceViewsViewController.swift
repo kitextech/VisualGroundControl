@@ -45,7 +45,8 @@ class TraceViewsViewController: NSViewController {
     private let velocityLogDrawable = ArrowDrawable(color: .orange, hideBall: true)
     private let targetLogDrawable = BallDrawable(color: .orange)
 
-    private let arcLogDrawable = ArcDrawable(color: .orange)
+    private let arcLogDrawable = CircleDrawable(color: .orange)
+//    private let arcLogDrawable = ArcDrawable(color: .orange)
     private let arcCenterLogDrawable = BallDrawable(color: .orange)
 
     private let arc2LogDrawable = CircleDrawable(color: .purple)
