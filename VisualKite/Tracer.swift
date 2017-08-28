@@ -232,21 +232,27 @@ public class ArrowDrawable: Drawable {
 
     public let color: NSColor
 
-    public let lines: [Line]
+    public var lines: [Line] { return [Line(start: .origin, end: vector)] }
 
-    public let lineWidth: Scalar = 5
+    public let lineWidth: Scalar = 3
 
-    public let spheres: [Sphere]
+    public var spheres: [Sphere] { return hideBall ? [] : [Sphere(center: vector, radius: 2)] }
 
     public var orientation: Quaternion = .id
 
     public var position: Vector
 
-    public init(at position: Vector = .origin, vector: Vector, color: NSColor = .white) {
+    // Special
+
+    public var vector: Vector
+
+    public var hideBall: Bool
+
+    public init(at position: Vector = .origin, vector: Vector = .zero, color: NSColor = .white, hideBall: Bool = false) {
         self.position = position
         self.color = color
-        self.lines = [Line(start: position, end: position + vector)]
-        self.spheres = [Sphere(center: position + vector, radius: 2)]
+        self.vector = vector
+        self.hideBall = hideBall
     }
 }
 
@@ -335,6 +341,63 @@ public class BoxDrawable: Drawable {
         let corner = (0..<8).map { i in 0.5*Vector(i > 3 ? dx : -dx, i % 4 > 1 ? dy : -dy, i % 2 > 0 ? dz : -dz) }
         lines = [(0, 1), (1, 3), (3, 2), (2, 0), (4, 5), (5, 7), (7, 6), (6, 4), (0, 4), (1, 5), (2, 6), (3, 7)]
             .map { Line(start: corner[$0], end: corner[$1]) }
+    }
+}
+
+public class ArcDrawable: Drawable {
+    // MARK: - Parameters
+
+    var plane: Plane
+    var radius: Scalar
+    var startAngle: Scalar
+    var angle: Scalar
+
+    // MARK: - Private Parameters
+
+    private let points = 30
+
+    // MARK: - Drawable
+
+    public let id = UUID()
+
+    public var isHidden = false
+
+    public let occlude = true
+
+    public let color: NSColor
+
+    public let lineWidth: Scalar = 3
+
+    public var lines: [Line] {
+        func makeVector(phi: Scalar) -> Vector {
+            return radius*(sin(phi)*plane.bases.0 + cos(phi)*plane.bases.1)
+        }
+
+        let vectors = (0...points)
+            .map { startAngle + angle*Scalar($0)/Scalar(points) }
+            .map(makeVector)
+
+        return zip(vectors.dropLast(), vectors.dropFirst()).map(Line.init)
+    }
+
+    public let spheres: [Sphere] = []
+
+    public var orientation: Quaternion = .id
+
+    public var position: Vector = .origin
+
+    public init(center: Vector = .origin, start: Vector = e_x, tangent: Vector = e_z, angle: Scalar = π/4, color: NSColor = .red) {
+        //        ×
+
+        let radialVector = start - center
+        let normal = radialVector×tangent
+
+        self.plane = Plane(center: center, normal: normal)
+        self.radius = radialVector.norm
+        self.startAngle = start.collapsed(on: plane.bases).phi
+
+        self.angle = angle
+        self.color = color
     }
 }
 

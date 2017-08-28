@@ -60,22 +60,11 @@ extension CGPoint {
     }
 
     public func signedAngle(to point: CGPoint) -> Scalar {
-        let p = point.unit
-        let q = unit
+        let e_x = unit
+        let e_y = CGPoint(x: -e_x.y, y: e_x.x)
 
-        let signed = Scalar(asin(p.y*q.x - p.x*q.y))
-
-        if angle(to: point) > π/2 {
-            if signed > 0 {
-                return π - signed
-            }
-            else {
-                return -π - signed
-            }
-        }
-        else {
-            return signed
-        }
+        return atan2(point•e_y, point•e_x)
+//        return atan2(point•e_x, point•e_y)
     }
 
     public func rotated(by angle: Scalar) -> CGPoint {
@@ -103,11 +92,13 @@ extension CGPoint {
     }
 
     public func absolute(in rect: CGRect) -> CGPoint {
-        return CGPoint(x: rect.maxX - rect.width*(0.5 + x), y: rect.minY + rect.height*(0.5 + y))
+        let side = min(rect.width, rect.height)
+        return CGPoint(x: rect.midX - side*x, y: rect.midY + side*y)
     }
 
     public func relative(in rect: CGRect) -> CGPoint {
-        return CGPoint(x: (rect.maxX - x)/rect.width - 0.5, y: (y - rect.minY)/rect.height - 0.5)
+        let side = min(rect.width, rect.height)
+        return CGPoint(x: (rect.midX - x)/side, y: (y - rect.midY)/side)
     }
 
     public var size: CGSize {
@@ -129,11 +120,13 @@ extension CGSize {
     }
 
     public func absolute(in rect: CGRect) -> CGSize {
-        return CGSize(width: rect.width*width, height: rect.height*height)
+        let side = min(rect.width, rect.height)
+        return CGSize(width: side*width, height: side*height)
     }
 
     public func relative(in rect: CGRect) -> CGSize {
-        return CGSize(width: width/rect.width, height: height/rect.height)
+        let side = min(rect.width, rect.height)
+        return CGSize(width: width/side, height: height/side)
     }
 }
 
@@ -147,4 +140,10 @@ extension CGRect {
     }
 
     public var center: CGPoint { return CGPoint(x: midX, y: midY) }
+
+    public var smallSide: CGFloat { return min(width, height) }
+
+    public var bigSide: CGFloat { return min(width, height) }
 }
+
+

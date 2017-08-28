@@ -9,6 +9,8 @@
 import AppKit
 import RxSwift
 import QuartzCore
+import AVKit
+import AVFoundation
 
 func map<S, T>(f: @escaping (S) -> T) -> ([S]) -> [T] {
     return { $0.map(f) }
@@ -19,25 +21,39 @@ class TraceViewsViewController: NSViewController {
 
     // MARK: - Outlets
 
-    @IBOutlet weak var xyView: TraceView!
-    @IBOutlet weak var freeView: TraceView!
+    @IBOutlet weak var logLabel: NSTextField!
 
-    @IBOutlet weak var slider: NSSlider!
+    @IBOutlet weak var freeView: TraceView!
+    @IBOutlet weak var videoView: AVPlayerView!
 
     @IBOutlet weak var xzButton: NSButton!
     @IBOutlet weak var yzButton: NSButton!
     @IBOutlet weak var piButton: NSButton!
+
+    @IBOutlet weak var loadButton: NSButton!
+
+    @IBOutlet weak var videoOffset: NSSlider!
 
     // MARK: - Private
 
     private let bag = DisposeBag()
     private var views: [TraceView] = []
 
-    private let arcLogDrawable = CircleDrawable(color: .yellow)
-    private let circleLogDrawable = CircleDrawable(color: .darkGray)
+    private let cDrawable = BallDrawable(color: .red)
+    private let piCircleDrawable = CircleDrawable()
+
+    private let velocityLogDrawable = ArrowDrawable(color: .orange, hideBall: true)
+    private let targetLogDrawable = BallDrawable(color: .orange)
+
+    private let arcLogDrawable = ArcDrawable(color: .orange)
+    private let arcCenterLogDrawable = BallDrawable(color: .orange)
+
+    private let arc2LogDrawable = CircleDrawable(color: .purple)
+    private let arcCenter2LogDrawable = BallDrawable(color: .purple)
+
+    private let circleLogDrawable = CircleDrawable()
     private let pathLogDrawable = PathDrawable()
     private var steppedLogDrawables = [KiteDrawable(color: .red)]
-    private let actuatorsLogDrawable = ArrowsDrawable(color: .purple)
 
     // MARK: - View Controller Lifecycle Methods
 
@@ -48,7 +64,7 @@ class TraceViewsViewController: NSViewController {
         freeView.theta = 0
         freeView.scrolls = true
 
-        views = [xyView, freeView]
+        views = [freeView]
 
         // Kites
 
@@ -63,8 +79,7 @@ class TraceViewsViewController: NSViewController {
 
         // Coordinate axes
 
-        let axes = [(e_x, NSColor.red), (e_y, .green), (e_z, .blue)].map { ArrowDrawable(vector: 10*$0, color: $1) }
-        axes.forEach(add)
+        [(e_x, NSColor.red), (e_y, .green), (e_z, .blue)].map { ArrowDrawable(vector: 10*$0, color: $1) }.forEach(add)
 
         // C and the path
 
@@ -74,25 +89,22 @@ class TraceViewsViewController: NSViewController {
 
         let phiC = KiteController.shared.settings.phiC.asObservable()
         let thetaC = KiteController.shared.settings.thetaC.asObservable()
-
         let cPoint = Observable.combineLatest(phiC, thetaC, d, resultSelector: getC)
 
-        let cDrawable = BallDrawable(color: .red)
         add(cDrawable)
 
         cPoint
-            .bind { pos in cDrawable.position = pos}
+            .bind { pos in self.cDrawable.position = pos}
             .disposed(by: bag)
 
-        let piCircleDrawable = CircleDrawable()
         add(piCircleDrawable)
 
         cPoint
-            .bind { pos in piCircleDrawable.position = pos; piCircleDrawable.normal = pos.unit }
+            .bind { pos in self.piCircleDrawable.position = pos; self.piCircleDrawable.normal = pos.unit }
             .disposed(by: bag)
 
         KiteController.shared.settings.turningRadius.asObservable()
-            .bind { radius in piCircleDrawable.radius = radius }
+            .bind { radius in self.piCircleDrawable.radius = radius }
             .disposed(by: bag)
 
         // Trace views as controls
@@ -110,9 +122,32 @@ class TraceViewsViewController: NSViewController {
 
         add(pathLogDrawable)
         add(circleLogDrawable)
+        add(targetLogDrawable)
+        add(arcLogDrawable)
+        add(arcCenterLogDrawable)
+        add(arc2LogDrawable)
+        add(arcCenter2LogDrawable)
+
+        add(velocityLogDrawable)
+
         steppedLogDrawables.forEach(add)
 
         LogProcessor.shared.change.bind(onNext: updateLog).disposed(by: bag)
+
+        loadButton.rx.tap.bind(onNext: openVideoFile).addDisposableTo(bag)
+
+        videoOffset.rx.value.bind { _  in self.scrubVideo() }.addDisposableTo(bag)
+
+        updateLog(.reset)
+    }
+
+    private func openVideoFile() {
+        let panel = NSOpenPanel()
+        panel.begin { result in
+            if result == NSFileHandlingPanelOKButton {
+                self.videoView.player = AVPlayer(url: panel.urls[0])
+            }
+        }
     }
 
     // Helper methods
@@ -156,7 +191,34 @@ class TraceViewsViewController: NSViewController {
         useAsRedrawTrigger(kite.orientation)
     }
 
+    private func scrubVideo() {
+        let seekTime = CMTime(seconds: LogProcessor.shared.timeSinceStart + videoOffset.doubleValue, preferredTimescale: 1000000)
+        videoView.player?.seek(to: seekTime)
+    }
+
     private func updateLog(_ change: LogProcessor.Change) {
+        logLabel.stringValue = LogProcessor.shared.logText
+
+        let isEmpty = LogProcessor.shared.model.isEmpty
+
+        circleLogDrawable.isHidden = isEmpty
+        pathLogDrawable.isHidden = isEmpty
+        steppedLogDrawables.forEach { $0.isHidden = isEmpty }
+
+        piCircleDrawable.isHidden = !isEmpty
+        cDrawable.isHidden = !isEmpty
+
+        if change == .reset {
+            views.forEach { $0.domeRadius = Scalar(LogProcessor.shared.model.tetherLength) }
+        }
+        else if change == .scrubbed {
+            scrubVideo()
+        }
+
+        if isEmpty {
+            return
+        }
+
         for (index, current) in LogProcessor.shared.steppedConfigurations.enumerated() {
             if index >= steppedLogDrawables.count {
                 let newDrawable = KiteDrawable(color: NSColor(red: 1, green: 0, blue: 0, alpha: 0.3))
@@ -174,14 +236,38 @@ class TraceViewsViewController: NSViewController {
             kiteDrawable.isHidden = true
         }
 
-        let model = LogProcessor.shared.model
-        let pos = getC(phi: CGFloat(model.phiC), theta: CGFloat(model.thetaC), d: getD(tether: CGFloat(model.tetherLength), r: CGFloat(model.turningRadius)))
+        if let currentLocation = LogProcessor.shared.steppedConfigurations.first?.loc {
+            velocityLogDrawable.position = currentLocation.pos
+            velocityLogDrawable.vector = currentLocation.vel
+        }
 
-        circleLogDrawable.position = pos
-        circleLogDrawable.normal = pos.unit
-        circleLogDrawable.radius = CGFloat(model.turningRadius)
+        if let arc = LogProcessor.shared.arcData, arc.c.norm > 0 {
+            circleLogDrawable.position = arc.c
+            circleLogDrawable.normal = arc.c.unit
+            circleLogDrawable.radius = CGFloat(LogProcessor.shared.model.turningRadius)
 
-//        steppedLogDrawables[0].
+            targetLogDrawable.position = arc.target
+
+            arcCenterLogDrawable.position = arc.center
+
+            arcLogDrawable.position = arc.center
+            arcLogDrawable.normal = arc.c.unit
+            arcLogDrawable.radius = arc.radius
+
+//            let radialVector = start - arc.center
+//            let normal = radialVector×tangent
+//
+//            arcLogDrawable.plane = Plane(center: center, normal: normal)
+//            arcLogDrawable.radius = radialVector.norm
+//            arcLogDrawable.startAngle = start.collapsed(on: plane.bases).phi
+
+
+//            arcCenter2LogDrawable.position = arc.center2
+//
+//            arc2LogDrawable.position = arc.center2
+//            arc2LogDrawable.normal = arc.c.unit
+//            arc2LogDrawable.radius = arc.radius2
+        }
 
         if change == .changedRange {
             pathLogDrawable.update(LogProcessor.shared.pathLocations.map(TimedLocation.getPosition))
@@ -189,14 +275,14 @@ class TraceViewsViewController: NSViewController {
 
         redrawViews()
     }
+}
 
-    private func getD(tether: Scalar, r: Scalar) -> Scalar {
-        return sqrt(tether*tether - r*r)
-    }
+func getD(tether: Scalar, r: Scalar) -> Scalar {
+    return sqrt(tether*tether - r*r)
+}
 
-    private func getC(phi: Scalar, theta: Scalar, d: Scalar) -> Vector {
-        return Vector(phi: phi, theta: π/2 + theta, r: d)
-    }
+func getC(phi: Scalar, theta: Scalar, d: Scalar) -> Vector {
+    return Vector(phi: phi, theta: π/2 + theta, r: d)
 }
 
 extension AffineTransform {

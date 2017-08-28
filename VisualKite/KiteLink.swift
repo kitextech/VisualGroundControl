@@ -555,7 +555,11 @@ let MPC_PHI_C = "MPC_PHI_C"
 let MPC_THETA_C = "MPC_THETA_C"
 let MPC_LOOP_TURN_R = "MPC_LOOP_TURN_R"
 
-struct TimedGPSVector {
+protocol Timed {
+    var time: TimeInterval { get }
+}
+
+struct TimedGPSVector: Timed {
     let time: TimeInterval
     let pos: GPSVector
 
@@ -564,7 +568,7 @@ struct TimedGPSVector {
     }
 }
 
-struct TimedLocation {
+struct TimedLocation: Timed {
     let time: TimeInterval
     let pos: Vector
     let vel: Vector
@@ -588,7 +592,7 @@ struct TimedLocation {
     }
 }
 
-struct TimedOrientation {
+struct TimedOrientation: Timed  {
     let time: TimeInterval
     let orientation: Quaternion
     let rate: Vector
@@ -604,7 +608,7 @@ struct TimedOrientation {
     }
 }
 
-struct TimedAttitude {
+struct TimedAttitude: Timed {
     let time: TimeInterval
     let att: Vector
     let rate: Vector

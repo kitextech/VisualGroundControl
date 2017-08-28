@@ -30,9 +30,19 @@ class ULogParser: CustomStringConvertible {
 
         parse(data: data.subdata(in: 16..<data.endIndex))
 
-        dataMessages.forEach { key, value in print("\(key): \(value.count)") }
-        messageNames.forEach { print("\($0): \($1)") }
-        parameters.forEach { print("\($0): \($1.last?.type ?? .bool) = [#\($1.count)]") }
+//        let arc_radius: [Float32] = read("fw_turning", primitive: "arc_radius")
+//        let roll_rate: [Float32] = read("fw_turning", primitive: "roll_rate")
+//        let index: [UInt32] = read("fw_turning", primitive: "index")
+//
+//        arc_radius[0..<100].forEach { print($0) }
+//        print()
+//        roll_rate[0..<100].forEach { print($0) }
+//        print()
+//        index[0..<100].forEach { print($0) }
+//
+//        dataMessages.forEach { key, value in print("\(key): \(value.count)") }
+//        messageNames.forEach { print("\($0): \($1)") }
+//        parameters.forEach { print("\($0): \($1.last?.type ?? .bool) = [#\($1.count)]") }
     }
 
     // MARK: - Parameter API -

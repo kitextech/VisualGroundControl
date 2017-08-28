@@ -9,9 +9,36 @@
 import AppKit
 import RxSwift
 
-struct TimedActuatorValues {
+struct TimedActuatorValues: Timed {
     let time: TimeInterval
     let values: [Float]
+}
+
+struct TimedPursuitLog: Timed {
+    let time: TimeInterval
+    let rollRate: Float32
+    let arcRadius: Float32
+
+    let posX: Float32
+    let posY: Float32
+
+    let velX: Float32
+    let velY: Float32
+
+    let targetX: Float32
+    let targetY: Float32
+
+    var pos: CGPoint {
+        return CGPoint(x: CGFloat(posX), y: CGFloat(posY))
+    }
+
+    var vel: CGPoint {
+        return CGPoint(x: CGFloat(velX), y: CGFloat(velY))
+    }
+
+    var target: CGPoint {
+        return CGPoint(x: CGFloat(targetX), y: CGFloat(targetY))
+    }
 }
 
 struct LogModel {
@@ -28,10 +55,13 @@ struct LogModel {
     public let locations: [TimedLocation]
     public let orientations: [TimedOrientation]
     public let actuators: [TimedActuatorValues]
+    public let pursuits: [TimedPursuitLog]
 
     public var isEmpty: Bool { return locations.isEmpty || orientations.isEmpty }
 
-    init(tetherLength: Float, posB: Vector, phiC: Float, thetaC: Float, turningRadius: Float, locations: [TimedLocation], orientations: [TimedOrientation], actuators: [TimedActuatorValues]) {
+    public static let empty = LogModel(tetherLength: 0, posB: .zero, phiC: 0, thetaC: 0, turningRadius: 0, locations: [], orientations: [], actuators: [], pursuits: [])
+
+    init(tetherLength: Float, posB: Vector, phiC: Float, thetaC: Float, turningRadius: Float, locations: [TimedLocation], orientations: [TimedOrientation], actuators: [TimedActuatorValues], pursuits: [TimedPursuitLog]) {
         self.start = min(orientations.first?.time ?? 0, locations.first?.time ?? 0)
         self.end = max(orientations.last?.time ?? 1, locations.last?.time ?? 1)
 
@@ -44,55 +74,26 @@ struct LogModel {
         self.locations = locations
         self.orientations = orientations
         self.actuators = actuators
+        self.pursuits = pursuits
     }
 
-    public static let empty = LogModel(tetherLength: 0, posB: .zero, phiC: 0, thetaC: 0, turningRadius: 0, locations: [], orientations: [], actuators: [])
+    public func location(at time: TimeInterval) -> (index: Int, val: TimedLocation) { return value(at: time, among: locations) }
+    public func orientation(at time: TimeInterval) -> (index: Int, val: TimedOrientation) { return value(at: time, among: orientations) }
+    public func actuator(at time: TimeInterval) -> (index: Int, val: TimedActuatorValues) { return value(at: time, among: actuators) }
+    public func pursuit(at time: TimeInterval) -> (index: Int, val: TimedPursuitLog) { return value(at: time, among: pursuits) }
 
-    public static let test: LogModel = {
-        let duration = 10.0
-        let n = 1000
-        let tetherLength: Scalar = 100
-        let indices = 0..<n
-        let turns = 3
-        let phiC: Scalar = π/3
-        let thetaC: Scalar = π/4
-
-        let r: Scalar = 20
-        let d = sqrt(tetherLength*tetherLength - r*r)
-        let c = Vector(phi: phiC, theta: π/2 + thetaC, r: d)
-
-        let ePiX = (c.unit×e_z).unit
-        let ePiY = ePiX×c.unit
-
-        let speed: Scalar = 10
-
-        let locations: [TimedLocation] = indices.map { i in
-            let rho = Scalar(i)/Scalar(n - 1)
-            let gamma = 2*π*Scalar(turns)*rho
-
-            let time = duration*Double(rho)
-
-            let pos = c + r*(ePiX*sin(gamma) + ePiY*cos(gamma))
-            let deltaPos = (r/50)*Vector(cos(17*gamma), cos(19*gamma), cos(23*gamma))
-
-            let vel = speed*(ePiX*cos(gamma) - ePiY*sin(gamma))
-            let deltaVel = (speed/50)*Vector(cos(29*gamma), cos(37*gamma), cos(41*gamma))
-
-            return TimedLocation(time: time, pos: pos + deltaPos, vel: vel + deltaVel)
-        }
-
-        let orientations: [TimedOrientation] = locations.map { location in
-            return TimedOrientation(time: location.time, orientation: Quaternion(rotationFrom: e_z, to: location.vel), rate: .zero)
-        }
-
-        return LogModel(tetherLength: 100, posB: .zero, phiC: 0, thetaC: 0, turningRadius: 0, locations: locations, orientations: orientations, actuators: [])
-    }()
+    public func value<T: Timed>(at time: TimeInterval, among timedValues: [T]) -> (Int, T) {
+        let index = timedValues.enumerated().max { abs($1.element.time - time) < abs($0.element.time - time) }?.offset ?? 0
+        return (index, timedValues[index])
+    }
 }
 
 typealias TimedConfiguration = (loc: TimedLocation, ori: TimedOrientation)
 
+typealias ArcData = (radius: Scalar, center: Vector, angle2: Scalar, radius2: Scalar, center2: Vector, target: Vector, c: Vector)
+
 struct LogProcessor {
-    enum Change { case scrubbed, changedRange }
+    enum Change { case scrubbed, changedRange, reset }
 
     public let change = PublishSubject<Change>()
 
@@ -104,23 +105,60 @@ struct LogProcessor {
     public var stepCount: Int = 1 { didSet { updateAll() } }
 
     // Path
+
     public var pathLocations: [TimedLocation] = []
 
     // Stepped
+
     public var time: Double = 0
+    public var timeSinceStart: Double { return time - model.start }
     public var steppedConfigurations: [TimedConfiguration] = []
 
+    // Pursuit
+
+    public var arcData: ArcData? = nil
+
     // Model
-    public var model: LogModel = .test
+
+    public var model: LogModel = .empty
+
+    // API
 
     public mutating func load(_ newModel: LogModel) {
         model = newModel
         updateAll()
+        change.onNext(.reset)
     }
 
     public mutating func clear() {
         model = .empty
         updateAll()
+        change.onNext(.reset)
+    }
+
+    public var logText: String {
+        guard !model.isEmpty else {
+            return "Log not loaded"
+        }
+
+        let actText, pursuitText: String
+
+        if model.actuators.count > 0 {
+            actText = model.actuator(at: time).val.values[0..<2].enumerated().map { " \($0): \($1)" }.joined(separator: "\n")
+        }
+        else {
+            actText = " N/A"
+        }
+
+        if model.pursuits.count > 0 {
+            let pursuit = model.pursuit(at: time).val
+            pursuitText = " arc radius:\(pursuit.arcRadius)\n rollrate: \(pursuit.rollRate)\n target: \(pursuit.target)"
+        }
+        else {
+            pursuitText = " N/A"
+        }
+
+        return String(format: "Time: %.2f\n", time) + "\nactuator_output:\n" + actText + "\nlogged:\n" + pursuitText
     }
 
     // Helper methods
@@ -136,12 +174,13 @@ struct LogProcessor {
             return
         }
 
-        pathLocations = Array(model.locations[locationIndex(for: absolute(t0Rel))..<locationIndex(for: absolute(t1Rel))])
+        pathLocations = Array(model.locations[model.location(at: absolute(t0Rel)).index..<model.location(at: absolute(t1Rel)).index])
         change.onNext(.changedRange)
     }
 
     private mutating func updateStepped() {
         steppedConfigurations = []
+        arcData = nil
 
         guard !model.isEmpty else {
             time = 0
@@ -159,23 +198,35 @@ struct LogProcessor {
             .map { i in (timeSinceStart + Double(i)*timeStep).truncatingRemainder(dividingBy: visibleDuration) + startTime }
             .map(configuration)
 
+        // Target related
+
+        let c = getC(phi: CGFloat(model.phiC), theta: CGFloat(model.thetaC), d: getD(tether: CGFloat(model.tetherLength), r: CGFloat(model.turningRadius)))
+
+        if c.norm > 0 && model.pursuits.count > 0 {
+            let p = model.pursuit(at: time).val
+
+            let piPlane = Plane(center: c, normal: c.unit)
+            let target = piPlane.deCollapse(point: p.target)
+            if let loc = steppedConfigurations.first?.loc, loc.vel.norm > 0 {
+                let radius = Scalar(p.arcRadius)
+                let center = loc.pos - radius*(piPlane.normal×loc.vel).unit
+
+                let (arcAngle2, center2point, radius2) = Pursuit.angleCenterRadius(position: p.pos, target: p.target, attitude: p.vel.norm > 0 ? p.vel.unit : CGPoint(x: 1, y: 0))
+                let center2 = piPlane.deCollapse(point: center2point)
+
+                arcData = (radius, center, arcAngle2, radius2, center2, target, c)
+            }
+        }
+
         change.onNext(.scrubbed)
     }
 
     private func configuration(for time: TimeInterval) -> TimedConfiguration {
-        return (model.locations[locationIndex(for: time)], model.orientations[orientationIndex(for: time)])
+        return (model.location(at: time).val, model.orientation(at: time).val)
     }
 
     private func absolute(_ rel: Scalar) -> TimeInterval {
         return model.start + model.duration*Double(rel)
-    }
-
-    private func locationIndex(for time: TimeInterval) -> Int {
-        return model.locations.enumerated().max { abs($1.element.time - time) < abs($0.element.time - time) }?.offset ?? 0
-    }
-
-    private func orientationIndex(for time: TimeInterval) -> Int {
-        return model.orientations.enumerated().max { abs($1.element.time - time) < abs($0.element.time - time) }?.offset ?? 0
     }
 }
 
@@ -220,12 +271,21 @@ class LogViewController: NSViewController {
         stepCount.map { String(format: "%.1f", LogProcessor.shared.model.duration/Double($0)) }.bind(to: stepLabel.rx.text).disposed(by: bag)
         stepCount.bind { LogProcessor.shared.stepCount = $0 }.disposed(by: bag)
 
-        loadButton.rx.tap.bind { self.load("~/Dropbox/10. KITEX/PrototypeDesign/10_32_17.ulg") }.disposed(by: bag)
+        loadButton.rx.tap.bind(onNext: openFile).disposed(by: bag)
         clearButton.rx.tap.bind { LogProcessor.shared.clear() }.disposed(by: bag)
     }
 
-    private func load(_ path: String) {
-        guard let data = try? Data(contentsOf: URL(fileURLWithPath: NSString(string: path).expandingTildeInPath)) else {
+    private func openFile() {
+        let panel = NSOpenPanel()
+        panel.begin { result in
+            if result == NSFileHandlingPanelOKButton {
+                self.load(panel.urls[0])
+            }
+        }
+    }
+
+    private func load(_ url: URL) {
+        guard let data = try? Data(contentsOf: url) else {
             fatalError("failed to load data")
         }
 
@@ -245,22 +305,11 @@ class LogViewController: NSViewController {
 
         let actuators: [TimedActuatorValues] = parser.read("actuator_controls_1") { TimedActuatorValues(time: $0.timestamp, values: $0.values("control")) }
 
-        let actuatorOutputs: [TimedActuatorValues] = parser.read("actuator_outputs") { TimedActuatorValues(time: $0.timestamp, values: $0.values("output")) }
+        let pursuits: [TimedPursuitLog] = parser.read("fw_turning") {
+            TimedPursuitLog(time: $0.timestamp, rollRate: $0.value("roll_rate"), arcRadius: $0.value("arc_radius"), posX: $0.value("x"), posY: $0.value("y"), velX: $0.value("vx"), velY: $0.value("vy"), targetX: $0.value("tx"), targetY: $0.value("ty"))
+        }
 
-        print("-------------------")
-        actuators.forEach { print("\($0.time) \($0.values)") }
-        print("--- actuators: \(actuators.count)")
-        print("-------------------")
-        actuatorOutputs.forEach { print("\($0.time) \($0.values)") }
-        print("--- actuatorOutputs: \(actuatorOutputs.count)")
-        print("-------------------")
-        print("tetherLength: \(tetherLength)")
-        print("phiC: \(phiC)")
-        print("thetaC: \(thetaC)")
-        print("turningRadius: \(turningRadius)")
-        print("posB: \(posB)")
-
-        let model = LogModel(tetherLength: tetherLength, posB: posB, phiC: phiC, thetaC: thetaC, turningRadius: turningRadius, locations: locations, orientations: orientations, actuators: actuators)
+        let model = LogModel(tetherLength: tetherLength, posB: posB, phiC: phiC, thetaC: thetaC, turningRadius: turningRadius, locations: locations, orientations: orientations, actuators: actuators, pursuits: pursuits)
         LogProcessor.shared.load(model)
     }
 }

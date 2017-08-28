@@ -107,6 +107,11 @@ public struct Plane {
         case (true, false), (false, true): return line.split(by: self).neg
         }
     }
+
+    public func deCollapse(point: CGPoint) -> Vector {
+        let (x, y) = bases
+        return center + Scalar(point.x)*x + Scalar(point.y)*y
+    }
 }
 
 infix operator •: MultiplicationPrecedence
