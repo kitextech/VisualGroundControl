@@ -137,7 +137,7 @@ class TraceViewsViewController: NSViewController {
 
         loadButton.rx.tap.bind(onNext: openVideoFile).addDisposableTo(bag)
 
-        videoOffset.rx.value.bind { _  in self.scrubVideo() }.addDisposableTo(bag)
+//        videoOffset.rx.value.bind { _  in self.scrubVideo() }.addDisposableTo(bag)
 
         updateLog(.reset)
     }
@@ -213,7 +213,7 @@ class TraceViewsViewController: NSViewController {
             views.forEach { $0.domeRadius = Scalar(LogProcessor.shared.model.tetherLength) }
         }
         else if change == .scrubbed {
-            scrubVideo()
+//            scrubVideo()
         }
 
         if isEmpty {

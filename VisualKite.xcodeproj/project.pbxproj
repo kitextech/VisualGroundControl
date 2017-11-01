@@ -25,10 +25,6 @@
 		22BFFA841E793700006BE86D /* LeapObjectiveC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA831E793700006BE86D /* LeapObjectiveC.mm */; };
 		22BFFA861E793771006BE86D /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA851E793771006BE86D /* libLeap.dylib */; };
 		22BFFA881E793810006BE86D /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22BFFA851E793771006BE86D /* libLeap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		22C5766A1E9BEEA80097345B /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C576681E9BEEA80097345B /* Realm.framework */; };
-		22C5766B1E9BEEA80097345B /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 22C576681E9BEEA80097345B /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		22C5766C1E9BEEA80097345B /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C576691E9BEEA80097345B /* RealmSwift.framework */; };
-		22C5766D1E9BEEA80097345B /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 22C576691E9BEEA80097345B /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		22DA65D21F2B6ED40055CB37 /* LogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DA65D11F2B6ED40055CB37 /* LogViewController.swift */; };
 		22DD78461F06505B00E73346 /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DD78451F06505B00E73346 /* Point.swift */; };
 		22DD78481F06714500E73346 /* Tracer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DD78471F06714400E73346 /* Tracer.swift */; };
@@ -44,6 +40,11 @@
 		22F6480F1F3DC56100B40D88 /* ULogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F6480C1F3DC56100B40D88 /* ULogParser.swift */; };
 		22F648101F3DC56100B40D88 /* ULogFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F6480D1F3DC56100B40D88 /* ULogFormat.swift */; };
 		22F648111F3DC56100B40D88 /* ULogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F6480E1F3DC56100B40D88 /* ULogMessage.swift */; };
+		9F04ACB21FA9DFBF00B287A1 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F04ACAF1FA9DC1300B287A1 /* Realm.framework */; };
+		9F04ACB31FA9DFBF00B287A1 /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F04ACAF1FA9DC1300B287A1 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9F04ACB41FA9DFBF00B287A1 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F04ACAE1FA9DC1300B287A1 /* RealmSwift.framework */; };
+		9F04ACB51FA9DFBF00B287A1 /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F04ACAE1FA9DC1300B287A1 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9F6DD4D11F54604E00526CE6 /* Euler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6DD4D01F54604E00526CE6 /* Euler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -217,8 +218,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				22C5766D1E9BEEA80097345B /* RealmSwift.framework in Embed Frameworks */,
-				22C5766B1E9BEEA80097345B /* Realm.framework in Embed Frameworks */,
+				9F04ACB51FA9DFBF00B287A1 /* RealmSwift.framework in Embed Frameworks */,
+				9F04ACB31FA9DFBF00B287A1 /* Realm.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -256,8 +257,6 @@
 		22BFFA821E793700006BE86D /* LeapObjectiveC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeapObjectiveC.h; sourceTree = "<group>"; };
 		22BFFA831E793700006BE86D /* LeapObjectiveC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LeapObjectiveC.mm; sourceTree = "<group>"; };
 		22BFFA851E793771006BE86D /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libLeap.dylib; sourceTree = "<group>"; };
-		22C576681E9BEEA80097345B /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
-		22C576691E9BEEA80097345B /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
 		22DA65D11F2B6ED40055CB37 /* LogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewController.swift; sourceTree = "<group>"; };
 		22DD78451F06505B00E73346 /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		22DD78471F06714400E73346 /* Tracer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tracer.swift; sourceTree = "<group>"; };
@@ -275,6 +274,9 @@
 		22F6480C1F3DC56100B40D88 /* ULogParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ULogParser.swift; sourceTree = "<group>"; };
 		22F6480D1F3DC56100B40D88 /* ULogFormat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ULogFormat.swift; sourceTree = "<group>"; };
 		22F6480E1F3DC56100B40D88 /* ULogMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ULogMessage.swift; sourceTree = "<group>"; };
+		9F04ACAE1FA9DC1300B287A1 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
+		9F04ACAF1FA9DC1300B287A1 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
+		9F6DD4D01F54604E00526CE6 /* Euler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Euler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -284,10 +286,10 @@
 			files = (
 				22BFFA861E793771006BE86D /* libLeap.dylib in Frameworks */,
 				22BFFA5A1E735524006BE86D /* ORSSerial.framework in Frameworks */,
-				22C5766C1E9BEEA80097345B /* RealmSwift.framework in Frameworks */,
+				9F04ACB41FA9DFBF00B287A1 /* RealmSwift.framework in Frameworks */,
 				22389A0F1E658CFD00E596EA /* RxCocoa.framework in Frameworks */,
 				22389A101E658CFD00E596EA /* RxSwift.framework in Frameworks */,
-				22C5766A1E9BEEA80097345B /* Realm.framework in Frameworks */,
+				9F04ACB21FA9DFBF00B287A1 /* Realm.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -348,8 +350,8 @@
 		22EC267B1E61DD7E00370170 = {
 			isa = PBXGroup;
 			children = (
-				22C576681E9BEEA80097345B /* Realm.framework */,
-				22C576691E9BEEA80097345B /* RealmSwift.framework */,
+				9F04ACAF1FA9DC1300B287A1 /* Realm.framework */,
+				9F04ACAE1FA9DC1300B287A1 /* RealmSwift.framework */,
 				22BFFA511E7354DB006BE86D /* ORSSerialPort.xcodeproj */,
 				223899CD1E658CB400E596EA /* Rx.xcodeproj */,
 				22EC26861E61DD7E00370170 /* VisualKite */,
@@ -409,6 +411,7 @@
 				22EC269B1E62219B00370170 /* Matrix.swift */,
 				22EC26A01E62219B00370170 /* Quaternion.swift */,
 				22EC269D1E62219B00370170 /* Rotations.swift */,
+				9F6DD4D01F54604E00526CE6 /* Euler.swift */,
 			);
 			name = Geomerty;
 			sourceTree = "<group>";
@@ -690,6 +693,7 @@
 				22EC26881E61DD7E00370170 /* AppDelegate.swift in Sources */,
 				22DA65D21F2B6ED40055CB37 /* LogViewController.swift in Sources */,
 				2298CE551F2E8D0C00319634 /* TraceViewsViewController.swift in Sources */,
+				9F6DD4D11F54604E00526CE6 /* Euler.swift in Sources */,
 				22389A141E66034400E596EA /* KiteEmulator.swift in Sources */,
 				22BFFA4A1E72B97A006BE86D /* DataModels.swift in Sources */,
 				22389A121E6602DE00E596EA /* KiteViewer.swift in Sources */,
@@ -807,6 +811,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/RealmSwift.framework",
 				);
 				INFOPLIST_FILE = VisualKite/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -831,6 +836,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/RealmSwift.framework",
 				);
 				INFOPLIST_FILE = VisualKite/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";

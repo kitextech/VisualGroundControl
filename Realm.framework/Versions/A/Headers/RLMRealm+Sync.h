@@ -18,28 +18,31 @@
 
 #import <Foundation/Foundation.h>
 
+#import "RLMRealm.h"
+
+@class RLMResults;
+
+/**
+ A callback used to vend the results of a partial sync fetch.
+ */
+typedef void(^RLMPartialSyncFetchCallback)(RLMResults * _Nullable results, NSError * _Nullable error);
+
 NS_ASSUME_NONNULL_BEGIN
 
-@class RLMSyncErrorActionToken;
-
-/// NSError category extension providing methods to get data out of Realm's
-/// "client reset" error.
-@interface NSError (RLMSync)
+///
+@interface RLMRealm (Sync)
 
 /**
- Given an appropriate Realm Object Server error, return the token that
- can be passed into `+[RLMSyncSession immediatelyHandleError:]` to
- immediately perform error clean-up work, or nil if the error isn't of
- a type that provides a token.
- */
-- (nullable RLMSyncErrorActionToken *)rlmSync_errorActionToken NS_REFINED_FOR_SWIFT;
+ If the Realm is a partially synchronized Realm, fetch and synchronize the objects
+ of a given object type that match the given query (in string format).
 
-/**
- Given a Realm Object Server client reset error, return the path where the
- backup copy of the Realm will be placed once the client reset process is
- complete.
- */
-- (nullable NSString *)rlmSync_clientResetBackedUpRealmPath NS_SWIFT_UNAVAILABLE("");
+ The results will be returned asynchronously in the callback.
+ Use `-[RLMResults addNotificationBlock:]` to be notified to changes to the set of
+ synchronized objects.
+
+ @warning Partial synchronization is a tech preview. Its APIs are subject to change.
+*/
+- (void)subscribeToObjects:(Class)type where:(NSString *)query callback:(RLMPartialSyncFetchCallback)callback;
 
 @end
 

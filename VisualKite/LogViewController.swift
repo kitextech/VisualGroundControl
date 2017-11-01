@@ -309,13 +309,28 @@ class LogViewController: NSViewController {
         let orientations: [TimedOrientation] = parser.read("vehicle_attitude") { TimedOrientation(time: $0.timestamp, orientation: $0.quaternion("q"), rate: .zero) }
 
         let actuators: [TimedActuatorValues] = parser.read("actuator_controls_1") { TimedActuatorValues(time: $0.timestamp, values: $0.values("control")) }
-
+        
         let pursuits: [TimedPursuitLog] = parser.read("fw_turning") {
             TimedPursuitLog(time: $0.timestamp, rollRate: $0.value("roll_rate"), arcRadius: $0.value("arc_radius"), posX: $0.value("x"), posY: $0.value("y"), velX: $0.value("vx"), velY: $0.value("vy"), targetX: $0.value("tx"), targetY: $0.value("ty"))
         }
 
         let model = LogModel(tetherLength: tetherLength, posB: posB, phiC: phiC, thetaC: thetaC, turningRadius: turningRadius, locations: locations, orientations: orientations, actuators: actuators, pursuits: pursuits)
         LogProcessor.shared.load(model)
+        
+        
+        let pitchSP: [TimedValue] = parser.read("vehicle_attitude_setpoint") { TimedValue(time: $0.timestamp, value: $0.value("pitch_body") ) }
+        let pitch: [TimedValue] = parser.read("vehicle_attitude") { TimedValue(time: $0.timestamp, value: Euler(q: $0.quaternion("q")).theta ) }
+        
+//        print(pitchSP)
+//        print(pitchSP.count)
+//        print(pitch.count)
+        pitch.forEach { print( $0.value ) }
+        
+//        print(pitch)
+        
+        
+        
+//        print(parser)
     }
 }
 
