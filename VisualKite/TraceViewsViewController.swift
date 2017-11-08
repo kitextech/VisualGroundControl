@@ -350,12 +350,7 @@ class TraceViewsViewController: NSViewController {
                 let collapsedTarget = (arc.target - arc.center).collapsed(on: plane.bases)
                 let collapsedAngle = collapsedLoc.signedAngle(to: collapsedTarget)
 
-                arcLogDrawable.angle = collapsedAngle < 0 ? 2*π - collapsedAngle : collapsedAngle
-
-                let original = acos((currentLocation.pos - arc.center).unit•(arc.target - arc.center).unit)
-
-                let r = 180/π
-                print("angle: \(original*r), coll: \(collapsedAngle*r), adjusted: \(arcLogDrawable.angle*r)")
+                arcLogDrawable.angle = (arc.radius*collapsedAngle < 0 ? 2*π : 0) + (arc.radius < 0 ? -1 : 1)*collapsedAngle
             }
         }
 
