@@ -203,7 +203,7 @@ class ULogParser: CustomStringConvertible {
                 ptr += Int(messageHeader.size)
             }
         }
-        
+
         print("Complete: \(Date().timeIntervalSince(startTime))")
     }
 

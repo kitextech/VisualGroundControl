@@ -5,6 +5,7 @@
 //  Created by Gustaf Kugelberg on 2017-03-18.
 //  Copyright © 2017 Gustaf Kugelberg. All rights reserved.
 //
+//        ×
 
 import AppKit
 import RxSwift
@@ -30,9 +31,9 @@ class TraceViewsViewController: NSViewController {
     @IBOutlet weak var yzButton: NSButton!
     @IBOutlet weak var piButton: NSButton!
 
-    @IBOutlet weak var loadButton: NSButton!
-
-    @IBOutlet weak var videoOffset: NSSlider!
+    @IBOutlet weak var toggleViewButton: NSButton!
+    @IBOutlet weak var restartButton: NSButton!
+    @IBOutlet weak var togglePlayButton: NSButton!
 
     // MARK: - Private
 
@@ -42,11 +43,10 @@ class TraceViewsViewController: NSViewController {
     private let cDrawable = BallDrawable(color: .red)
     private let piCircleDrawable = CircleDrawable()
 
-    private let velocityLogDrawable = ArrowDrawable(color: .orange, hideBall: true)
-    private let targetLogDrawable = BallDrawable(color: .orange)
+    private let velocityLogDrawable = ArrowDrawable(color: .darkGray, hideBall: true)
+    private let targetLogDrawable = BallDrawable(color: .red)
 
-    private let arcLogDrawable = CircleDrawable(color: .orange)
-//    private let arcLogDrawable = ArcDrawable(color: .orange)
+    private let arcLogDrawable = ArcDrawable(color: .orange)
     private let arcCenterLogDrawable = BallDrawable(color: .orange)
 
     private let arc2LogDrawable = CircleDrawable(color: .purple)
@@ -55,6 +55,12 @@ class TraceViewsViewController: NSViewController {
     private let circleLogDrawable = CircleDrawable()
     private let pathLogDrawable = PathDrawable()
     private var steppedLogDrawables = [KiteDrawable(color: .red)]
+
+    private var isPlayingVideo: Bool { return videoView.player?.isPlaying ?? false }
+    private var isLoadedVideo: Bool { return videoView.player != nil }
+    private var shouldShowVideo = true
+
+    private var videoTimeObserver: Any?
 
     // MARK: - View Controller Lifecycle Methods
 
@@ -126,8 +132,8 @@ class TraceViewsViewController: NSViewController {
         add(targetLogDrawable)
         add(arcLogDrawable)
         add(arcCenterLogDrawable)
-        add(arc2LogDrawable)
-        add(arcCenter2LogDrawable)
+//        add(arc2LogDrawable)
+//        add(arcCenter2LogDrawable)
 
         add(velocityLogDrawable)
 
@@ -135,20 +141,12 @@ class TraceViewsViewController: NSViewController {
 
         LogProcessor.shared.change.bind(onNext: updateLog).disposed(by: bag)
 
-        loadButton.rx.tap.bind(onNext: openVideoFile).addDisposableTo(bag)
-
-        videoOffset.rx.value.bind { _  in self.scrubVideo() }.addDisposableTo(bag)
+        toggleViewButton.rx.tap.bind(onNext: tappedToggleViewButton).addDisposableTo(bag)
+        togglePlayButton.rx.tap.bind(onNext: tappedTogglePlayButton).addDisposableTo(bag)
+        restartButton.rx.tap.bind(onNext: tappedRestartButton).addDisposableTo(bag)
 
         updateLog(.reset)
-    }
-
-    private func openVideoFile() {
-        let panel = NSOpenPanel()
-        panel.begin { result in
-            if result == NSFileHandlingPanelOKButton {
-                self.videoView.player = AVPlayer(url: panel.urls[0])
-            }
-        }
+        updateUI()
     }
 
     // Helper methods
@@ -192,32 +190,125 @@ class TraceViewsViewController: NSViewController {
         useAsRedrawTrigger(kite.orientation)
     }
 
-    private func scrubVideo() {
-        let seekTime = CMTime(seconds: LogProcessor.shared.timeSinceStart + videoOffset.doubleValue, preferredTimescale: 1000000)
-        videoView.player?.seek(to: seekTime)
+    private func tappedRestartButton() {
+        videoView.player?.seek(to: CMTime(seconds: 0, preferredTimescale: CMTimeScale(NSEC_PER_SEC)))
+    }
+
+    private func tappedTogglePlayButton() {
+        if isPlayingVideo {
+            videoView.player?.pause()
+        }
+        else {
+            videoView.player?.play()
+        }
+
+        updateUI()
+    }
+
+    private func tappedToggleViewButton() {
+        shouldShowVideo = !shouldShowVideo
+        updateUI()
+        updatePlayer()
+    }
+
+    private func loadVideoFile(logUrl: URL) {
+        let filename = logUrl.lastPathComponent
+            .replacingOccurrences(of: "_replayed", with: "")
+            .replacingOccurrences(of: ".ulg", with: ".mov")
+        let url = logUrl.deletingLastPathComponent().appendingPathComponent(filename)
+
+        print("-----")
+        print("-----")
+        print("-----")
+        print("-----")
+        print("LOADING FILE: \(filename)")
+        print("LOADING URL: \(url)")
+
+        videoView.player = AVPlayer(url: url)
+
+        print("PLAYER: \(videoView.player == nil ? "nil" : "exist")")
+
+        if let player = videoView.player {
+            print("PLAYER ERROR: \(player.error?.localizedDescription ?? "---")")
+            print("PLAYER PLAYING: \(player.isPlaying)")
+            print("PLAYER REASON: \(player.reasonForWaitingToPlay ?? "--")")
+            print("PLAYER STATUS: \(player.status)")
+        }
+
+        updatePlayer()
+        updateUI()
+    }
+
+    private func updatePlayer() {
+        guard let player = videoView.player else {
+            return
+        }
+
+        if shouldShowVideo {
+            let interval = CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+            videoTimeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { cmTime in
+                let t = TimeInterval(CMTimeGetSeconds(cmTime))
+                LogProcessor.shared.requestedTime = .video(t: t)
+            }
+        }
+        else if let videoTimeObserver = videoTimeObserver {
+            videoView.player?.removeTimeObserver(videoTimeObserver)
+        }
+    }
+
+    private func updateUI() {
+        toggleViewButton.title = shouldShowVideo ? "Hide video" : "Show video"
+        togglePlayButton.title = isPlayingVideo ? "Pause" : "Play"
+
+        toggleViewButton.isEnabled = isLoadedVideo
+        restartButton.isEnabled = isLoadedVideo
+        togglePlayButton.isEnabled = isLoadedVideo
+
+        videoView.isHidden = !shouldShowVideo || !isLoadedVideo
     }
 
     private func updateLog(_ change: LogProcessor.Change) {
         logLabel.stringValue = LogProcessor.shared.logText
 
-        let isEmpty = LogProcessor.shared.model.isEmpty
+        let isEmpty = LogProcessor.shared.model?.isEmpty ?? true
 
         circleLogDrawable.isHidden = isEmpty
+        arcLogDrawable.isHidden = isEmpty
         pathLogDrawable.isHidden = isEmpty
         steppedLogDrawables.forEach { $0.isHidden = isEmpty }
 
         piCircleDrawable.isHidden = !isEmpty
         cDrawable.isHidden = !isEmpty
 
-        if change == .reset {
-            views.forEach { $0.domeRadius = Scalar(LogProcessor.shared.model.tetherLength) }
-        }
-        else if change == .scrubbed {
-            scrubVideo()
+        guard let model = LogProcessor.shared.model, !model.isEmpty else {
+            videoView.player = nil
+            return
         }
 
-        if isEmpty {
-            return
+        switch change {
+        case .scrubbed:
+            scrubbedLog()
+        case .scrubbedByVideo:
+            break
+        case .changedRange:
+            pathLogDrawable.update(LogProcessor.shared.pathLocations.map(TimedLocation.getPosition))
+        case .reset:
+            let radius: Scalar
+            if let model = LogProcessor.shared.model {
+                if !isLoadedVideo {
+                    loadVideoFile(logUrl: model.url)
+                }
+                else {
+                    videoView.player = nil
+                }
+
+                updateUI()
+                radius = Scalar(model.tetherLength)
+            }
+            else {
+                radius = KiteController.shared.settings.tetherLength.value
+            }
+            views.forEach { $0.domeRadius = radius }
         }
 
         for (index, current) in LogProcessor.shared.steppedConfigurations.enumerated() {
@@ -240,41 +331,41 @@ class TraceViewsViewController: NSViewController {
         if let currentLocation = LogProcessor.shared.steppedConfigurations.first?.loc {
             velocityLogDrawable.position = currentLocation.pos
             velocityLogDrawable.vector = currentLocation.vel
-        }
 
-        if let arc = LogProcessor.shared.arcData, arc.c.norm > 0 {
-            circleLogDrawable.position = arc.c
-            circleLogDrawable.normal = arc.c.unit
-            circleLogDrawable.radius = CGFloat(LogProcessor.shared.model.turningRadius)
+            if let arc = LogProcessor.shared.arcData, arc.c.norm > 0 {
+                circleLogDrawable.position = arc.c
+                circleLogDrawable.normal = arc.c.unit
+                circleLogDrawable.radius = CGFloat(model.turningRadius)
 
-            targetLogDrawable.position = arc.target
+                targetLogDrawable.position = arc.target
 
-            arcCenterLogDrawable.position = arc.center
+                arcCenterLogDrawable.position = arc.center
 
-            arcLogDrawable.position = arc.center
-            arcLogDrawable.normal = arc.c.unit
-            arcLogDrawable.radius = arc.radius
+                let plane = Plane(center: arc.center, normal: arc.c.unit)
+                arcLogDrawable.plane = plane
+                arcLogDrawable.radius = arc.radius
+                arcLogDrawable.startAngle = plane.collapse(vector: currentLocation.pos).phi
 
-//            let radialVector = start - arc.center
-//            let normal = radialVector×tangent
-//
-//            arcLogDrawable.plane = Plane(center: center, normal: normal)
-//            arcLogDrawable.radius = radialVector.norm
-//            arcLogDrawable.startAngle = start.collapsed(on: plane.bases).phi
+                let collapsedLoc = (currentLocation.pos - arc.center).collapsed(on: plane.bases)
+                let collapsedTarget = (arc.target - arc.center).collapsed(on: plane.bases)
+                let collapsedAngle = collapsedLoc.signedAngle(to: collapsedTarget)
 
+                arcLogDrawable.angle = collapsedAngle < 0 ? 2*π - collapsedAngle : collapsedAngle
 
-//            arcCenter2LogDrawable.position = arc.center2
-//
-//            arc2LogDrawable.position = arc.center2
-//            arc2LogDrawable.normal = arc.c.unit
-//            arc2LogDrawable.radius = arc.radius2
-        }
+                let original = acos((currentLocation.pos - arc.center).unit•(arc.target - arc.center).unit)
 
-        if change == .changedRange {
-            pathLogDrawable.update(LogProcessor.shared.pathLocations.map(TimedLocation.getPosition))
+                let r = 180/π
+                print("angle: \(original*r), coll: \(collapsedAngle*r), adjusted: \(arcLogDrawable.angle*r)")
+            }
         }
 
         redrawViews()
+    }
+
+    private func scrubbedLog() {
+        let seekTime = CMTime(seconds: LogProcessor.shared.videoTime, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+//        print("Scrub to: \(LogProcessor.shared.videoTime) - \(seekTime)")
+        videoView.player?.seek(to: seekTime)
     }
 }
 
@@ -289,5 +380,11 @@ func getC(phi: Scalar, theta: Scalar, d: Scalar) -> Vector {
 extension AffineTransform {
     init(translationBy point: CGPoint) {
         self = AffineTransform(translationByX: point.x, byY: point.y)
+    }
+}
+
+extension AVPlayer {
+    var isPlaying: Bool {
+        return rate != 0 && error == nil
     }
 }

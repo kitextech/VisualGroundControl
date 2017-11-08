@@ -87,9 +87,9 @@ public class VectorDrawable: Drawable {
 }
 
 public class KiteDrawable: Drawable {
-    let span: Scalar = 6*1.2
-    let length: Scalar = 6*1
-    let height: Scalar = 6*0.6
+    let span: Scalar = 9*1.2
+    let length: Scalar = 9*1
+    let height: Scalar = 9*0.6
 
     private let tailProportion: Scalar = 0.8
     private let stabiliserProportion: Scalar = 0.8
@@ -155,7 +155,7 @@ public class SphereDrawable: Drawable {
 
     public var occlude = true
 
-    public let color = NSColor.lightGray
+    public let color: NSColor
 
     public let lineWidth: Scalar = 3
 
@@ -196,6 +196,10 @@ public class SphereDrawable: Drawable {
     public var orientation: Quaternion = .id
 
     public var position: Vector = .origin
+
+    public init(color: NSColor = NSColor.gray.withAlphaComponent(0.5)) {
+        self.color = color
+    }
 }
 
 public class BallDrawable: Drawable {
@@ -222,6 +226,8 @@ public class BallDrawable: Drawable {
         self.color = color
     }
 }
+
+// 
 
 public class ArrowDrawable: Drawable {
     public let id = UUID()
@@ -347,9 +353,9 @@ public class BoxDrawable: Drawable {
 public class ArcDrawable: Drawable {
     // MARK: - Parameters
 
-    var plane: Plane
-    var radius: Scalar
-    var startAngle: Scalar
+    var plane: Plane = Plane(center: .origin, normal: e_z)
+    var radius: Scalar = 10
+    var startAngle: Scalar = 0
     var angle: Scalar
 
     // MARK: - Private Parameters
@@ -369,13 +375,9 @@ public class ArcDrawable: Drawable {
     public let lineWidth: Scalar = 3
 
     public var lines: [Line] {
-        func makeVector(phi: Scalar) -> Vector {
-            return radius*(sin(phi)*plane.bases.0 + cos(phi)*plane.bases.1)
-        }
-
         let vectors = (0...points)
-            .map { startAngle + angle*Scalar($0)/Scalar(points) }
-            .map(makeVector)
+            .map { startAngle + (radius > 0 ? 1 : -1)*angle*Scalar($0)/Scalar(points) }
+            .map { plane.deCollapse(point: CGPoint(phi: $0, r: abs(radius))) }
 
         return zip(vectors.dropLast(), vectors.dropFirst()).map(Line.init)
     }
@@ -386,16 +388,7 @@ public class ArcDrawable: Drawable {
 
     public var position: Vector = .origin
 
-    public init(center: Vector = .origin, start: Vector = e_x, tangent: Vector = e_z, angle: Scalar = π/4, color: NSColor = .red) {
-        //        ×
-
-        let radialVector = start - center
-        let normal = radialVector×tangent
-
-        self.plane = Plane(center: center, normal: normal)
-        self.radius = radialVector.norm
-        self.startAngle = start.collapsed(on: plane.bases).phi
-
+    public init(angle: Scalar = π/4, color: NSColor = .red) {
         self.angle = angle
         self.color = color
     }

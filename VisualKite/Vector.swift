@@ -112,6 +112,11 @@ public struct Plane {
         let (x, y) = bases
         return center + Scalar(point.x)*x + Scalar(point.y)*y
     }
+
+    public func collapse(vector: Vector) -> CGPoint {
+        let relative = vector - center
+        return CGPoint(x: relative.component(along: bases.0), y: relative.component(along: bases.1))
+    }
 }
 
 infix operator •: MultiplicationPrecedence
@@ -289,7 +294,7 @@ extension Vector: CustomStringConvertible, Equatable {
         guard r > 0 else {
             fatalError("Norm is zero")
         }
-        
+
         return (1/r)*self
     }
 

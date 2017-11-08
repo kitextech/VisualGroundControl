@@ -15,6 +15,10 @@ extension CGPoint {
         self = r*CGPoint(x: cos(phi), y: sin(phi))
     }
 
+    init(x: Float, y: Float) {
+        self = CGPoint(x: Double(x), y: Double(y))
+    }
+
     static func *(left: Scalar, right: CGPoint) -> CGPoint {
         return CGPoint(x: CGFloat(left)*right.x, y: CGFloat(left)*right.y)
     }
@@ -64,7 +68,6 @@ extension CGPoint {
         let e_y = CGPoint(x: -e_x.y, y: e_x.x)
 
         return atan2(point•e_y, point•e_x)
-//        return atan2(point•e_x, point•e_y)
     }
 
     public func rotated(by angle: Scalar) -> CGPoint {
