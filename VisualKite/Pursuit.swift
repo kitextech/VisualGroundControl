@@ -147,9 +147,9 @@ class PursuitView: NSView {
 
         ballPath(at: arcCenter, radius: 5).fill()
 
-        let attrib: [String: AnyObject] = [
-            NSForegroundColorAttributeName : NSColor.black,
-            NSFontAttributeName : NSFont.systemFont(ofSize: 17)
+        let attrib: [NSAttributedStringKey: AnyObject] = [
+            .foregroundColor : NSColor.black,
+            .font : NSFont.systemFont(ofSize: 17)
         ]
 
         ("yaw: \(180*yaw/π)" as NSString).draw(in: CGRect(x: 200, y: 310, width: 300, height: 35), withAttributes: attrib)

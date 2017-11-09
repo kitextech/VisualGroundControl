@@ -288,7 +288,7 @@ class LogViewController: NSViewController {
 
         let panel = NSOpenPanel()
         panel.begin { result in
-            if result == NSFileHandlingPanelOKButton {
+            if result.rawValue == NSFileHandlingPanelOKButton {
                 self.load(panel.urls[0])
             }
         }

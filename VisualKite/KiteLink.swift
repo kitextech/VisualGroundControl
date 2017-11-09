@@ -11,7 +11,7 @@ import Mavlink
 import ORSSerial
 import RxSwift
 
-class KiteController {
+class KiteController: NSObject {
     // Public
 
     public static let shared = KiteController()
@@ -36,7 +36,7 @@ class KiteController {
 
     private let bag = DisposeBag()
 
-    private init() {
+    override private init() {
         kite0 = KiteLink(targetSystemId: 0, targetComponentId: 1, settings: settings)
         kite1 = KiteLink(targetSystemId: 1, targetComponentId: 1, settings: settings)
     }
@@ -82,9 +82,9 @@ class KiteLink: NSObject {
 
     // MARK: Serial Port Properties
 
-    public let serialPortManager = ORSSerialPortManager.shared()
+    @objc dynamic public let serialPortManager = ORSSerialPortManager.shared()
 
-    public var serialPort: ORSSerialPort? {
+    @objc dynamic public var serialPort: ORSSerialPort? {
         didSet {
             oldValue?.close()
             oldValue?.delegate = nil

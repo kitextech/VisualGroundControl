@@ -112,7 +112,7 @@ final class KiteViewer {
         let misc = [kiteBall, turningPointBall, tetherLine, tetherPointBall, positionTargetBall]
         (axes + arrows + misc).forEach(scene.rootNode.addChildNode)
         
-        Observable.combineLatest(position.asObservable(), velocity.asObservable(), orientation.asObservable(), wind.asObservable(), tetherPoint.asObservable(), turningPoint.asObservable(), resultSelector: ignore)
+        Observable.combineLatest(position.asObservable(), velocity.asObservable(), orientation.asObservable(), wind.asObservable(), tetherPoint.asObservable(), turningPoint.asObservable(), resultSelector: { (_, _, _, _, _, _) in })
             .subscribe(onNext: updateScene)
             .disposed(by: bag)
     }

@@ -141,9 +141,9 @@ class TraceViewsViewController: NSViewController {
 
         LogProcessor.shared.change.bind(onNext: updateLog).disposed(by: bag)
 
-        toggleViewButton.rx.tap.bind(onNext: tappedToggleViewButton).addDisposableTo(bag)
-        togglePlayButton.rx.tap.bind(onNext: tappedTogglePlayButton).addDisposableTo(bag)
-        restartButton.rx.tap.bind(onNext: tappedRestartButton).addDisposableTo(bag)
+        toggleViewButton.rx.tap.bind(onNext: tappedToggleViewButton).disposed(by: bag)
+        togglePlayButton.rx.tap.bind(onNext: tappedTogglePlayButton).disposed(by: bag)
+        restartButton.rx.tap.bind(onNext: tappedRestartButton).disposed(by: bag)
 
         updateLog(.reset)
         updateUI()
@@ -214,26 +214,9 @@ class TraceViewsViewController: NSViewController {
     private func loadVideoFile(logUrl: URL) {
         let filename = logUrl.lastPathComponent
             .replacingOccurrences(of: "_replayed", with: "")
-            .replacingOccurrences(of: ".ulg", with: ".mov")
+            .replacingOccurrences(of: ".ulg", with: ".m4v")
         let url = logUrl.deletingLastPathComponent().appendingPathComponent(filename)
-
-        print("-----")
-        print("-----")
-        print("-----")
-        print("-----")
-        print("LOADING FILE: \(filename)")
-        print("LOADING URL: \(url)")
-
         videoView.player = AVPlayer(url: url)
-
-        print("PLAYER: \(videoView.player == nil ? "nil" : "exist")")
-
-        if let player = videoView.player {
-            print("PLAYER ERROR: \(player.error?.localizedDescription ?? "---")")
-            print("PLAYER PLAYING: \(player.isPlaying)")
-            print("PLAYER REASON: \(player.reasonForWaitingToPlay ?? "--")")
-            print("PLAYER STATUS: \(player.status)")
-        }
 
         updatePlayer()
         updateUI()

@@ -15,7 +15,7 @@ func noOp<T>(value: T) -> T { return value }
 func makeScalar(_ value: Double) -> Scalar { return Scalar(value) }
 
 func ignore<T>(value: T) { }
-func isOn(int: Int) -> Bool { return int == 1 }
+func isOn(state: NSControl.StateValue) -> Bool { return state == .on }
 
 func log<T>(as name: String) -> (T) -> Void {
     return { print(name + ": \($0)") }
@@ -58,7 +58,7 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
     private let bag = DisposeBag()
     private let emulator = KiteEmulator()
     
-    private let leap = LeapListener.shared
+//    private let leap = LeapListener.shared
     private let kite = KiteController.kite0
     
     private let viewer = KiteViewer()

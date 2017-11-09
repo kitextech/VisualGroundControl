@@ -20,7 +20,7 @@ struct MessageBox {
         com.target_system = tarSysId
         com.target_component = tarCompId
         com.command = UInt16(MAV_CMD_NAV_GUIDED_ENABLE.rawValue)
-        com.confirmation = UInt8(true)
+        com.confirmation = UInt8(truncating: true)
         com.param1 = on ? 1 : 0 // // flag >0.5 => start, <0.5 => stop
 
         var message = mavlink_message_t()

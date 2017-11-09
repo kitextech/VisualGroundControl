@@ -8,7 +8,7 @@
 
 import Foundation
 
-let π = Scalar(Double.pi)
+public let π = Scalar(Double.pi)
 
 extension CGPoint {
     init(phi: Scalar, r: Scalar) {

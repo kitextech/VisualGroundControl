@@ -146,7 +146,7 @@ class ULogParser: CustomStringConvertible {
                 case .info:
                     guard let message = MessageInfo(data: data, header: messageHeader) else { return }
                     //                    infos.append(message)
-                //                    print(message)
+                                    print(message)
                 case .format:
                     add(ULogFormat(data.subdata(in: 0..<Int(messageHeader.size)).asString()))
                 case .parameter:

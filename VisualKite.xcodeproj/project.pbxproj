@@ -21,10 +21,6 @@
 		22BFFA5A1E735524006BE86D /* ORSSerial.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA571E7354DB006BE86D /* ORSSerial.framework */; };
 		22BFFA621E782302006BE86D /* SerialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA611E782302006BE86D /* SerialViewController.swift */; };
 		22BFFA7B1E7841E6006BE86D /* MavlinkMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA7A1E7841E6006BE86D /* MavlinkMessage.swift */; };
-		22BFFA7D1E78863B006BE86D /* LeapMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA7C1E78863B006BE86D /* LeapMotion.swift */; };
-		22BFFA841E793700006BE86D /* LeapObjectiveC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 22BFFA831E793700006BE86D /* LeapObjectiveC.mm */; };
-		22BFFA861E793771006BE86D /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BFFA851E793771006BE86D /* libLeap.dylib */; };
-		22BFFA881E793810006BE86D /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22BFFA851E793771006BE86D /* libLeap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		22DA65D21F2B6ED40055CB37 /* LogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DA65D11F2B6ED40055CB37 /* LogViewController.swift */; };
 		22DD78461F06505B00E73346 /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DD78451F06505B00E73346 /* Point.swift */; };
 		22DD78481F06714500E73346 /* Tracer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DD78471F06714400E73346 /* Tracer.swift */; };
@@ -224,7 +220,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				22BFFA881E793810006BE86D /* libLeap.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,13 +239,6 @@
 		22BFFA511E7354DB006BE86D /* ORSSerialPort.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ORSSerialPort.xcodeproj; path = "Frameworks/ORSSerialPort/Framework Project/ORSSerialPort.xcodeproj"; sourceTree = "<group>"; };
 		22BFFA611E782302006BE86D /* SerialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerialViewController.swift; sourceTree = "<group>"; };
 		22BFFA7A1E7841E6006BE86D /* MavlinkMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MavlinkMessage.swift; sourceTree = "<group>"; };
-		22BFFA7C1E78863B006BE86D /* LeapMotion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeapMotion.swift; sourceTree = "<group>"; };
-		22BFFA7F1E7936FF006BE86D /* VisualKite-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VisualKite-Bridging-Header.h"; sourceTree = "<group>"; };
-		22BFFA801E793700006BE86D /* Leap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Leap.h; sourceTree = "<group>"; };
-		22BFFA811E793700006BE86D /* LeapMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeapMath.h; sourceTree = "<group>"; };
-		22BFFA821E793700006BE86D /* LeapObjectiveC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeapObjectiveC.h; sourceTree = "<group>"; };
-		22BFFA831E793700006BE86D /* LeapObjectiveC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LeapObjectiveC.mm; sourceTree = "<group>"; };
-		22BFFA851E793771006BE86D /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libLeap.dylib; sourceTree = "<group>"; };
 		22DA65D11F2B6ED40055CB37 /* LogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewController.swift; sourceTree = "<group>"; };
 		22DD78451F06505B00E73346 /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		22DD78471F06714400E73346 /* Tracer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tracer.swift; sourceTree = "<group>"; };
@@ -276,7 +264,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22BFFA861E793771006BE86D /* libLeap.dylib in Frameworks */,
 				22BFFA5A1E735524006BE86D /* ORSSerial.framework in Frameworks */,
 				22389A0F1E658CFD00E596EA /* RxCocoa.framework in Frameworks */,
 				22389A101E658CFD00E596EA /* RxSwift.framework in Frameworks */,
@@ -323,20 +310,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		22BFFA7E1E7936CC006BE86D /* LeapMotion */ = {
-			isa = PBXGroup;
-			children = (
-				22BFFA851E793771006BE86D /* libLeap.dylib */,
-				22BFFA801E793700006BE86D /* Leap.h */,
-				22BFFA811E793700006BE86D /* LeapMath.h */,
-				22BFFA821E793700006BE86D /* LeapObjectiveC.h */,
-				22BFFA831E793700006BE86D /* LeapObjectiveC.mm */,
-				22BFFA7F1E7936FF006BE86D /* VisualKite-Bridging-Header.h */,
-			);
-			name = LeapMotion;
-			path = VisualKite;
-			sourceTree = "<group>";
-		};
 		22EC267B1E61DD7E00370170 = {
 			isa = PBXGroup;
 			children = (
@@ -344,7 +317,6 @@
 				223899CD1E658CB400E596EA /* Rx.xcodeproj */,
 				22EC26861E61DD7E00370170 /* VisualKite */,
 				22EC26851E61DD7E00370170 /* Products */,
-				22BFFA7E1E7936CC006BE86D /* LeapMotion */,
 			);
 			sourceTree = "<group>";
 		};
@@ -369,7 +341,6 @@
 				22DD78491F06734D00E73346 /* TraceView.swift */,
 				22DD78471F06714400E73346 /* Tracer.swift */,
 				224B2BA81E9984730090C7B9 /* Pursuit.swift */,
-				22BFFA7C1E78863B006BE86D /* LeapMotion.swift */,
 				22BFFA4F1E7351F4006BE86D /* KiteLink.swift */,
 				22BFFA4B1E72ED54006BE86D /* KiteAnalyzer.swift */,
 				22BFFA7A1E7841E6006BE86D /* MavlinkMessage.swift */,
@@ -445,12 +416,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0820;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Gustaf Kugelberg";
 				TargetAttributes = {
 					22EC26831E61DD7E00370170 = {
 						CreatedOnToolsVersion = 8.2.1;
-						LastSwiftMigration = 0820;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -669,7 +640,6 @@
 				22F6480F1F3DC56100B40D88 /* ULogParser.swift in Sources */,
 				22BFFA501E7351F4006BE86D /* KiteLink.swift in Sources */,
 				22DD78481F06714500E73346 /* Tracer.swift in Sources */,
-				22BFFA7D1E78863B006BE86D /* LeapMotion.swift in Sources */,
 				22DD784A1F06734D00E73346 /* TraceView.swift in Sources */,
 				22BFFA4C1E72ED54006BE86D /* KiteAnalyzer.swift in Sources */,
 				22EC26A21E62219B00370170 /* Matrix.swift in Sources */,
@@ -687,7 +657,6 @@
 				22389A121E6602DE00E596EA /* KiteViewer.swift in Sources */,
 				22DD78461F06505B00E73346 /* Point.swift in Sources */,
 				22F648101F3DC56100B40D88 /* ULogFormat.swift in Sources */,
-				22BFFA841E793700006BE86D /* LeapObjectiveC.mm in Sources */,
 				22EC26A61E62219B00370170 /* Vector.swift in Sources */,
 				22BFFA621E782302006BE86D /* SerialViewController.swift in Sources */,
 				2298CE541F2E8D0C00319634 /* SettingsViewController.swift in Sources */,
@@ -707,7 +676,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -715,7 +686,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -758,7 +733,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -766,7 +743,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -811,9 +792,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = KiteX.VisualKite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ENFORCE_EXCLUSIVE_ACCESS = none;
-				SWIFT_OBJC_BRIDGING_HEADER = "VisualKite/VisualKite-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -836,8 +818,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = KiteX.VisualKite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ENFORCE_EXCLUSIVE_ACCESS = none;
-				SWIFT_OBJC_BRIDGING_HEADER = "VisualKite/VisualKite-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

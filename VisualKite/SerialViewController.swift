@@ -23,10 +23,10 @@ class SerialViewController: NSViewController {
     
     // MARK: - Private Properties
 
-    internal let kite = KiteController.kite1
+    @objc dynamic internal let kite = KiteController.kite1
     private let bag = DisposeBag()
     
-    private var messages = [String]()
+    @objc dynamic private var messages = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()

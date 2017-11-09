@@ -89,11 +89,11 @@ class SettingsViewController: NSViewController {
 
         func prepend(_ string: String) -> (String) -> String { return { string + ": " + $0 } }
 
-        let tetherLength = tetherLengthSlider.scalar.shareReplayLatestWhileConnected()
-        let phiC = phiCSlider.scalar.shareReplayLatestWhileConnected()
-        let thetaC = thetaCSlider.scalar.shareReplayLatestWhileConnected()
-        let turningRadius = turningRadiusSlider.scalar.shareReplayLatestWhileConnected()
-        let tetheredHoverThrust = tetheredHoverThrustSlider.scalar.shareReplayLatestWhileConnected()
+        let tetherLength = tetherLengthSlider.scalar.share()
+        let phiC = phiCSlider.scalar.share()
+        let thetaC = thetaCSlider.scalar.share()
+        let turningRadius = turningRadiusSlider.scalar.share()
+        let tetheredHoverThrust = tetheredHoverThrustSlider.scalar.share()
 
         KiteController.shared.settings.setup(tetherLength, phiC, thetaC, turningRadius, tetheredHoverThrust)
 
