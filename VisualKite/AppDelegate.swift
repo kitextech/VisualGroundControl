@@ -11,12 +11,13 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     
-    @IBOutlet weak var window: NSWindow!
+    @IBOutlet weak var window: MyWindow!
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         if #available(OSX 10.12.2, *) {
             NSApplication.shared.isAutomaticCustomizeTouchBarMenuItemEnabled = true
         }
     }
-    
 }
+
+class MyWindow: NSWindow { }

@@ -18,10 +18,11 @@ class KiteController: NSObject {
 
     public let settings = SettingsModel()
 
-    public static var kite0: KiteLink { return KiteController.shared.kite0 }
     public static var kite1: KiteLink { return KiteController.shared.kite1 }
-
-    public var kites: [KiteLink] { return [kite0, kite1] }
+    public static var kite2: KiteLink { return KiteController.shared.kite2 }
+    public static var availableKite: KiteLink {
+        return KiteController.shared.kite1.isAvailable ? KiteController.shared.kite1 : KiteController.shared.kite2
+    }
 
     // Public
 
@@ -31,21 +32,36 @@ class KiteController: NSObject {
 
     // Private
 
-    private let kite0: KiteLink
     private let kite1: KiteLink
+    private let kite2: KiteLink
 
     private let bag = DisposeBag()
 
     override private init() {
-        kite0 = KiteLink(targetSystemId: 0, targetComponentId: 1, settings: settings)
         kite1 = KiteLink(targetSystemId: 1, targetComponentId: 1, settings: settings)
+        kite2 = KiteLink(targetSystemId: 2, targetComponentId: 1, settings: settings)
     }
 }
 
 class KiteLink: NSObject {
+    public enum ParameterStatus {
+        case unsent
+        case sent(retried: Int, date: Date)
+        case timedOut(date: Date)
+        case confirmed
+    }
+
+    public var parameters = [String : (ParameterValue, ParameterStatus)]()
+
+    public let parameterLog = Variable("---")
+
+    public var isAvailable = true
+
     public let flightMode: Variable<FlightMode> = Variable(.offboard(subMode: .position(subMode: .normal)))
 
     public let isOffboard = Variable<Bool>(true)
+
+    public let isSerialPortOpen = Variable(false)
 
     // MARK: Parameters
 
@@ -57,8 +73,12 @@ class KiteLink: NSObject {
 
     // MARK: - Continuous Parameters
     
-    public let positionTarget = Variable<Vector>(.zero) // Offboard>Position
-    public let attitudeTarget = Variable<Quaternion>(.id) // Offboard>Attitude
+    public let positionTargetPre = Variable<Vector>(.zero) // Offboard>Position
+    public let attitudeTargetPre = Variable<Quaternion>(.id) // Offboard>Attitude
+
+    public let positionTargetPost = Variable<Vector>(.zero) // Offboard>Position
+    public let attitudeTargetPost = Variable<Quaternion>(.id) // Offboard>Attitude
+
     public let thrust = Variable<Scalar>(0) // Offboard>Attitude
 
     // MARK: Output
@@ -74,8 +94,6 @@ class KiteLink: NSObject {
     public let errorMessage = PublishSubject<String>()
 
     public let gpsOrigin = Variable<GPSVector>(.zero)
-
-    public var isSerialPortOpen: Bool { return serialPort?.isOpen ?? false }
 
 //    public var latestGlobalPosition: GPSVector = .zero
     public var latestPosition: Vector = .zero
@@ -109,9 +127,6 @@ class KiteLink: NSObject {
 
     private let bag = DisposeBag()
 
-    internal var unsentParameterValues = [String : ParameterValue]()
-    internal var unconfirmedParameterValues = [String : (ParameterValue, Date, Int)]()
-
     private let parameterGracePeriod: TimeInterval = 1
     private let parameterRetries = 10
 
@@ -136,7 +151,6 @@ class KiteLink: NSObject {
         bind(settings.thetaC, using: setScalar(id: MPC_THETA_C))
         bind(settings.turningRadius, using: setScalar(id: MPC_LOOP_TURN_R))
         bind(settings.tetheredHoverThrust, using: setScalar(id: MPC_THR_TETHER))
-
         bind(positionB, using: setVector(ids: (MPC_X_POS_B, MPC_Y_POS_B, MPC_Z_POS_B)))
 
         // Specific
@@ -170,13 +184,11 @@ class KiteLink: NSObject {
 
     public func saveB() {
         positionB.value = latestPosition
-
         print("Using \(positionB.value) as B for kite \(box.tarSysId)")
     }
 
     public func nudgeB(by offset: Vector) {
         positionB.value += offset
-
         print("Nudging B to \(positionB.value) for kite \(box.tarSysId)")
     }
 
@@ -184,7 +196,7 @@ class KiteLink: NSObject {
         guard let serialPort = serialPort else {
             return
         }
-        
+
         if serialPort.isOpen {
             serialPort.close()
         }
@@ -192,6 +204,16 @@ class KiteLink: NSObject {
             serialPort.open()
             startUsbMavlinkSession() // TODO: Maybe depend on USB vs Telemetry
         }
+
+        resetParameters()
+    }
+
+    private func resetParameters() {
+        parameterLog.value = "---"
+        parameters.removeAll()
+//        parameters.keys.forEach { key in
+//            parameters[key]?.1 = .unsent
+//        }
     }
 
     public func requestParameterList() {
@@ -206,26 +228,29 @@ class KiteLink: NSObject {
 
     private func heartbeat(timer: Timer) {
         let now = Date()
-        unconfirmedParameterValues.values.forEach { value, sentDate, retries in
-            if now.timeIntervalSince(sentDate) > Double(retries + 1)*parameterGracePeriod {
-                if retries < parameterRetries {
-//                    print("Retrying (\(retries + 1)) retries for \(value.id) value: \(value.value)")
-                    send(box.setParameter(value: value))
-                    unconfirmedParameterValues[value.id] = (value, sentDate, retries + 1)
+        for (key, value) in parameters {
+            let (parameter, status) = value
+            switch status {
+            case .unsent:
+                send(box.setParameter(value: parameter))
+                parameters[key]?.1 = .sent(retried: 1, date: now)
+            case .sent(retried: let retries, date: let sentDate):
+                if now.timeIntervalSince(sentDate) > Double(retries + 1)*parameterGracePeriod {
+                    if retries < parameterRetries {
+                        send(box.setParameter(value: parameter))
+                        parameters[key]?.1 = .sent(retried: retries + 1, date: sentDate)
+                    }
+                    else {
+                        errorMessage.onNext("too many (\(retries)) retries for \(parameter.id)")
+                        parameters[key]?.1 = .timedOut(date: sentDate)
+                    }
                 }
-                else {
-                    errorMessage.onNext("too many (\(retries)) retries for \(value.id)")
-                    unconfirmedParameterValues[value.id] = nil
-                }
+            default:
+                break
             }
         }
 
-        unsentParameterValues.forEach { key, value in
-            send(box.setParameter(value: value))
-            unconfirmedParameterValues[key] = (value, now, 0)
-        }
-
-        unsentParameterValues.removeAll()
+        paramatersChanged()
 
         switch flightMode.value {
         case .manual:
@@ -234,13 +259,31 @@ class KiteLink: NSObject {
         case .offboard(subMode: let secondary):
             switch secondary {
             case .attitude:
-                send(box.setAttitudeTarget(quaternion: attitudeTarget.value, thrust: thrust.value))
+                send(box.setAttitudeTarget(quaternion: attitudeTargetPre.value, thrust: thrust.value))
             case .position:
-                send(box.setPositionTarget(vector: positionTarget.value))
+                send(box.setPositionTarget(vector: positionTargetPre.value))
             case .looping:
                 break
             }
         }
+    }
+
+    private func paramatersChanged() {
+        parameterLog.value = parameters.keys.sorted().map { key -> String in
+            if let (parameter, status) = parameters[key] {
+                let text: String
+                switch status {
+                case .unsent: text = "unsent"
+                case .sent(retried: let retried, date: _): text = "sent #\(retried)"
+                case .timedOut: text = "timed out"
+                case .confirmed: text = "confirmed"
+                }
+
+                return "\(parameter.id) (\(text)): \(parameter.value)"
+            }
+            return "---"
+        }
+        .joined(separator: "\n")
     }
 
     // MARK: - Helper Methods for Linking Rx and Mavlink Parameter Messages
@@ -255,9 +298,9 @@ class KiteLink: NSObject {
 
     private func push(_ values: [ParameterValue]) {
         values.forEach {
-            unsentParameterValues[$0.id] = $0
-            unconfirmedParameterValues[$0.id] = nil
+            parameters[$0.id] = ($0, .unsent)
         }
+        paramatersChanged()
     }
 
     private func setBool(id: String) -> (Bool) -> [ParameterValue] {
@@ -291,10 +334,13 @@ class KiteLink: NSObject {
             return abs(actual - received) < relativeError*abs(actual) + absoluteError
         }
 
-        if let unconfirmed = unconfirmedParameterValues[p.id]?.0, unconfirmed.type == p.type, isCloseEnough(actual: unconfirmed.value, received: p.value) {
-            unconfirmedParameterValues[p.id] = nil
-            print("Confirmed \(p.id) : \(p.value)")
+        for (key, value) in parameters {
+            if case .sent = value.1 {
+                parameters[key]?.1 = .confirmed
+            }
         }
+
+        paramatersChanged()
     }
 
     private func changedFlightMode(mode: FlightMode) {
@@ -396,10 +442,12 @@ class KiteLink: NSObject {
 extension KiteLink: ORSSerialPortDelegate {
     func serialPortWasOpened(_ serialPort: ORSSerialPort) {
         print("Serial port was opened: \(serialPort.name)")
+        isSerialPortOpen.value = true
     }
     
     func serialPortWasClosed(_ serialPort: ORSSerialPort) {
         print("Serial port was closed: \(serialPort.name)")
+        isSerialPortOpen.value = false
     }
     
     /**
@@ -448,7 +496,6 @@ extension KiteLink: ORSSerialPortDelegate {
                     print("RECEIVED globalOrigin (\(message.msgid)): \(o)")
                 }
                 else if let value = message.parameterValue {
-                    print("Received Parameter: \(value.id) (\(value.id.characters.count)) = \(value.value)")
                     confirm(value)
                 }
 

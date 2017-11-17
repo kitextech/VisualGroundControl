@@ -215,15 +215,16 @@ public class BallDrawable: Drawable {
 
     public var lines: [Line] = []
 
-    public let spheres: [Sphere] = [Sphere(center: .zero, radius: 2)]
+    public let spheres: [Sphere]
 
     public var orientation: Quaternion = .id
 
     public var position: Vector
 
-    public init(position: Vector = .origin, color: NSColor = .white) {
+    public init(position: Vector = .origin, color: NSColor = .white, radius: Scalar = 2) {
         self.position = position
         self.color = color
+        self.spheres = [Sphere(center: .zero, radius: radius)]
     }
 }
 

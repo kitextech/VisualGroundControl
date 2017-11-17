@@ -49,9 +49,6 @@ class TraceViewsViewController: NSViewController {
     private let arcLogDrawable = ArcDrawable(color: .orange)
     private let arcCenterLogDrawable = BallDrawable(color: .orange)
 
-    private let arc2LogDrawable = CircleDrawable(color: .purple)
-    private let arcCenter2LogDrawable = BallDrawable(color: .purple)
-
     private let circleLogDrawable = CircleDrawable()
     private let pathLogDrawable = PathDrawable()
     private var steppedLogDrawables = [KiteDrawable(color: .red)]
@@ -75,8 +72,8 @@ class TraceViewsViewController: NSViewController {
 
         // Kites
 
-        add(KiteController.kite0, color: .purple)
-        add(KiteController.kite1, color: .orange)
+        add(KiteController.kite1, color: .purple)
+        add(KiteController.kite2, color: .orange)
 
         // The dome
 
@@ -114,9 +111,14 @@ class TraceViewsViewController: NSViewController {
             .bind { radius in self.piCircleDrawable.radius = radius }
             .disposed(by: bag)
 
+//        Observable.combineLatest(cPoint, KiteController.shared.settings.turningRadius, resultSelector: noOp)
+//            .bind { print("--") }
+//            .disposed(by: bag)
+
         // Trace views as controls
 
-        let requestedPositions = [KiteController.kite0.positionTarget, KiteController.kite1.positionTarget]
+        let requestedPositions = [KiteController.kite1.positionTargetPre, KiteController.kite1.positionTargetPost,
+                                  KiteController.kite2.positionTargetPre, KiteController.kite2.positionTargetPost]
         views.forEach { $0.requestedPositions = requestedPositions }
 
         // Redrawing
@@ -132,9 +134,6 @@ class TraceViewsViewController: NSViewController {
         add(targetLogDrawable)
         add(arcLogDrawable)
         add(arcCenterLogDrawable)
-//        add(arc2LogDrawable)
-//        add(arcCenter2LogDrawable)
-
         add(velocityLogDrawable)
 
         steppedLogDrawables.forEach(add)
@@ -179,11 +178,18 @@ class TraceViewsViewController: NSViewController {
 
         // Target position
 
-        let targetDrawable = BallDrawable(color: color)
-        add(targetDrawable)
+        let targetPreDrawable = BallDrawable(color: color)
+        add(targetPreDrawable)
 
-        kite.positionTarget.asObservable()
-            .bind { pos in targetDrawable.position = pos }
+        kite.positionTargetPre.asObservable()
+            .bind { pos in targetPreDrawable.position = pos }
+            .disposed(by: bag)
+
+        let targetPostDrawable = BallDrawable(color: color, radius: 4)
+        add(targetPostDrawable)
+
+        kite.positionTargetPost.asObservable()
+            .bind { pos in targetPostDrawable.position = pos }
             .disposed(by: bag)
 
         useAsRedrawTrigger(kite.location)

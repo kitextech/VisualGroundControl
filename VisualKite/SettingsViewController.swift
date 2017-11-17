@@ -71,11 +71,11 @@ class SettingsViewController: NSViewController {
 
     @IBAction func pressedUse0AsB(_ sender: NSButton) {
 //        KiteController.shared.settings.globalOrigin.value = KiteController.kite0.latestGlobalPosition
-        KiteController.kite0.saveB()
+        KiteController.kite1.saveB()
     }
 
     @IBAction func didNudgeB(_ sender: NSStepper) {
-        (sender.tag/3 == 0 ? KiteController.kite0 : KiteController.kite1).nudgeB(by: Scalar(sender.intValue)*[e_x, e_y, e_z][sender.tag % 3])
+        (sender.tag/3 == 0 ? KiteController.kite1 : KiteController.kite2).nudgeB(by: Scalar(sender.intValue)*[e_x, e_y, e_z][sender.tag % 3])
         sender.intValue = 0
     }
 
@@ -110,18 +110,18 @@ class SettingsViewController: NSViewController {
 
         // Positions
         let stripTime = { (p: TimedGPSVector) in p.pos }
-        KiteController.kite0.globalPosition.asObservable().map(stripTime).map(gpsString).bind(to: position0Label.rx.text).disposed(by: bag)
-        KiteController.kite1.globalPosition.asObservable().map(stripTime).map(gpsString).bind(to: position1Label.rx.text).disposed(by: bag)
+        KiteController.kite1.globalPosition.asObservable().map(stripTime).map(gpsString).bind(to: position0Label.rx.text).disposed(by: bag)
+        KiteController.kite2.globalPosition.asObservable().map(stripTime).map(gpsString).bind(to: position1Label.rx.text).disposed(by: bag)
 
         let nedString = { (p: TimedLocation) in String(format: "NED: %.1f, %.1f, %.1f", p.pos.x, p.pos.y, p.pos.z) }
-        KiteController.kite0.location.map(nedString).bind(to: ned0Label.rx.text).disposed(by: bag)
-        KiteController.kite1.location.map(nedString).bind(to: ned1Label.rx.text).disposed(by: bag)
+        KiteController.kite1.location.map(nedString).bind(to: ned0Label.rx.text).disposed(by: bag)
+        KiteController.kite2.location.map(nedString).bind(to: ned1Label.rx.text).disposed(by: bag)
 
 //        globalOriginButton.rx.tap.bind { _ in KiteController.shared.resendOrigin() }.disposed(by: bag)
 
         // Errors
-        let kite0Errors = KiteController.kite0.errorMessage.map(prepend("kite0"))
-        let kite1Errors = KiteController.kite1.errorMessage.map(prepend("kite1"))
+        let kite0Errors = KiteController.kite1.errorMessage.map(prepend("kite1"))
+        let kite1Errors = KiteController.kite2.errorMessage.map(prepend("kite2"))
 
         Observable.merge(kite0Errors, kite1Errors).bind(to: errorLabel.rx.text).disposed(by: bag)
     }

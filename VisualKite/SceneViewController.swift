@@ -59,7 +59,7 @@ final class SceneViewController: NSViewController, SCNSceneRendererDelegate {
     private let emulator = KiteEmulator()
     
 //    private let leap = LeapListener.shared
-    private let kite = KiteController.kite0
+    private let kite = KiteController.kite1
     
     private let viewer = KiteViewer()
     
