@@ -18,7 +18,6 @@ struct SettingsModel {
     public let turningRadius: Variable<Scalar> = Variable(10)
     public let tetheredHoverThrust: Variable<Scalar> = Variable(0)
 
-    // MARK: BAG
     private let bag = DisposeBag()
 
     func setup(_ tetherLength: Observable<Scalar>, _ phiC: Observable<Scalar>, _ thetaC: Observable<Scalar>, _ turningRadius: Observable<Scalar>, _ tetheredHoverThrust: Observable<Scalar>) {
